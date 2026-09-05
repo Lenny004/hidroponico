@@ -12,7 +12,9 @@ import {
   aristaCreariaCiclo,
   crearNodoDesdePlantilla,
   idsComponenteConexa,
+  normalizarPlagas,
   obtenerCultivoPorId,
+  type ClaveVariableCultivo,
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
 
@@ -36,6 +38,14 @@ type EstadoGrafoConstruccion = {
   conectar: (conexion: Connection) => boolean;
   agregarNodo: (tipoCultivo: string, posicion: { x: number; y: number }) => void;
   seleccionar: (id: string | null) => void;
+  actualizarTipoCultivo: (id: string, tipoCultivo: string) => void;
+  actualizarVariable: (id: string, clave: ClaveVariableCultivo, valor: number | null) => void;
+  actualizarTextoNodo: (
+    id: string,
+    campo: "comentarios" | "solucion_plagas",
+    valor: string | null,
+  ) => void;
+  actualizarPlagas: (id: string, plagas: string[] | null) => void;
   setBusquedaCatalogo: (valor: string) => void;
   setFiltroLienzo: (valor: string) => void;
 };
@@ -162,6 +172,85 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
         ...nodo,
         selected: nodo.id === id,
       })),
+    }));
+  },
+
+  actualizarTipoCultivo: (id, tipoCultivo) => {
+    const definicion = obtenerCultivoPorId(tipoCultivo);
+    if (!definicion) {
+      set({ mensajeEstado: "Tipo de cultivo no reconocido." });
+      return;
+    }
+    set((estado) => ({
+      nodos: estado.nodos.map((nodo) =>
+        nodo.id === id
+          ? {
+              ...nodo,
+              data: {
+                color: definicion.color,
+                cultivo: { ...nodo.data.cultivo, tipoCultivo: definicion.id },
+              },
+            }
+          : nodo,
+      ),
+      mensajeEstado: `Tipo cambiado a ${definicion.nombre}.`,
+    }));
+  },
+
+  actualizarVariable: (id, clave, valor) => {
+    set((estado) => ({
+      nodos: estado.nodos.map((nodo) =>
+        nodo.id === id
+          ? {
+              ...nodo,
+              data: {
+                ...nodo.data,
+                cultivo: {
+                  ...nodo.data.cultivo,
+                  variables: { ...nodo.data.cultivo.variables, [clave]: valor },
+                },
+              },
+            }
+          : nodo,
+      ),
+    }));
+  },
+
+  actualizarTextoNodo: (id, campo, valor) => {
+    const limpio = valor?.trim() ? valor : null;
+    set((estado) => ({
+      nodos: estado.nodos.map((nodo) =>
+        nodo.id === id
+          ? {
+              ...nodo,
+              data: {
+                ...nodo.data,
+                cultivo: { ...nodo.data.cultivo, [campo]: limpio },
+              },
+            }
+          : nodo,
+      ),
+    }));
+  },
+
+  actualizarPlagas: (id, plagas) => {
+    const normalizadas = normalizarPlagas(plagas);
+    set((estado) => ({
+      nodos: estado.nodos.map((nodo) =>
+        nodo.id === id
+          ? {
+              ...nodo,
+              data: {
+                ...nodo.data,
+                cultivo: { ...nodo.data.cultivo, plagas: normalizadas },
+              },
+            }
+          : nodo,
+      ),
+      mensajeEstado:
+        normalizadas === null
+          ? "Sin plagas registradas."
+          : `${normalizadas.length} plaga(s) en el nodo.`,
     }));
   },
 

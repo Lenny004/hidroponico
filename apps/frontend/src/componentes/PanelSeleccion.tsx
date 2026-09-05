@@ -1,46 +1,188 @@
-import { CLAVES_VARIABLES_CULTIVO, obtenerCultivoPorId } from "@hidroponico/tipos-compartidos";
+import { useEffect, useState, type FormEvent, type KeyboardEvent } from "react";
+import {
+  CATALOGO_CULTIVOS,
+  ETIQUETAS_VARIABLES,
+  GRUPOS_VARIABLES,
+  obtenerCultivoPorId,
+} from "@hidroponico/tipos-compartidos";
+import CampoNumerico from "./CampoNumerico";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
 export default function PanelSeleccion() {
   const idSeleccionado = usarGrafoConstruccion((estado) => estado.idSeleccionado);
   const nodos = usarGrafoConstruccion((estado) => estado.nodos);
+  const actualizarTipoCultivo = usarGrafoConstruccion((estado) => estado.actualizarTipoCultivo);
+  const actualizarVariable = usarGrafoConstruccion((estado) => estado.actualizarVariable);
+  const actualizarTextoNodo = usarGrafoConstruccion((estado) => estado.actualizarTextoNodo);
+  const actualizarPlagas = usarGrafoConstruccion((estado) => estado.actualizarPlagas);
+
   const nodo = nodos.find((item) => item.id === idSeleccionado);
-  const nombre = nodo
-    ? (obtenerCultivoPorId(nodo.data.cultivo.tipoCultivo)?.nombre ??
-      nodo.data.cultivo.tipoCultivo)
+  const cultivo = nodo?.data.cultivo;
+  const nombre = cultivo
+    ? (obtenerCultivoPorId(cultivo.tipoCultivo)?.nombre ?? cultivo.tipoCultivo)
     : null;
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col gap-3 overflow-y-auto border-l border-borde bg-panel p-3">
+    <aside className="flex w-80 shrink-0 flex-col gap-3 overflow-y-auto border-l border-borde bg-panel p-3">
       <p className="text-xs font-semibold tracking-wide text-muted uppercase">
         Detalle
       </p>
-      {!nodo || !nombre ? (
+      {!nodo || !cultivo || !nombre ? (
         <p className="text-sm text-muted">
-          Haz click en un nodo para ver su ficha. La edición completa llega en la Fase 2.
+          Haz click en un nodo para ver y editar su ficha.
         </p>
       ) : (
-        <div className="flex flex-col gap-3">
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={(evento) => evento.preventDefault()}
+        >
           <div>
             <p className="text-lg font-semibold">{nombre}</p>
             <p className="break-all text-[11px] text-muted">{nodo.id}</p>
           </div>
-          <p className="text-xs text-muted">
-            Variables en solo lectura (propuesta de 15 categorías, no confirmada).
+
+          <label className="flex flex-col gap-1 text-xs">
+            <span>Tipo de cultivo</span>
+            <select
+              value={cultivo.tipoCultivo}
+              onChange={(evento) => actualizarTipoCultivo(nodo.id, evento.target.value)}
+              className="rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none focus:border-acento"
+            >
+              {CATALOGO_CULTIVOS.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.nombre}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <p className="text-[11px] text-muted">
+            Las 15 variables son una propuesta no confirmada. Vacío = `null`, no 0.
           </p>
-          <dl className="grid grid-cols-1 gap-1 text-xs">
-            {CLAVES_VARIABLES_CULTIVO.map((clave) => (
-              <div
-                key={clave}
-                className="flex items-center justify-between gap-2 rounded-md border border-borde px-2 py-1"
-              >
-                <dt className="text-muted">{clave}</dt>
-                <dd>{nodo.data.cultivo.variables[clave] ?? "null"}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+
+          {GRUPOS_VARIABLES.map((grupo) => (
+            <fieldset key={grupo.titulo} className="flex flex-col gap-2">
+              <legend className="text-xs font-semibold tracking-wide text-muted uppercase">
+                {grupo.titulo}
+              </legend>
+              {grupo.claves.map((clave) => (
+                <CampoNumerico
+                  key={`${nodo.id}-${clave}`}
+                  id={`${nodo.id}-${clave}`}
+                  etiqueta={ETIQUETAS_VARIABLES[clave]}
+                  claveTecnica={clave}
+                  valor={cultivo.variables[clave]}
+                  onConfirmar={(valor) => actualizarVariable(nodo.id, clave, valor)}
+                />
+              ))}
+            </fieldset>
+          ))}
+
+          <CampoPlagas
+            idNodo={nodo.id}
+            plagas={cultivo.plagas ?? null}
+            onCambiar={(plagas) => actualizarPlagas(nodo.id, plagas)}
+          />
+
+          <label className="flex flex-col gap-1 text-xs">
+            <span>solucion_plagas</span>
+            <textarea
+              rows={2}
+              value={cultivo.solucion_plagas ?? ""}
+              placeholder="Vacío = null"
+              onChange={(evento) =>
+                actualizarTextoNodo(nodo.id, "solucion_plagas", evento.target.value)
+              }
+              className="resize-y rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-xs">
+            <span>comentarios</span>
+            <textarea
+              rows={3}
+              value={cultivo.comentarios ?? ""}
+              placeholder="Vacío = null"
+              onChange={(evento) =>
+                actualizarTextoNodo(nodo.id, "comentarios", evento.target.value)
+              }
+              className="resize-y rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
+            />
+          </label>
+        </form>
       )}
     </aside>
+  );
+}
+
+function CampoPlagas({
+  idNodo,
+  plagas,
+  onCambiar,
+}: {
+  idNodo: string;
+  plagas: string[] | null;
+  onCambiar: (plagas: string[] | null) => void;
+}) {
+  const [alta, setAlta] = useState("");
+  const actuales = plagas ?? [];
+
+  useEffect(() => {
+    setAlta("");
+  }, [idNodo]);
+
+  const agregar = (evento?: FormEvent | KeyboardEvent) => {
+    evento?.preventDefault();
+    const nombre = alta.trim();
+    if (!nombre) {
+      return;
+    }
+    onCambiar([...actuales, nombre]);
+    setAlta("");
+  };
+
+  return (
+    <fieldset className="flex flex-col gap-2">
+      <legend className="text-xs font-semibold tracking-wide text-muted uppercase">
+        Plagas
+      </legend>
+      <div className="flex flex-wrap gap-1">
+        {actuales.length === 0 ? (
+          <span className="text-xs text-muted">Ninguna (null)</span>
+        ) : (
+          actuales.map((plaga) => (
+            <button
+              key={plaga}
+              type="button"
+              onClick={() => onCambiar(actuales.filter((item) => item !== plaga))}
+              className="rounded-full border border-borde bg-lienzo px-2 py-0.5 text-xs hover:border-acento"
+              title="Quitar plaga"
+            >
+              {plaga} ×
+            </button>
+          ))
+        )}
+      </div>
+      <div className="flex gap-1">
+        <input
+          value={alta}
+          placeholder="Añadir plaga"
+          onChange={(evento) => setAlta(evento.target.value)}
+          onKeyDown={(evento) => {
+            if (evento.key === "Enter") {
+              agregar(evento);
+            }
+          }}
+          className="min-w-0 flex-1 rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
+        />
+        <button
+          type="button"
+          onClick={() => agregar()}
+          className="rounded-lg border border-borde px-2 text-sm hover:border-acento"
+        >
+          Añadir
+        </button>
+      </div>
+    </fieldset>
   );
 }

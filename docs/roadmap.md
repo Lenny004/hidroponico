@@ -18,6 +18,8 @@ Renderizar nodos y aristas, crear / mover / conectar, validar DAG. Sin motores.
 
 Click en un nodo abre panel editable con `NodoCultivo`.
 
+**Hecha:** formulario de las 15 variables (`null` si el campo está vacío), tipo, plagas, `solucion_plagas` y comentarios. Sin persistir a base de datos.
+
 ## Fase 3 — EDA + un solo motor
 
 Bus TREE.JS y `motor.minerales` de punta a punta (agregación por grupo y regla de `null`). **Antes:** confirmar [reglas-negocio.md](reglas-negocio.md).

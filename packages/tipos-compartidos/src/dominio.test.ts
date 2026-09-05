@@ -3,6 +3,7 @@ import { aristaCreariaCiclo } from "./grafo-dag";
 import { idsComponenteConexa } from "./componente-conexa";
 import { crearNodoDesdePlantilla } from "./factory-nodo";
 import { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
+import { normalizarPlagas, parsearNumeroONull } from "./parsear-valores";
 
 describe("aristaCreariaCiclo", () => {
   it("rechaza un bucle sobre el mismo nodo", () => {
@@ -57,5 +58,33 @@ describe("crearNodoDesdePlantilla", () => {
 
   it("rechaza un tipo que no está en el catálogo", () => {
     expect(crearNodoDesdePlantilla("banano", "n1")).toBeNull();
+  });
+});
+
+describe("parsearNumeroONull", () => {
+  it("trata vacío e inválido como null, no como 0", () => {
+    expect(parsearNumeroONull("")).toBeNull();
+    expect(parsearNumeroONull("  ")).toBeNull();
+    expect(parsearNumeroONull("abc")).toBeNull();
+  });
+
+  it("acepta 0 explícito y decimales con coma", () => {
+    expect(parsearNumeroONull("0")).toBe(0);
+    expect(parsearNumeroONull("12,5")).toBe(12.5);
+  });
+});
+
+describe("normalizarPlagas", () => {
+  it("devuelve null si no queda ningún nombre", () => {
+    expect(normalizarPlagas([])).toBeNull();
+    expect(normalizarPlagas(["  ", ""])).toBeNull();
+    expect(normalizarPlagas(null)).toBeNull();
+  });
+
+  it("elimina duplicados conservando el primero", () => {
+    expect(normalizarPlagas(["Pulgón", "pulgón", "Araña"])).toEqual([
+      "Pulgón",
+      "Araña",
+    ]);
   });
 });

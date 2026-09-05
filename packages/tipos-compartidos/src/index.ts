@@ -16,3 +16,10 @@ export {
 export { idsComponenteConexa } from "./componente-conexa";
 
 export { EVENTOS_GRAFO, type NombreEventoGrafo } from "./eventos-grafo";
+
+export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES } from "./etiquetas-variables";
+export {
+  esBorradorNumerico,
+  normalizarPlagas,
+  parsearNumeroONull,
+} from "./parsear-valores";

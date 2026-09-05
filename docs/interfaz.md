@@ -18,7 +18,7 @@ Referencia visual: editor de nodos tipo **n8n**. Librería prevista: **React Flo
 - Mover nodos.
 - Conectar nodos con líneas; rechazar ciclos.
 - Highlight de selección y de grupo conectado.
-- Click → panel de detalle (Fase 2).
+- Click → panel de detalle editable (Fase 2).
 
 ## Botones play (Fase 3–4)
 
