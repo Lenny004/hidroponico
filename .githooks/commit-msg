@@ -1,0 +1,15 @@
+#!/bin/sh
+# Rechaza el commit si el mensaje aún trae coautor de Cursor/IA.
+msg=$1
+[ -f "$msg" ] || exit 0
+
+repo=$(git rev-parse --show-toplevel 2>/dev/null) || repo=""
+if [ -n "$repo" ] && command -v node >/dev/null 2>&1 && [ -f "$repo/scripts/quitar-coautor-cursor.mjs" ]; then
+  exec node "$repo/scripts/quitar-coautor-cursor.mjs" check "$msg"
+fi
+
+if grep -E -i -q 'Co-authored-by:.*Cursor|cursoragent@cursor\.com|Made with Cursor' "$msg"; then
+  echo "Error: este repositorio no permite Co-authored-by de Cursor ni trailers de IA." >&2
+  exit 1
+fi
+exit 0

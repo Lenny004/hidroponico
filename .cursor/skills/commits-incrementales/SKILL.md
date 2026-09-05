@@ -12,11 +12,11 @@ Solo commitear si el usuario lo pide. Nunca push salvo petición explícita.
 1. `git status`, `git diff`, `git log` (estilo del repo).
 2. Excluir secretos (`.env`, credenciales).
 3. Agrupar por tema. Si el diff es grande, **varios commits**, no uno solo.
-4. Mensaje en 1–2 frases, foco en el porqué. Sin trailers.
+4. Mensaje en 1–2 frases, foco en el porqué. Sin trailers. No uses `git commit --trailer`.
 
 ## Prohibido
 
-- `Co-authored-by: Cursor` u otro coautor de IA (en ningún sitio).
+- `Co-authored-by: Cursor <cursoragent@cursor.com>` u otro coautor de IA (en el mensaje, en `--trailer`, o en el recuadro SCM).
 - Commits que mezclan docs + scaffolding + features.
 - `--no-verify`, force push, amend de commits ajenos o ya publicados.
 

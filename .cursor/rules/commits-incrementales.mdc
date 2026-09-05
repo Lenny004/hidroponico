@@ -10,6 +10,7 @@ alwaysApply: true
 - Preferir varios commits descriptivos antes que un commit enorme.
 - No hacer `git push` ni abrir PR salvo petición explícita del usuario.
 - No usar `--no-verify`, force push, ni amend de commits ajenos o ya publicados.
+- Nunca `Co-authored-by: Cursor` ni `git commit --trailer` de IA. El hook del repo lo quita o rechaza.
 
 ```text
 # ❌ MAL
