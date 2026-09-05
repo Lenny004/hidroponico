@@ -1,12 +1,12 @@
 # Reglas de negocio
 
-Estas reglas son críticas. **No implementar agregación de minerales (regla 1 y 2) sin mostrar antes el plan de esta sección y obtener confirmación.**
+Agregación de minerales implementada según el plan confirmado abajo.
 
 ## 1. Enlace solo por misma categoría
 
-Dos nodos solo se conectan **para efectos de agregación** si comparten la misma categoría de mineral/variable. No se suman minerales distintos entre sí.
+Dos nodos solo se conectan **para efectos de agregación** si se suman la misma categoría. No se suman minerales distintos entre sí.
 
-Pendiente de confirmar en UI: ¿una arista visual equivale a un enlace de una sola categoría, o un par de nodos puede tener varios enlaces (uno por categoría)?
+La arista del canvas es visual (mismo sistema). Dentro de cada componente conexa, Mg, K, Mn y Fe se agregan por separado.
 
 ## 2. Propagación de `null` en el agregado de grupo
 
@@ -17,7 +17,7 @@ Si **un solo nodo** de un grupo conectado por una categoría tiene esa variable 
 
 Es una regla de integridad: un dato faltante invalida el cálculo agregado de ese grupo.
 
-**Asunción abierta:** ¿la UI bloquea la simulación o solo advierte y sigue con grupos válidos?
+**Confirmado:** la UI no bloquea; advierte y sigue con los grupos/categorías válidos.
 
 ## 3. Tolerancia a variables faltantes en el nodo individual
 
@@ -36,13 +36,11 @@ El sistema debe responder, sin que el usuario cuente a mano:
 
 Esta suma por tipo es distinta de la agregación por **grupo conectado** (reglas 1 y 2). Hay que no mezclar ambos conceptos en el mismo cálculo.
 
-## Plan propuesto de agregación (a confirmar antes de programar)
+## Plan de agregación (confirmado)
 
-1. El grafo tiene aristas etiquetadas por `categoria` (ej. `mineral_magnesio`).
-2. Por cada categoría, construir el subgrafo que solo incluye aristas de esa categoría.
-3. Hallar componentes conexas (Union-Find).
-4. En cada componente, si algún nodo tiene la variable `null` o ausente → resultado del grupo = `null`.
-5. Si todos tienen número → sumar.
-6. TREE.JS emite resultados por grupo; un `null` de grupo no lanza excepción ni detiene otras categorías.
-
-**No implementar este plan hasta confirmarlo.** En particular falta aclarar si el enlace visual del canvas es por categoría o si la «misma categoría» se infiere de otra forma.
+1. Las aristas del canvas son visuales: agrupan plantas en el mismo sistema.
+2. Cada categoría (Mg, K, Mn, Fe) se suma **por separado** dentro de cada componente conexa (Union-Find, aristas como no dirigidas). No se suman minerales distintos entre sí.
+3. En cada grupo, si algún nodo tiene esa variable en `null` o ausente → total de esa categoría = `null`.
+4. Si todos tienen número (incluido 0) → sumar.
+5. Un `null` de categoría/grupo no lanza ni detiene otras categorías ni otros grupos.
+6. El conteo por `tipoCultivo` es otro cálculo, no se mezcla con los grupos.

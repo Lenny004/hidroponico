@@ -1,21 +1,12 @@
 import type { ClaveVariableCultivo } from "./nodo-cultivo";
 
 export const ETIQUETAS_VARIABLES: Record<ClaveVariableCultivo, string> = {
-  mineral_nitrogeno: "Nitrógeno",
-  mineral_fosforo: "Fósforo",
-  mineral_potasio: "Potasio",
-  mineral_calcio: "Calcio",
   mineral_magnesio: "Magnesio",
-  mineral_azufre: "Azufre",
-  mineral_hierro: "Hierro",
+  mineral_potasio: "Potasio",
   mineral_manganeso: "Manganeso",
-  mineral_zinc: "Zinc",
-  mineral_cobre: "Cobre",
-  mineral_boro: "Boro",
-  mineral_molibdeno: "Molibdeno",
+  mineral_hierro: "Hierro",
   oxigeno: "Oxígeno",
   cantidad_sol: "Cantidad de solución",
-  ph: "pH",
 };
 
 export const GRUPOS_VARIABLES: {
@@ -23,29 +14,16 @@ export const GRUPOS_VARIABLES: {
   claves: ClaveVariableCultivo[];
 }[] = [
   {
-    titulo: "Macronutrientes",
+    titulo: "Minerales",
     claves: [
-      "mineral_nitrogeno",
-      "mineral_fosforo",
-      "mineral_potasio",
-      "mineral_calcio",
       "mineral_magnesio",
-      "mineral_azufre",
-    ],
-  },
-  {
-    titulo: "Micronutrientes",
-    claves: [
-      "mineral_hierro",
+      "mineral_potasio",
       "mineral_manganeso",
-      "mineral_zinc",
-      "mineral_cobre",
-      "mineral_boro",
-      "mineral_molibdeno",
+      "mineral_hierro",
     ],
   },
   {
-    titulo: "Ambientales",
-    claves: ["oxigeno", "cantidad_sol", "ph"],
+    titulo: "Solución y oxígeno",
+    claves: ["cantidad_sol", "oxigeno"],
   },
 ];

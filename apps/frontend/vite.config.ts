@@ -8,6 +8,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/salud": "http://localhost:3001",
+      "/pipeline": "http://localhost:3001",
     },
   },
 });

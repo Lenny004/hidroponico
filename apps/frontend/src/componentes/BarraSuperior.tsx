@@ -4,21 +4,26 @@ import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 function BotonPlay({
   etiqueta,
   destacado = false,
+  deshabilitado = false,
+  onClick,
 }: {
   etiqueta: string;
   destacado?: boolean;
+  deshabilitado?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
-      disabled
-      title="Los motores se cablean en las Fases 3 y 4"
+      disabled={deshabilitado}
+      title={deshabilitado ? "Disponible cuando exista ese motor" : etiqueta}
+      onClick={onClick}
       className={
         destacado
-          ? "flex size-12 items-center justify-center rounded-full bg-acento-fuerte text-lienzo shadow-[0_0_24px_rgba(16,185,129,0.45)] disabled:cursor-not-allowed"
+          ? "flex size-12 items-center justify-center rounded-full bg-acento-fuerte text-lienzo shadow-[0_0_24px_rgba(16,185,129,0.45)] disabled:cursor-not-allowed disabled:opacity-50"
           : "flex size-9 items-center justify-center rounded-full border border-borde bg-panel text-acento disabled:cursor-not-allowed disabled:opacity-60"
       }
-      aria-label={`${etiqueta} (aún no disponible)`}
+      aria-label={deshabilitado ? `${etiqueta} (aún no disponible)` : etiqueta}
     >
       <Play className={destacado ? "size-6 fill-current" : "size-4 fill-current"} />
     </button>
@@ -28,8 +33,10 @@ function BotonPlay({
 export default function BarraSuperior() {
   const busquedaCatalogo = usarGrafoConstruccion((estado) => estado.busquedaCatalogo);
   const filtroLienzo = usarGrafoConstruccion((estado) => estado.filtroLienzo);
+  const ejecutandoPipeline = usarGrafoConstruccion((estado) => estado.ejecutandoPipeline);
   const setBusquedaCatalogo = usarGrafoConstruccion((estado) => estado.setBusquedaCatalogo);
   const setFiltroLienzo = usarGrafoConstruccion((estado) => estado.setFiltroLienzo);
+  const ejecutarPipeline = usarGrafoConstruccion((estado) => estado.ejecutarPipeline);
 
   return (
     <header className="flex items-center gap-3 border-b border-borde bg-panel px-4 py-2">
@@ -51,19 +58,28 @@ export default function BarraSuperior() {
       />
       <div className="ml-auto flex items-center gap-3">
         <div className="flex flex-col items-center gap-0.5">
-          <BotonPlay etiqueta="Minerales" />
+          <BotonPlay
+            etiqueta="Minerales"
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline("minerales")}
+          />
           <span className="text-[10px] text-muted">Minerales</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <BotonPlay etiqueta="Oxígeno" />
+          <BotonPlay etiqueta="Oxígeno" deshabilitado />
           <span className="text-[10px] text-muted">Oxígeno</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <BotonPlay etiqueta="Pipeline" destacado />
+          <BotonPlay
+            etiqueta="Pipeline"
+            destacado
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline()}
+          />
           <span className="text-[10px] font-medium text-acento">Pipeline</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <BotonPlay etiqueta="Plagas" />
+          <BotonPlay etiqueta="Plagas" deshabilitado />
           <span className="text-[10px] text-muted">Plagas</span>
         </div>
       </div>

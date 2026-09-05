@@ -1,7 +1,8 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { RegistroMotores } from "@hidroponico/motores";
+import { motorMinerales, RegistroMotores } from "@hidroponico/motores";
 import { crearBusEventosTree } from "./tree-js/bus-eventos";
+import { registrarRutaPipeline } from "./rutas/pipeline";
 
 const puerto = Number(process.env.PORT ?? 3001);
 const app = Fastify({ logger: true });
@@ -12,6 +13,9 @@ await app.register(cors, {
 
 const bus = crearBusEventosTree();
 const registroMotores = new RegistroMotores();
+registroMotores.registrar(motorMinerales);
+
+await registrarRutaPipeline(app, bus, registroMotores);
 
 app.get("/salud", async () => ({
   estado: "ok",

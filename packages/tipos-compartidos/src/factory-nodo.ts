@@ -6,7 +6,7 @@ import {
 } from "./nodo-cultivo";
 
 /**
- * Crea las 15 variables en `null`.
+ * Crea las variables del boceto en `null`.
  * Un dato no definido no es 0: el pipeline debe tolerarlo (regla de negocio 3).
  */
 function variablesVacias(): VariablesCultivo {

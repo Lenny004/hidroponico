@@ -2,41 +2,13 @@
 
 Nomenclatura de dominio en **español**, alineada al boceto original (`mineral_magnesio`, `cantidad_sol`, etc.).
 
-## Propuesta de 15 variables (no confirmada)
+## Variables del boceto (confirmadas)
 
-El boceto habla de «15 categorías / 15 subnodos» pero solo lista 4 minerales. Esta lista es una **interpretación**, no un dato del dueño del producto. **No implementarla como definitiva** hasta confirmarla. Ver [asunciones](asunciones.md).
+Campos numéricos (ml): `mineral_magnesio`, `mineral_potasio`, `mineral_manganeso`, `mineral_hierro`, `oxigeno`, `cantidad_sol`.
 
-12 minerales + oxígeno + solución + pH = 15:
+Texto / listas: `plagas`, `solucion_plagas`, `comentarios`.
 
-```ts
-interface NodoCultivo {
-  id: string;
-  tipoCultivo: string;
-  variables: {
-    // Macronutrientes
-    mineral_nitrogeno?: number | null;
-    mineral_fosforo?: number | null;
-    mineral_potasio?: number | null;
-    mineral_calcio?: number | null;
-    mineral_magnesio?: number | null;
-    mineral_azufre?: number | null;
-    // Micronutrientes
-    mineral_hierro?: number | null;
-    mineral_manganeso?: number | null;
-    mineral_zinc?: number | null;
-    mineral_cobre?: number | null;
-    mineral_boro?: number | null;
-    mineral_molibdeno?: number | null;
-    // Ambientales
-    oxigeno?: number | null;
-    cantidad_sol?: number | null;
-    ph?: number | null;
-  };
-  plagas?: string[] | null;
-  solucion_plagas?: string | null;
-  comentarios?: string | null;
-}
-```
+La lista de 15 categorías se descartó. Ver [asunciones.md](asunciones.md).
 
 Campos extra del canvas (solo grafo de construcción): posición `x`/`y`, color, ícono.
 

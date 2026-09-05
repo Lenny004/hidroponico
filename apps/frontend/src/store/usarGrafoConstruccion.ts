@@ -17,6 +17,7 @@ import {
   type ClaveVariableCultivo,
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
+import { solicitarPipeline, type ResultadoPipelineApi } from "../api/pipeline";
 
 export type DatosNodoCultivo = {
   cultivo: NodoCultivo;
@@ -46,6 +47,9 @@ type EstadoGrafoConstruccion = {
     valor: string | null,
   ) => void;
   actualizarPlagas: (id: string, plagas: string[] | null) => void;
+  resultadoPipeline: ResultadoPipelineApi | null;
+  ejecutandoPipeline: boolean;
+  ejecutarPipeline: (nombreMotor?: string) => Promise<void>;
   setBusquedaCatalogo: (valor: string) => void;
   setFiltroLienzo: (valor: string) => void;
 };
@@ -75,6 +79,8 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   busquedaCatalogo: "",
   filtroLienzo: "",
   mensajeEstado: "Arrastra un cultivo al lienzo para empezar.",
+  resultadoPipeline: null,
+  ejecutandoPipeline: false,
 
   onNodosChange: (cambios) => {
     set((estado) => {
@@ -252,6 +258,39 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
           ? "Sin plagas registradas."
           : `${normalizadas.length} plaga(s) en el nodo.`,
     }));
+  },
+
+  ejecutarPipeline: async (nombreMotor) => {
+    const { nodos, aristas } = get();
+    set({
+      ejecutandoPipeline: true,
+      mensajeEstado: nombreMotor
+        ? `Ejecutando motor ${nombreMotor}…`
+        : "Ejecutando pipeline (motores en paralelo)…",
+    });
+    try {
+      const resultado = await solicitarPipeline(
+        nodos.map((nodo) => nodo.data.cultivo),
+        aristas.map((arista) => ({
+          origenId: arista.source,
+          destinoId: arista.target,
+        })),
+        nombreMotor,
+      );
+      const extras = resultado.advertencias.length
+        ? ` · ${resultado.advertencias.length} advertencia(s), el cálculo siguió`
+        : "";
+      set({
+        resultadoPipeline: resultado,
+        ejecutandoPipeline: false,
+        mensajeEstado: `Pipeline listo${extras}.`,
+      });
+    } catch {
+      set({
+        ejecutandoPipeline: false,
+        mensajeEstado: "No se pudo contactar TREE.JS. ¿Está corriendo el backend?",
+      });
+    }
   },
 
   setBusquedaCatalogo: (valor) => set({ busquedaCatalogo: valor }),

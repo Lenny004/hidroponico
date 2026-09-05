@@ -31,8 +31,9 @@ Copia `apps/backend/.env.example` a `apps/backend/.env` cuando vayas a generar e
 | Fase 0 — monorepo, lint, CI, esquema Prisma | Hecho |
 | Fase 1 — canvas, arrastre, conexiones DAG, resaltado de grupo | Hecho |
 | Fase 2 — panel editable de `NodoCultivo` | Hecho |
-| Motores / TREE.JS orquestado | Pendiente (bus y registry vacíos) |
-| Agregación de minerales | No implementada: falta confirmar `docs/reglas-negocio.md` |
+| Fase 3 — TREE.JS + motor.minerales | Hecho |
+| Motores oxígeno / plagas | Pendiente (Fase 4) |
+| Agregación de minerales | Hecha (null no bloquea el pipeline) |
 
 ## Estructura
 

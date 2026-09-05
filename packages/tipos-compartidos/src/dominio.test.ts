@@ -3,6 +3,8 @@ import { aristaCreariaCiclo } from "./grafo-dag";
 import { idsComponenteConexa } from "./componente-conexa";
 import { crearNodoDesdePlantilla } from "./factory-nodo";
 import { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
+import { agregarCategoriaEnGrupo, agregarCategoriasPorGrupos } from "./agregar-grupos";
+import { conteoPorTipo } from "./conteo-por-tipo";
 import { normalizarPlagas, parsearNumeroONull } from "./parsear-valores";
 
 describe("aristaCreariaCiclo", () => {
@@ -47,10 +49,10 @@ describe("idsComponenteConexa", () => {
 });
 
 describe("crearNodoDesdePlantilla", () => {
-  it("crea un nodo con las 15 variables en null", () => {
+  it("crea un nodo con las variables del boceto en null", () => {
     const nodo = crearNodoDesdePlantilla("lechuga", "n1");
     expect(nodo?.tipoCultivo).toBe("lechuga");
-    expect(CLAVES_VARIABLES_CULTIVO).toHaveLength(15);
+    expect(CLAVES_VARIABLES_CULTIVO).toHaveLength(6);
     for (const clave of CLAVES_VARIABLES_CULTIVO) {
       expect(nodo?.variables[clave]).toBeNull();
     }
@@ -86,5 +88,76 @@ describe("normalizarPlagas", () => {
       "Pulgón",
       "Araña",
     ]);
+  });
+});
+
+describe("agregarCategoriaEnGrupo", () => {
+  it("suma cuando todos tienen número, incluido 0", () => {
+    const nodos = [
+      { id: "a", tipoCultivo: "lechuga", variables: { mineral_magnesio: 10 } },
+      { id: "b", tipoCultivo: "lechuga", variables: { mineral_magnesio: 0 } },
+    ];
+    expect(agregarCategoriaEnGrupo(nodos, "mineral_magnesio")).toEqual({
+      categoria: "mineral_magnesio",
+      total: 10,
+      invalidadoPorNull: false,
+    });
+  });
+
+  it("deja el grupo en null si un nodo no tiene el dato", () => {
+    const nodos = [
+      { id: "a", tipoCultivo: "lechuga", variables: { mineral_potasio: 4 } },
+      { id: "b", tipoCultivo: "tomate", variables: { mineral_potasio: null } },
+    ];
+    expect(agregarCategoriaEnGrupo(nodos, "mineral_potasio").total).toBeNull();
+  });
+});
+
+describe("agregarCategoriasPorGrupos", () => {
+  it("no mezcla minerales distintos y sigue si una categoría queda null", () => {
+    const nodos = [
+      {
+        id: "a",
+        tipoCultivo: "lechuga",
+        variables: { mineral_magnesio: 1, mineral_potasio: 5 },
+      },
+      {
+        id: "b",
+        tipoCultivo: "lechuga",
+        variables: { mineral_magnesio: 2, mineral_potasio: null },
+      },
+      {
+        id: "c",
+        tipoCultivo: "tomate",
+        variables: { mineral_magnesio: 9, mineral_potasio: 9 },
+      },
+    ];
+    const aristas = [{ origenId: "a", destinoId: "b" }];
+    const grupos = agregarCategoriasPorGrupos(nodos, aristas, [
+      "mineral_magnesio",
+      "mineral_potasio",
+    ]);
+    const grupoAb = grupos.find((grupo) => grupo.idsNodos.includes("a"));
+    const grupoC = grupos.find((grupo) => grupo.idsNodos.includes("c"));
+    expect(
+      grupoAb?.categorias.find((item) => item.categoria === "mineral_magnesio")?.total,
+    ).toBe(3);
+    expect(
+      grupoAb?.categorias.find((item) => item.categoria === "mineral_potasio")?.total,
+    ).toBeNull();
+    expect(
+      grupoC?.categorias.find((item) => item.categoria === "mineral_potasio")?.total,
+    ).toBe(9);
+  });
+});
+
+describe("conteoPorTipo", () => {
+  it("cuenta nodos sin recorrer a mano", () => {
+    const nodos = [
+      { id: "1", tipoCultivo: "lechuga", variables: {} },
+      { id: "2", tipoCultivo: "lechuga", variables: {} },
+      { id: "3", tipoCultivo: "tomate", variables: {} },
+    ];
+    expect(conteoPorTipo(nodos)).toEqual({ lechuga: 2, tomate: 1 });
   });
 });

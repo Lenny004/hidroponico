@@ -1,29 +1,26 @@
 /**
- * Claves de las 15 variables por nodo.
- *
- * ASUNCIÓN NO CONFIRMADA: esta lista interpreta el boceto de «15 categorías».
- * No tratarla como esquema definitivo hasta validación del dueño del producto.
- * Ver docs/asunciones.md y docs/modelo-datos.md.
+ * Variables numéricas del boceto del jefe (ml).
+ * No ampliar esta lista sin confirmación: la propuesta de 15 categorías quedó descartada.
  */
 export const CLAVES_VARIABLES_CULTIVO = [
-  "mineral_nitrogeno",
-  "mineral_fosforo",
-  "mineral_potasio",
-  "mineral_calcio",
   "mineral_magnesio",
-  "mineral_azufre",
-  "mineral_hierro",
+  "mineral_potasio",
   "mineral_manganeso",
-  "mineral_zinc",
-  "mineral_cobre",
-  "mineral_boro",
-  "mineral_molibdeno",
+  "mineral_hierro",
   "oxigeno",
   "cantidad_sol",
-  "ph",
 ] as const;
 
 export type ClaveVariableCultivo = (typeof CLAVES_VARIABLES_CULTIVO)[number];
+
+export const CLAVES_MINERALES = [
+  "mineral_magnesio",
+  "mineral_potasio",
+  "mineral_manganeso",
+  "mineral_hierro",
+] as const satisfies readonly ClaveVariableCultivo[];
+
+export type ClaveMineral = (typeof CLAVES_MINERALES)[number];
 
 /**
  * Valores numéricos o `null` si el dato no existe.
@@ -46,6 +43,5 @@ export interface AristaCultivo {
   id: string;
   origenId: string;
   destinoId: string;
-  /** Reservado para agregación por categoría (Fase 3). El canvas de Fase 1 no lo usa. */
   categoria?: string | null;
 }

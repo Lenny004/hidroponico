@@ -3,6 +3,7 @@ import BarraEstado from "./componentes/BarraEstado";
 import BarraSuperior from "./componentes/BarraSuperior";
 import CanvasGrafo from "./componentes/CanvasGrafo";
 import PanelCultivo from "./componentes/PanelCultivo";
+import PanelResultados from "./componentes/PanelResultados";
 import PanelSeleccion from "./componentes/PanelSeleccion";
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
           <CanvasGrafo />
           <PanelSeleccion />
         </div>
+        <PanelResultados />
         <BarraEstado />
       </div>
     </ReactFlowProvider>

@@ -18,11 +18,13 @@ Renderizar nodos y aristas, crear / mover / conectar, validar DAG. Sin motores.
 
 Click en un nodo abre panel editable con `NodoCultivo`.
 
-**Hecha:** formulario de las 15 variables (`null` si el campo está vacío), tipo, plagas, `solucion_plagas` y comentarios. Sin persistir a base de datos.
+**Hecha:** formulario de las variables del boceto (`null` si el campo está vacío), tipo, plagas, `solucion_plagas` y comentarios. Sin persistir a base de datos.
 
 ## Fase 3 — EDA + un solo motor
 
 Bus TREE.JS y `motor.minerales` de punta a punta (agregación por grupo y regla de `null`). **Antes:** confirmar [reglas-negocio.md](reglas-negocio.md).
+
+**Hecha:** Union-Find, `motor.minerales`, orquestador en paralelo, POST `/pipeline`. Un grupo en `null` avisa y no bloquea. Oxígeno y plagas aún no están registrados.
 
 ## Fase 4 — Motores restantes
 
@@ -32,8 +34,8 @@ Bus TREE.JS y `motor.minerales` de punta a punta (agregación por grupo y regla 
 
 Cantidad total de solución nutritiva para hidratar el sistema.
 
-**Bloqueado** hasta que Ferresal / el dueño del producto entregue la fórmula real (litros, concentración, etc.). No inventarla.
+**Criterio usable (mientras Ferresal no entregue otra):** sumar `cantidad_sol` (ml) por grupo, con la misma regla de `null`. Ver [asunciones.md](asunciones.md).
 
 ## Fase 6 — Persistencia real
 
-Separar grafo de construcción (cliente) del grafo de base de datos. El persistido es la fuente de verdad para reportes. Sincronización según lo que se confirme en [asunciones.md](asunciones.md).
+Separar grafo de construcción (cliente) del grafo de base de datos. El persistido es la fuente de verdad para reportes. Sincronización **automática** (confirmada). Aún no hay Prisma en caliente.

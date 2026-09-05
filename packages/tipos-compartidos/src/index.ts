@@ -1,5 +1,5 @@
-export type { AristaCultivo, ClaveVariableCultivo, NodoCultivo, VariablesCultivo } from "./nodo-cultivo";
-export { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
+export type { AristaCultivo, ClaveMineral, ClaveVariableCultivo, NodoCultivo, VariablesCultivo } from "./nodo-cultivo";
+export { CLAVES_MINERALES, CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
 
 export type { DefinicionCultivo, IdCultivoCatalogo } from "./catalogo-cultivos";
 export { CATALOGO_CULTIVOS, obtenerCultivoPorId } from "./catalogo-cultivos";
@@ -14,6 +14,15 @@ export {
 } from "./grafo-dag";
 
 export { idsComponenteConexa } from "./componente-conexa";
+
+export { UnionFind, particionarEnGrupos } from "./union-find";
+export {
+  agregarCategoriaEnGrupo,
+  agregarCategoriasPorGrupos,
+  type AgregadoCategoria,
+  type GrupoAgregado,
+} from "./agregar-grupos";
+export { conteoPorTipo, sumaVariablePorTipo } from "./conteo-por-tipo";
 
 export { EVENTOS_GRAFO, type NombreEventoGrafo } from "./eventos-grafo";
 

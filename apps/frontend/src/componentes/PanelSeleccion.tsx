@@ -57,7 +57,7 @@ export default function PanelSeleccion() {
           </label>
 
           <p className="text-[11px] text-muted">
-            Las 15 variables son una propuesta no confirmada. Vacío = `null`, no 0.
+            Las variables del boceto: vacío = null, no 0.
           </p>
 
           {GRUPOS_VARIABLES.map((grupo) => (
