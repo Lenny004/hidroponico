@@ -6,11 +6,13 @@ Orden obligatorio. No adelantar fases «por comodidad».
 
 Monorepo pnpm, lint, CI básico, esquema de base de datos inicial.
 
-**Este primer pasito no es la Fase 0 completa:** solo carpetas, `.md`, rules y skills. Sin `package.json`, sin Prisma, sin CI.
+**Hecha:** workspaces, ESLint, GitHub Actions, Prisma (`nodos` / `aristas`), bus TREE.JS sin motores.
 
 ## Fase 1 — Canvas mínimo
 
 Renderizar nodos y aristas, crear / mover / conectar, validar DAG. Sin motores.
+
+**Hecha:** panel Cultivo, canvas `@xyflow/react`, rechazo de ciclos, resaltado de grupo conectado.
 
 ## Fase 2 — Modelo de nodo + panel de detalle
 

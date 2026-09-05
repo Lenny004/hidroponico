@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+@theme {
+  --color-lienzo: #0b1220;
+  --color-panel: #121a2a;
+  --color-borde: #243049;
+  --color-acento: #34d399;
+  --color-acento-fuerte: #10b981;
+  --color-texto: #e8eef9;
+  --color-muted: #93a4c3;
+}
+
+html,
+body,
+#raiz {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--color-lienzo);
+  color: var(--color-texto);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.react-flow__node-cultivo {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.react-flow__attribution {
+  display: none;
+}
