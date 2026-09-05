@@ -10,6 +10,7 @@ import {
 import { create } from "zustand";
 import {
   aristaCreariaCiclo,
+  copiarVariablesDePlantilla,
   crearNodoDesdePlantilla,
   idsComponenteConexa,
   normalizarPlagas,
@@ -190,7 +191,8 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
 
   actualizarTipoCultivo: (id, tipoCultivo) => {
     const definicion = obtenerCultivoPorId(tipoCultivo);
-    if (!definicion) {
+    const variables = copiarVariablesDePlantilla(tipoCultivo);
+    if (!definicion || !variables) {
       set({ mensajeEstado: "Tipo de cultivo no reconocido." });
       return;
     }
@@ -201,12 +203,16 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
               ...nodo,
               data: {
                 color: definicion.color,
-                cultivo: { ...nodo.data.cultivo, tipoCultivo: definicion.id },
+                cultivo: {
+                  ...nodo.data.cultivo,
+                  tipoCultivo: definicion.id,
+                  variables,
+                },
               },
             }
           : nodo,
       ),
-      mensajeEstado: `Tipo cambiado a ${definicion.nombre}.`,
+      mensajeEstado: `Tipo cambiado a ${definicion.nombre}. Se aplicó su plantilla de ml.`,
     }));
   },
 

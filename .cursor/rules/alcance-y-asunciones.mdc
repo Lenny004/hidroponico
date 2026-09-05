@@ -10,6 +10,6 @@ Seguir `docs/roadmap.md` y las decisiones de `docs/asunciones.md`.
 - No implementar oxígeno y plagas en el mismo cambio que minerales (Fase 4 aparte).
 - Agregación: Union-Find visual + suma por categoría; `null` no bloquea el pipeline.
 - Variables del boceto: Mg, K, Mn, Fe, oxigeno, cantidad_sol. No reintroducir las 15.
-- Fórmula de litros: usar suma de `cantidad_sol` hasta que Ferresal dé otra.
+- Fórmula de litros: usar suma de `cantidad_sol`. No copiar Hoagland ni umbrales de O₂ en mg/L al modelo en ml.
 - Sincronización a BD: automática (Fase 6), no botón Publicar.
 - Si un punto es ambiguo, preguntar.

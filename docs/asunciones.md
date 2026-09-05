@@ -31,10 +31,13 @@ Implementada en Fase 6: GET al recargar, PUT automático al editar. Si la base n
 
 **En paralelo.** No hay dependencia entre minerales, oxígeno, plagas e insumos. El orquestador usa `Promise.all` sobre el registro. Añadir un motor no cambia el orquestador.
 
-## 5. Fórmula de solución nutritiva
+## 5. Fórmulas públicas vs. el boceto
 
-Ferresal no entregó fórmula. No se puede inventar un paso «minerales → litros» con Hoagland: esa receta exige N, Ca, P, etc., y el boceto solo tiene Mg, K, Mn y Fe.
+Hay recetas en la literatura; no encajan con las unidades ni las variables del boceto, así que **no se copian al código**.
 
-**Regla usable ahora:** `cantidad_sol` de cada nodo es ml de solución a preparar para esa planta. El total del sistema es la **suma de `cantidad_sol`** por grupo conectado, con la misma regla de `null` (un faltante invalida el total de ese grupo, no el pipeline).
+- Minerales: Hoagland & Arnon (1950) da ppm de N, P, K, Ca, Mg, S, Fe, Mn, etc. El boceto solo tiene Mg, K, Mn y Fe, y en **ml por planta**, no mg/L.
+- Oxígeno: los papers de NFT hablan de oxígeno **disuelto** (típico 5–8 mg/L en la solución), no de mililitros por nodo. No hay una fórmula «lechuga = X ml de `oxigeno`».
 
-Referencia bibliográfica (no usada en código): Hoagland & Arnon, *The water-culture method…*, Calif. Agr. Expt. Sta. Circ. 347, 1950. Cuando Ferresal dé la fórmula real, se sustituye este criterio.
+**Regla usable ahora:** el catálogo propone ml por planta al crear (o al cambiar el tipo). Quien arma el canvas puede editarlos o vaciarlos a `null`. `cantidad_sol` es ml de solución a preparar para esa planta. El total del sistema es la **suma de `cantidad_sol`** por grupo conectado, con la misma regla de `null` (un faltante invalida el total de ese grupo, no el pipeline). Si llega una fórmula propia del proyecto, se sustituye este criterio.
+
+Referencia (no usada en código): Hoagland & Arnon, *The water-culture method…*, Calif. Agr. Expt. Sta. Circ. 347, 1950.

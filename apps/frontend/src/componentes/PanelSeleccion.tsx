@@ -60,7 +60,8 @@ export default function PanelSeleccion() {
           </label>
 
           <p className="text-[11px] text-muted">
-            Cada campo es de esta planta. El total del grupo conectado aparece debajo al calcular.
+            Los ml salen de la plantilla de {nombre}. Puedes editarlos; vacío = null.
+            El total del grupo conectado aparece debajo al calcular.
           </p>
 
           {GRUPOS_VARIABLES.map((grupo) => (

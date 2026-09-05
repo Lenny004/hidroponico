@@ -1,8 +1,16 @@
 export type { AristaCultivo, ClaveMineral, ClaveVariableCultivo, NodoCultivo, VariablesCultivo } from "./nodo-cultivo";
 export { CLAVES_MINERALES, CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
 
-export type { DefinicionCultivo, IdCultivoCatalogo } from "./catalogo-cultivos";
-export { CATALOGO_CULTIVOS, obtenerCultivoPorId } from "./catalogo-cultivos";
+export type {
+  DefinicionCultivo,
+  IdCultivoCatalogo,
+  VariablesPlantilla,
+} from "./catalogo-cultivos";
+export {
+  CATALOGO_CULTIVOS,
+  copiarVariablesDePlantilla,
+  obtenerCultivoPorId,
+} from "./catalogo-cultivos";
 
 export { crearNodoDesdePlantilla } from "./factory-nodo";
 

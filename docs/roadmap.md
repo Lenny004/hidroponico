@@ -36,7 +36,7 @@ Bus TREE.JS y `motor.minerales` de punta a punta (agregación por grupo y regla 
 
 Cantidad total de solución nutritiva para hidratar el sistema.
 
-**Criterio usable (mientras Ferresal no entregue otra):** sumar `cantidad_sol` (ml) por grupo, con la misma regla de `null`. Ver [asunciones.md](asunciones.md).
+**Criterio usable:** sumar `cantidad_sol` (ml) por grupo, con la misma regla de `null`. Las recetas públicas (Hoagland, mg/L de O₂) no mapean al boceto. Ver [asunciones.md](asunciones.md).
 
 **Hecha:** `motor.insumos` registrado en el pipeline. No hay fórmula minerales→litros.
 

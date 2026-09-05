@@ -15,7 +15,7 @@ Leer `docs/roadmap.md` y `docs/asunciones.md` antes de tocar código.
 3. Fase 2: panel de detalle de `NodoCultivo`.
 4. Fase 3: TREE.JS + **solo** `motor.minerales` (tras confirmar agregación).
 5. Fase 4: oxígeno, plagas, orquestador.
-6. Fase 5: insumos — bloqueado sin fórmula de Ferresal.
+6. Fase 5: insumos — suma de `cantidad_sol` (sin convertir minerales a litros).
 7. Fase 6: persistencia real (dos grafos).
 
 ## No hacer

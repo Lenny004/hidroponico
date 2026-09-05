@@ -2,6 +2,11 @@ import { describe, expect, it } from "vitest";
 import { aristaCreariaCiclo } from "./grafo-dag";
 import { idsComponenteConexa } from "./componente-conexa";
 import { crearNodoDesdePlantilla } from "./factory-nodo";
+import {
+  CATALOGO_CULTIVOS,
+  copiarVariablesDePlantilla,
+  obtenerCultivoPorId,
+} from "./catalogo-cultivos";
 import { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
 import { agregarCategoriaEnGrupo, agregarCategoriasPorGrupos } from "./agregar-grupos";
 import { agregarPlagasEnGrupo } from "./agregar-plagas";
@@ -52,17 +57,48 @@ describe("idsComponenteConexa", () => {
 });
 
 describe("crearNodoDesdePlantilla", () => {
-  it("crea un nodo con las variables del boceto en null", () => {
+  it("copia los ml de la plantilla del cultivo, no null", () => {
     const nodo = crearNodoDesdePlantilla("lechuga", "n1");
+    const plantilla = obtenerCultivoPorId("lechuga")?.plantilla;
     expect(nodo?.tipoCultivo).toBe("lechuga");
     expect(CLAVES_VARIABLES_CULTIVO).toHaveLength(6);
-    for (const clave of CLAVES_VARIABLES_CULTIVO) {
-      expect(nodo?.variables[clave]).toBeNull();
+    expect(nodo?.variables).toEqual(plantilla);
+    expect(nodo?.variables.mineral_potasio).toBe(8);
+    expect(nodo?.plagas).toBeNull();
+    expect(nodo?.solucion_plagas).toBeNull();
+    expect(nodo?.comentarios).toBeNull();
+  });
+
+  it("cubre los 10 cultivos con las 6 variables en número finito", () => {
+    expect(CATALOGO_CULTIVOS).toHaveLength(10);
+    for (const cultivo of CATALOGO_CULTIVOS) {
+      for (const clave of CLAVES_VARIABLES_CULTIVO) {
+        expect(Number.isFinite(cultivo.plantilla[clave])).toBe(true);
+      }
     }
+  });
+
+  it("propone ml distintos según el tipo de cultivo", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1");
+    const tomate = crearNodoDesdePlantilla("tomate", "n2");
+    expect(lechuga?.variables.mineral_potasio).not.toBe(tomate?.variables.mineral_potasio);
+    expect(tomate?.variables.cantidad_sol).toBe(450);
+  });
+
+  it("no comparte la referencia de la plantilla del catálogo", () => {
+    const nodo = crearNodoDesdePlantilla("lechuga", "n1");
+    expect(nodo).not.toBeNull();
+    if (!nodo) {
+      return;
+    }
+    nodo.variables.mineral_magnesio = 99;
+    expect(obtenerCultivoPorId("lechuga")?.plantilla.mineral_magnesio).toBe(4);
+    expect(copiarVariablesDePlantilla("lechuga")?.mineral_magnesio).toBe(4);
   });
 
   it("rechaza un tipo que no está en el catálogo", () => {
     expect(crearNodoDesdePlantilla("banano", "n1")).toBeNull();
+    expect(copiarVariablesDePlantilla("banano")).toBeNull();
   });
 });
 

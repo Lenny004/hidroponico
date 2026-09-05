@@ -27,7 +27,7 @@ Al menos 10 tipos, cada uno con ícono/color:
 9. Menta
 10. Rúcula
 
-`CultivoNodeFactory` copiará valores por defecto según `tipoCultivo` cuando exista catálogo de plantillas.
+`CultivoNodeFactory` copia los ml de la plantilla del `tipoCultivo` (propuesta del catálogo, editable; no es receta Hoagland). Cambiar el tipo reaplica esa plantilla.
 
 ## Íconos (uso libre)
 
