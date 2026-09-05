@@ -16,14 +16,20 @@ function BotonPlay({
     <button
       type="button"
       disabled={deshabilitado}
-      title={deshabilitado ? "Disponible cuando exista ese motor" : etiqueta}
+      title={
+        deshabilitado && !onClick
+          ? "Disponible cuando exista ese motor"
+          : deshabilitado
+            ? "Ejecutando…"
+            : etiqueta
+      }
       onClick={onClick}
       className={
         destacado
           ? "flex size-12 items-center justify-center rounded-full bg-acento-fuerte text-lienzo shadow-[0_0_24px_rgba(16,185,129,0.45)] disabled:cursor-not-allowed disabled:opacity-50"
           : "flex size-9 items-center justify-center rounded-full border border-borde bg-panel text-acento disabled:cursor-not-allowed disabled:opacity-60"
       }
-      aria-label={deshabilitado ? `${etiqueta} (aún no disponible)` : etiqueta}
+      aria-label={deshabilitado && !onClick ? `${etiqueta} (aún no disponible)` : etiqueta}
     >
       <Play className={destacado ? "size-6 fill-current" : "size-4 fill-current"} />
     </button>

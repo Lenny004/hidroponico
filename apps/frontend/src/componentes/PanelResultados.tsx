@@ -42,7 +42,7 @@ export default function PanelResultados() {
                       {etiquetaDe(clave as ClaveVariableCultivo)}:{" "}
                       <span className={total == null ? "text-amber-300" : "text-texto"}>
                         {total == null ? "null" : `${total} ml`}
-                      </span>
+                      </span>{" "}
                     </span>
                   ))}
                 </p>
