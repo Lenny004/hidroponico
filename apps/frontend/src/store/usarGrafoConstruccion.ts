@@ -212,7 +212,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
             }
           : nodo,
       ),
-      mensajeEstado: `Tipo cambiado a ${definicion.nombre}. Se aplicó su plantilla de ml.`,
+      mensajeEstado: `Tipo cambiado a ${definicion.nombre}. Se aplicó su receta (mg/L y litros).`,
     }));
   },
 

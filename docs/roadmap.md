@@ -30,13 +30,13 @@ Bus TREE.JS y `motor.minerales` de punta a punta (agregación por grupo y regla 
 
 `motor.oxigeno`, `motor.plagas`, orquestador (botón play central). No implementar los tres de una vez.
 
-**Hecha:** oxígeno suma `oxigeno` por grupo; plagas recopila `plagas` y `solucion_plagas` con la misma regla de `null`. Los cuatro plays están activos.
+**Hecha:** oxígeno disuelto en mg/L (mínimo del tanque); plagas recopila `plagas` y `solucion_plagas` con la misma regla de `null`. Los cuatro plays están activos.
 
 ## Fase 5 — Simulación de insumos
 
 Cantidad total de solución nutritiva para hidratar el sistema.
 
-**Criterio usable:** sumar `cantidad_sol` (ml) por grupo, con la misma regla de `null`. Las recetas públicas (Hoagland, mg/L de O₂) no mapean al boceto. Ver [asunciones.md](asunciones.md).
+**Criterio usable:** sumar `cantidad_sol` (**L**) por grupo. Minerales: masa **mg = mg/L × L**. Ver [asunciones.md](asunciones.md).
 
 **Hecha:** `motor.insumos` registrado en el pipeline. No hay fórmula minerales→litros.
 

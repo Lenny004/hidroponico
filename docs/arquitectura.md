@@ -44,10 +44,10 @@ interface MotorHidroponico {
 
 | Motor | Responsabilidad |
 |-------|-----------------|
-| `motor.minerales` | Agrega minerales por grupo conectado de la misma categoría. |
-| `motor.oxigeno` | Agrega oxígeno disuelto necesario por grupo. |
+| `motor.minerales` | Masa elemental (mg) = concentración (mg/L) × litros por grupo. |
+| `motor.oxigeno` | Oxígeno disuelto del tanque (mg/L); no suma concentraciones. |
 | `motor.plagas` | Recopila plagas activas y solución sugerida por nodo/grupo. |
-| `motor.insumos` | Suma `cantidad_sol` (ml) por grupo. No convierte minerales a litros. |
+| `motor.insumos` | Suma `cantidad_sol` (L) por grupo. |
 
 El orquestador **registra** motores. Añadir `motor.ph` en el futuro no debe exigir tocar el orquestador.
 

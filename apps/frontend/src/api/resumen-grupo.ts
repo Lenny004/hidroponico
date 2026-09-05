@@ -40,9 +40,12 @@ export function resumenGrupoDeNodo(
   return encontrado ? { totales, plagas, solucion_plagas } : null;
 }
 
-export function textoTotalGrupo(total: number | null | undefined): string {
+export function textoTotalGrupo(
+  total: number | null | undefined,
+  unidad = "mg",
+): string {
   if (total === undefined) {
     return "";
   }
-  return total == null ? "grupo: null" : `grupo: ${total} ml`;
+  return total == null ? "grupo: null" : `grupo: ${total} ${unidad}`;
 }

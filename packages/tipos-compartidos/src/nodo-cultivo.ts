@@ -1,5 +1,7 @@
 /**
- * Variables numéricas del boceto del jefe (ml).
+ * Variables numéricas del boceto.
+ * Minerales y oxígeno: concentración en mg/L (ppm en solución diluida).
+ * `cantidad_sol`: litros de solución nutritiva de esa planta en el tanque.
  * No ampliar esta lista sin confirmación: la propuesta de 15 categorías quedó descartada.
  */
 export const CLAVES_VARIABLES_CULTIVO = [

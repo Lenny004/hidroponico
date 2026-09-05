@@ -3,6 +3,8 @@ import {
   CATALOGO_CULTIVOS,
   ETIQUETAS_VARIABLES,
   GRUPOS_VARIABLES,
+  UNIDAD_AGREGADO,
+  UNIDAD_NODO,
   obtenerCultivoPorId,
 } from "@hidroponico/tipos-compartidos";
 import CampoNumerico from "./CampoNumerico";
@@ -60,8 +62,8 @@ export default function PanelSeleccion() {
           </label>
 
           <p className="text-[11px] text-muted">
-            Los ml salen de la plantilla de {nombre}. Puedes editarlos; vacío = null.
-            El total del grupo conectado aparece debajo al calcular.
+            Minerales y O₂ en mg/L (ppm). Solución en litros. El grupo dosifica mg =
+            concentración × litros. Vacío = null.
           </p>
 
           {GRUPOS_VARIABLES.map((grupo) => (
@@ -75,6 +77,8 @@ export default function PanelSeleccion() {
                   id={`${nodo.id}-${clave}`}
                   etiqueta={ETIQUETAS_VARIABLES[clave]}
                   claveTecnica={clave}
+                  unidadNodo={UNIDAD_NODO[clave]}
+                  unidadAgregado={UNIDAD_AGREGADO[clave]}
                   valor={cultivo.variables[clave]}
                   totalGrupo={resumenGrupo?.totales[clave]}
                   onConfirmar={(valor) => actualizarVariable(nodo.id, clave, valor)}

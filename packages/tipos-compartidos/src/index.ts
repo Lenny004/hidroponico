@@ -28,7 +28,10 @@ export { UnionFind, particionarEnGrupos } from "./union-find";
 export {
   agregarCategoriaEnGrupo,
   agregarCategoriasPorGrupos,
+  agregarMasaMineralEnGrupo,
+  agregarOxigenoDisueltoEnGrupo,
   type AgregadoCategoria,
+  type AgregadoMasaMineral,
   type GrupoAgregado,
 } from "./agregar-grupos";
 export { agregarPlagasEnGrupo, type AgregadoPlagas } from "./agregar-plagas";
@@ -45,7 +48,7 @@ export {
   type NodoPersistido,
 } from "./grafo-persistido";
 
-export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES } from "./etiquetas-variables";
+export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES, UNIDAD_AGREGADO, UNIDAD_NODO, formatearMedida } from "./etiquetas-variables";
 export {
   esBorradorNumerico,
   normalizarPlagas,

@@ -1,19 +1,19 @@
 # Reglas de negocio
 
-Agregación de minerales implementada según el plan confirmado abajo.
+Agregación implementada según el plan confirmado abajo.
 
 ## 1. Enlace solo por misma categoría
 
-Dos nodos solo se conectan **para efectos de agregación** si se suman la misma categoría. No se suman minerales distintos entre sí.
+Dos nodos solo se conectan **para efectos de agregación** si se trata la misma categoría. No se mezclan minerales distintos entre sí.
 
-La arista del canvas es visual (mismo sistema). Dentro de cada componente conexa, Mg, K, Mn y Fe se agregan por separado.
+La arista del canvas es visual (mismo tanque / mismo sistema). Dentro de cada componente conexa, Mg, K, Mn y Fe se dosifican por separado.
 
 ## 2. Propagación de `null` en el agregado de grupo
 
-Si **un solo nodo** de un grupo conectado por una categoría tiene esa variable en `null`, el resultado agregado de esa categoría para **todo el grupo** queda en `null`.
+Si **un solo nodo** de un grupo conectado tiene esa variable en `null` (o, en minerales, si falta `cantidad_sol`), el resultado de esa categoría para **todo el grupo** queda en `null`.
 
 - No tratar `null` como `0`.
-- No omitir el nodo faltante y sumar el resto.
+- No omitir el nodo faltante y calcular el resto.
 
 Es una regla de integridad: un dato faltante invalida el cálculo agregado de ese grupo.
 
@@ -38,9 +38,9 @@ Esta suma por tipo es distinta de la agregación por **grupo conectado** (reglas
 
 ## Plan de agregación (confirmado)
 
-1. Las aristas del canvas son visuales: agrupan plantas en el mismo sistema.
-2. Cada categoría (Mg, K, Mn, Fe) se suma **por separado** dentro de cada componente conexa (Union-Find, aristas como no dirigidas). No se suman minerales distintos entre sí.
-3. En cada grupo, si algún nodo tiene esa variable en `null` o ausente → total de esa categoría = `null`.
-4. Si todos tienen número (incluido 0) → sumar.
+1. Las aristas del canvas son visuales: agrupan plantas en el mismo tanque.
+2. Cada mineral se trata **por separado**. La concentración del nodo está en mg/L. La masa del grupo es **Σ (mg/L × L)**. No se suman mg/L entre plantas.
+3. En cada grupo, si algún nodo tiene esa concentración o `cantidad_sol` en `null` → masa de esa categoría = `null`.
+4. `cantidad_sol` (L) sí se suma. `oxigeno` (mg/L) no se suma: el tanque usa el valor compartido; si discrepan, el mínimo.
 5. Un `null` de categoría/grupo no lanza ni detiene otras categorías ni otros grupos.
 6. El conteo por `tipoCultivo` es otro cálculo, no se mezcla con los grupos.

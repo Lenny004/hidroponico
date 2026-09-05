@@ -14,7 +14,7 @@ Referencia visual: editor de nodos tipo **n8n**. Librería prevista: **React Flo
 
 ## Interacciones del MVP (Fase 1+)
 
-- Arrastrar un cultivo del panel al lienzo crea un nodo (`CultivoNodeFactory`) con los ml de su plantilla.
+- Arrastrar un cultivo del panel al lienzo crea un nodo (`CultivoNodeFactory`) con su receta (mg/L y litros).
 - Mover nodos.
 - Conectar nodos con líneas; rechazar ciclos.
 - Highlight de selección y de grupo conectado.

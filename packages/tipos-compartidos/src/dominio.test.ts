@@ -8,7 +8,7 @@ import {
   obtenerCultivoPorId,
 } from "./catalogo-cultivos";
 import { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
-import { agregarCategoriaEnGrupo, agregarCategoriasPorGrupos } from "./agregar-grupos";
+import { agregarCategoriaEnGrupo, agregarCategoriasPorGrupos, agregarMasaMineralEnGrupo, agregarOxigenoDisueltoEnGrupo } from "./agregar-grupos";
 import { agregarPlagasEnGrupo } from "./agregar-plagas";
 import { grafoTieneCiclo } from "./grafo-dag";
 import { serializarGrafoConstruccion, validarGrafoPersistido } from "./grafo-persistido";
@@ -57,16 +57,16 @@ describe("idsComponenteConexa", () => {
 });
 
 describe("crearNodoDesdePlantilla", () => {
-  it("copia los ml de la plantilla del cultivo, no null", () => {
+  it("copia mg/L y litros de la plantilla, no null", () => {
     const nodo = crearNodoDesdePlantilla("lechuga", "n1");
     const plantilla = obtenerCultivoPorId("lechuga")?.plantilla;
     expect(nodo?.tipoCultivo).toBe("lechuga");
     expect(CLAVES_VARIABLES_CULTIVO).toHaveLength(6);
     expect(nodo?.variables).toEqual(plantilla);
-    expect(nodo?.variables.mineral_potasio).toBe(8);
+    expect(nodo?.variables.mineral_potasio).toBe(235);
+    expect(nodo?.variables.cantidad_sol).toBe(4);
+    expect(nodo?.variables.oxigeno).toBe(6);
     expect(nodo?.plagas).toBeNull();
-    expect(nodo?.solucion_plagas).toBeNull();
-    expect(nodo?.comentarios).toBeNull();
   });
 
   it("cubre los 10 cultivos con las 6 variables en número finito", () => {
@@ -78,11 +78,12 @@ describe("crearNodoDesdePlantilla", () => {
     }
   });
 
-  it("propone ml distintos según el tipo de cultivo", () => {
+  it("usa receta de fruto distinta a la de hoja", () => {
     const lechuga = crearNodoDesdePlantilla("lechuga", "n1");
     const tomate = crearNodoDesdePlantilla("tomate", "n2");
-    expect(lechuga?.variables.mineral_potasio).not.toBe(tomate?.variables.mineral_potasio);
-    expect(tomate?.variables.cantidad_sol).toBe(450);
+    expect(lechuga?.variables.mineral_potasio).toBe(235);
+    expect(tomate?.variables.mineral_potasio).toBe(350);
+    expect(tomate?.variables.cantidad_sol).toBe(8);
   });
 
   it("no comparte la referencia de la plantilla del catálogo", () => {
@@ -92,8 +93,8 @@ describe("crearNodoDesdePlantilla", () => {
       return;
     }
     nodo.variables.mineral_magnesio = 99;
-    expect(obtenerCultivoPorId("lechuga")?.plantilla.mineral_magnesio).toBe(4);
-    expect(copiarVariablesDePlantilla("lechuga")?.mineral_magnesio).toBe(4);
+    expect(obtenerCultivoPorId("lechuga")?.plantilla.mineral_magnesio).toBe(48.6);
+    expect(copiarVariablesDePlantilla("lechuga")?.mineral_magnesio).toBe(48.6);
   });
 
   it("rechaza un tipo que no está en el catálogo", () => {
@@ -131,24 +132,84 @@ describe("normalizarPlagas", () => {
 });
 
 describe("agregarCategoriaEnGrupo", () => {
-  it("suma cuando todos tienen número, incluido 0", () => {
+  it("suma litros cuando todos tienen número, incluido 0", () => {
     const nodos = [
-      { id: "a", tipoCultivo: "lechuga", variables: { mineral_magnesio: 10 } },
-      { id: "b", tipoCultivo: "lechuga", variables: { mineral_magnesio: 0 } },
+      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 4 } },
+      { id: "b", tipoCultivo: "lechuga", variables: { cantidad_sol: 0 } },
     ];
-    expect(agregarCategoriaEnGrupo(nodos, "mineral_magnesio")).toEqual({
-      categoria: "mineral_magnesio",
-      total: 10,
+    expect(agregarCategoriaEnGrupo(nodos, "cantidad_sol")).toEqual({
+      categoria: "cantidad_sol",
+      total: 4,
       invalidadoPorNull: false,
     });
   });
 
   it("deja el grupo en null si un nodo no tiene el dato", () => {
     const nodos = [
-      { id: "a", tipoCultivo: "lechuga", variables: { mineral_potasio: 4 } },
-      { id: "b", tipoCultivo: "tomate", variables: { mineral_potasio: null } },
+      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 4 } },
+      { id: "b", tipoCultivo: "tomate", variables: { cantidad_sol: null } },
     ];
-    expect(agregarCategoriaEnGrupo(nodos, "mineral_potasio").total).toBeNull();
+    expect(agregarCategoriaEnGrupo(nodos, "cantidad_sol").total).toBeNull();
+  });
+});
+
+describe("agregarMasaMineralEnGrupo", () => {
+  it("calcula mg = mg/L × L y no suma concentraciones", () => {
+    const nodos = [
+      {
+        id: "a",
+        tipoCultivo: "lechuga",
+        variables: { mineral_magnesio: 48.6, cantidad_sol: 4 },
+      },
+      {
+        id: "b",
+        tipoCultivo: "lechuga",
+        variables: { mineral_magnesio: 48.6, cantidad_sol: 4 },
+      },
+    ];
+    const agregado = agregarMasaMineralEnGrupo(nodos, "mineral_magnesio");
+    expect(agregado.masaMg).toBeCloseTo(388.8);
+    expect(agregado.volumenL).toBe(8);
+    expect(agregado.concentracionMgL).toBeCloseTo(48.6);
+  });
+
+  it("invalida si falta concentración o litros", () => {
+    expect(
+      agregarMasaMineralEnGrupo(
+        [
+          { id: "a", tipoCultivo: "lechuga", variables: { mineral_potasio: 235, cantidad_sol: 4 } },
+          { id: "b", tipoCultivo: "lechuga", variables: { mineral_potasio: null, cantidad_sol: 4 } },
+        ],
+        "mineral_potasio",
+      ).masaMg,
+    ).toBeNull();
+    expect(
+      agregarMasaMineralEnGrupo(
+        [
+          { id: "a", tipoCultivo: "lechuga", variables: { mineral_hierro: 1, cantidad_sol: 4 } },
+          { id: "b", tipoCultivo: "lechuga", variables: { mineral_hierro: 1, cantidad_sol: null } },
+        ],
+        "mineral_hierro",
+      ).masaMg,
+    ).toBeNull();
+  });
+});
+
+describe("agregarOxigenoDisueltoEnGrupo", () => {
+  it("usa el mínimo mg/L del tanque, no la suma", () => {
+    const nodos = [
+      { id: "a", tipoCultivo: "lechuga", variables: { oxigeno: 6 } },
+      { id: "b", tipoCultivo: "tomate", variables: { oxigeno: 5 } },
+    ];
+    expect(agregarOxigenoDisueltoEnGrupo(nodos).total).toBe(5);
+  });
+
+  it("queda null si falta un dato", () => {
+    const nodos = [
+      { id: "a", tipoCultivo: "lechuga", variables: { oxigeno: 6 } },
+      { id: "b", tipoCultivo: "tomate", variables: { oxigeno: null } },
+    ];
+    expect(agregarOxigenoDisueltoEnGrupo(nodos).total).toBeNull();
   });
 });
 

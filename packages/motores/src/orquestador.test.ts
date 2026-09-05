@@ -9,39 +9,42 @@ import {
 } from "./index";
 
 describe("MotorMinerales", () => {
-  it("no lanza cuando hay null y sigue con las otras categorías", () => {
+  it("dosifica mg = mg/L × L y no lanza si una categoría queda null", () => {
     const resultado = motorMinerales.procesar([
       {
         id: "a",
         tipoCultivo: "lechuga",
-        variables: { mineral_magnesio: 3, mineral_potasio: null },
+        variables: { mineral_magnesio: 48.6, mineral_potasio: null, cantidad_sol: 4 },
       },
       {
         id: "b",
         tipoCultivo: "lechuga",
-        variables: { mineral_magnesio: 1, mineral_potasio: 8 },
+        variables: { mineral_magnesio: 48.6, mineral_potasio: 235, cantidad_sol: 4 },
       },
     ]);
     expect(resultado.exitoso).toBe(true);
-    expect(resultado.datos).toMatchObject({
-      totales: {
-        mineral_magnesio: 4,
-        mineral_potasio: null,
-      },
-    });
+    const totales = resultado.datos.totales as Record<string, number | null>;
+    expect(totales.mineral_magnesio).toBeCloseTo(388.8);
+    expect(totales.mineral_potasio).toBeNull();
     expect(resultado.advertencias.length).toBeGreaterThan(0);
   });
 });
 
 describe("MotorOxigeno", () => {
-  it("suma oxigeno y deja null si falta un dato", () => {
-    const resultado = motorOxigeno.procesar([
-      { id: "a", tipoCultivo: "lechuga", variables: { oxigeno: 4 } },
+  it("no suma mg/L: usa el mínimo del tanque o null si falta un dato", () => {
+    const incompleto = motorOxigeno.procesar([
+      { id: "a", tipoCultivo: "lechuga", variables: { oxigeno: 6 } },
       { id: "b", tipoCultivo: "lechuga", variables: { oxigeno: null } },
     ]);
-    expect(resultado.exitoso).toBe(true);
-    expect(resultado.datos).toMatchObject({ totales: { oxigeno: null } });
-    expect(resultado.advertencias.length).toBeGreaterThan(0);
+    expect(incompleto.exitoso).toBe(true);
+    expect(incompleto.datos).toMatchObject({ totales: { oxigeno: null } });
+
+    const mixto = motorOxigeno.procesar([
+      { id: "a", tipoCultivo: "lechuga", variables: { oxigeno: 6 } },
+      { id: "b", tipoCultivo: "tomate", variables: { oxigeno: 5 } },
+    ]);
+    expect(mixto.datos).toMatchObject({ totales: { oxigeno: 5 } });
+    expect(mixto.advertencias.length).toBeGreaterThan(0);
   });
 });
 
@@ -87,15 +90,15 @@ describe("MotorPlagas", () => {
 });
 
 describe("MotorInsumos", () => {
-  it("suma cantidad_sol incluido 0 y deja null si falta un dato", () => {
+  it("suma litros incluido 0 y deja null si falta un dato", () => {
     const completo = motorInsumos.procesar([
-      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 250 } },
+      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 4 } },
       { id: "b", tipoCultivo: "lechuga", variables: { cantidad_sol: 0 } },
     ]);
-    expect(completo.datos).toMatchObject({ totales: { cantidad_sol: 250 } });
+    expect(completo.datos).toMatchObject({ totales: { cantidad_sol: 4 } });
 
     const incompleto = motorInsumos.procesar([
-      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 250 } },
+      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 4 } },
       { id: "b", tipoCultivo: "tomate", variables: { cantidad_sol: null } },
     ]);
     expect(incompleto.exitoso).toBe(true);
@@ -117,12 +120,12 @@ describe("ejecutarPipeline", () => {
         {
           id: "a",
           tipoCultivo: "lechuga",
-          variables: { mineral_hierro: 2, oxigeno: 1, cantidad_sol: 100 },
+          variables: { mineral_hierro: 1, oxigeno: 6, cantidad_sol: 4 },
         },
         {
           id: "b",
           tipoCultivo: "tomate",
-          variables: { mineral_hierro: 5, oxigeno: 3, cantidad_sol: 50 },
+          variables: { mineral_hierro: 2, oxigeno: 6, cantidad_sol: 8 },
         },
       ],
       [{ origenId: "a", destinoId: "b" }],
@@ -135,7 +138,13 @@ describe("ejecutarPipeline", () => {
       "insumos",
     ]);
     expect(resultado.motores.find((motor) => motor.nombre === "insumos")?.grupos[0]?.datos).toMatchObject(
-      { totales: { cantidad_sol: 150 } },
+      { totales: { cantidad_sol: 12 } },
     );
+    const minerales = resultado.motores.find((motor) => motor.nombre === "minerales")
+      ?.grupos[0]?.datos.totales as Record<string, number | null> | undefined;
+    const oxigeno = resultado.motores.find((motor) => motor.nombre === "oxigeno")
+      ?.grupos[0]?.datos.totales as Record<string, number | null> | undefined;
+    expect(minerales?.mineral_hierro).toBe(20);
+    expect(oxigeno?.oxigeno).toBe(6);
   });
 });

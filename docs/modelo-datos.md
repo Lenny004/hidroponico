@@ -4,7 +4,7 @@ Nomenclatura de dominio en **español**, alineada al boceto original (`mineral_m
 
 ## Variables del boceto (confirmadas)
 
-Campos numéricos (ml): `mineral_magnesio`, `mineral_potasio`, `mineral_manganeso`, `mineral_hierro`, `oxigeno`, `cantidad_sol`.
+Campos numéricos: minerales y `oxigeno` en **mg/L**; `cantidad_sol` en **L**. Ver [asunciones.md](asunciones.md).
 
 Texto / listas: `plagas`, `solucion_plagas`, `comentarios`.
 
@@ -27,7 +27,7 @@ Al menos 10 tipos, cada uno con ícono/color:
 9. Menta
 10. Rúcula
 
-`CultivoNodeFactory` copia los ml de la plantilla del `tipoCultivo` (propuesta del catálogo, editable; no es receta Hoagland). Cambiar el tipo reaplica esa plantilla.
+`CultivoNodeFactory` copia la receta del `tipoCultivo` (mg/L y litros). Hoja: Hoagland 1950. Fruto: UA-CEA / Jensen. Cambiar el tipo reaplica esa plantilla.
 
 ## Íconos (uso libre)
 

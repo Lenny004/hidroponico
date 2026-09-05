@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   esBorradorNumerico,
+  formatearMedida,
   parsearNumeroONull,
 } from "@hidroponico/tipos-compartidos";
 
@@ -8,6 +9,8 @@ type PropsCampoNumerico = {
   id: string;
   etiqueta: string;
   claveTecnica: string;
+  unidadNodo: string;
+  unidadAgregado: string;
   valor: number | null | undefined;
   totalGrupo?: number | null;
   onConfirmar: (valor: number | null) => void;
@@ -20,6 +23,8 @@ export default function CampoNumerico({
   id,
   etiqueta,
   claveTecnica,
+  unidadNodo,
+  unidadAgregado,
   valor,
   totalGrupo,
   onConfirmar,
@@ -40,7 +45,10 @@ export default function CampoNumerico({
   return (
     <label className="flex flex-col gap-1">
       <span className="flex items-baseline justify-between gap-2 text-xs">
-        <span>{etiqueta}</span>
+        <span>
+          {etiqueta}{" "}
+          <span className="text-muted">({unidadNodo})</span>
+        </span>
         <span className="font-mono text-[10px] text-muted">{claveTecnica}</span>
       </span>
       <input
@@ -57,7 +65,9 @@ export default function CampoNumerico({
       />
       {totalGrupo !== undefined ? (
         <span className={totalGrupo == null ? "text-[11px] text-amber-300" : "text-[11px] text-acento"}>
-          {totalGrupo == null ? "Grupo conectado: null" : `Grupo conectado: ${totalGrupo} ml`}
+          {totalGrupo == null
+            ? "Grupo conectado: null"
+            : `Grupo conectado: ${formatearMedida(totalGrupo, unidadAgregado)}`}
         </span>
       ) : null}
     </label>

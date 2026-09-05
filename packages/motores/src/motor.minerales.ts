@@ -1,13 +1,13 @@
 import {
-  agregarCategoriaEnGrupo,
+  agregarMasaMineralEnGrupo,
   CLAVES_MINERALES,
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
 import type { MotorHidroponico, ResultadoMotor } from "./motor-hidroponico";
 
 /**
- * Agrega Mg, K, Mn y Fe por grupo conectado.
- * Un `null` invalida esa categoría del grupo; no lanza ni detiene otras categorías.
+ * Dosifica Mg, K, Mn y Fe del tanque del grupo.
+ * Masa (mg) = concentración (mg/L) × litros. Un `null` invalida esa categoría; no detiene las demás.
  */
 export class MotorMinerales implements MotorHidroponico {
   readonly nombre = "minerales";
@@ -16,13 +16,19 @@ export class MotorMinerales implements MotorHidroponico {
   procesar(grupoDeNodos: NodoCultivo[]): ResultadoMotor {
     const advertencias: string[] = [];
     const totales: Record<string, number | null> = {};
+    const concentraciones: Record<string, number | null> = {};
+    let volumenL: number | null = null;
 
     for (const categoria of this.categoriasQueProcesa) {
-      const agregado = agregarCategoriaEnGrupo(grupoDeNodos, categoria);
-      totales[categoria] = agregado.total;
+      const agregado = agregarMasaMineralEnGrupo(grupoDeNodos, categoria);
+      totales[categoria] = agregado.masaMg;
+      concentraciones[categoria] = agregado.concentracionMgL;
+      if (agregado.volumenL != null) {
+        volumenL = agregado.volumenL;
+      }
       if (agregado.invalidadoPorNull) {
         advertencias.push(
-          `${categoria} en null para el grupo [${grupoDeNodos.map((nodo) => nodo.id).join(", ")}]`,
+          `${categoria} requiere mg/L y litros en todos los nodos del grupo [${grupoDeNodos.map((nodo) => nodo.id).join(", ")}]`,
         );
       }
     }
@@ -34,6 +40,8 @@ export class MotorMinerales implements MotorHidroponico {
       datos: {
         idsNodos: grupoDeNodos.map((nodo) => nodo.id),
         totales,
+        volumen_L: volumenL,
+        concentraciones,
       },
     };
   }

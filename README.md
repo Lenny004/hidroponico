@@ -16,7 +16,7 @@ pnpm dev
 
 Solo frontend: `pnpm dev:frontend`. Solo API: `pnpm dev:backend`.
 
-PostgreSQL (persistencia del grafo):
+PostgreSQL (persistencia del grafo). El compose publica Postgres en **5435** (el 5432 suele estar ocupado por otros proyectos):
 
 ```bash
 docker compose up -d

@@ -5,8 +5,8 @@ import {
 import type { MotorHidroponico, ResultadoMotor } from "./motor-hidroponico";
 
 /**
- * Suma `cantidad_sol` (ml) por grupo conectado: total de solución a preparar.
- * No convierte minerales a litros. Un `null` invalida el grupo; no lanza ni detiene el pipeline.
+ * Suma `cantidad_sol` (L) por grupo conectado: litros de solución a preparar.
+ * No convierte minerales a sales. Un `null` invalida el grupo; no lanza ni detiene el pipeline.
  */
 export class MotorInsumos implements MotorHidroponico {
   readonly nombre = "insumos";
@@ -14,7 +14,7 @@ export class MotorInsumos implements MotorHidroponico {
 
   /**
    * @param grupoDeNodos - Componente conexa del canvas.
-   * @returns Total de `cantidad_sol`, o `null` si falta el dato en algún nodo.
+   * @returns Total de `cantidad_sol` en litros, o `null` si falta el dato en algún nodo.
    */
   procesar(grupoDeNodos: NodoCultivo[]): ResultadoMotor {
     const advertencias: string[] = [];

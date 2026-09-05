@@ -1,8 +1,17 @@
-import { ETIQUETAS_VARIABLES, type ClaveVariableCultivo } from "@hidroponico/tipos-compartidos";
+import {
+  ETIQUETAS_VARIABLES,
+  UNIDAD_AGREGADO,
+  formatearMedida,
+  type ClaveVariableCultivo,
+} from "@hidroponico/tipos-compartidos";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
 function etiquetaDe(clave: string): string {
   return (ETIQUETAS_VARIABLES as Record<string, string>)[clave] ?? clave;
+}
+
+function unidadDe(clave: string): string {
+  return (UNIDAD_AGREGADO as Record<string, string>)[clave] ?? "";
 }
 
 function textoLista(valores: string[] | null | undefined): string {
@@ -49,7 +58,9 @@ export default function PanelResultados() {
                     <span key={clave} className="mr-3">
                       {etiquetaDe(clave as ClaveVariableCultivo)}:{" "}
                       <span className={total == null ? "text-amber-300" : "text-texto"}>
-                        {total == null ? "null" : `${total} ml`}
+                        {total == null
+                          ? "null"
+                          : formatearMedida(total, unidadDe(clave))}
                       </span>{" "}
                     </span>
                   ))}
