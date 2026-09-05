@@ -1,0 +1,20 @@
+---
+description: Commits pequeños; no subir cambios exagerados ni hacer push sin pedirlo
+alwaysApply: true
+---
+
+# Commits incrementales
+
+- Un commit = un tema. No mezclar scaffolding, features, refactors y docs en el mismo commit.
+- No generar diffs exagerados: nada de reescribir el repo, mover todo de carpeta, ni “aprovechar” para cambiar archivos no pedidos.
+- Preferir varios commits descriptivos antes que un commit enorme.
+- No hacer `git push` ni abrir PR salvo petición explícita del usuario.
+- No usar `--no-verify`, force push, ni amend de commits ajenos o ya publicados.
+
+```text
+# ❌ MAL
+# un solo commit con monorepo + canvas + 3 motores + README reescrito
+
+# ✅ BIEN
+# docs: añadir asunciones abiertas del modelo de 15 variables
+```

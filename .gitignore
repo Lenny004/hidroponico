@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Builds
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE local (las rules y skills del repo SÍ se versionan)
+.idea/
+*.swp

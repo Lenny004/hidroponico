@@ -1,0 +1,16 @@
+---
+description: No adelantar fases ni asumir en silencio las preguntas abiertas
+alwaysApply: true
+---
+
+# Alcance y asunciones
+
+Seguir `docs/roadmap.md`. Este repo empezó solo con docs; no escribir código de aplicación hasta que se pida la Fase 0/1.
+
+- No implementar los tres motores de una vez.
+- Antes de programar agregación de minerales, mostrar el plan de `docs/reglas-negocio.md` y esperar confirmación.
+- No inventar la fórmula de solución nutritiva (Fase 5).
+- No sincronizar grafo de construcción con base de datos hasta confirmar Guardar/Publicar (`docs/asunciones.md`).
+- Si un punto es ambiguo, preguntar. No rellenar huecos de negocio en silencio.
+
+Las 15 variables de `docs/modelo-datos.md` son una propuesta. No tratarlas como esquema definitivo.

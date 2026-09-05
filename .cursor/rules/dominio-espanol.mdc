@@ -1,0 +1,15 @@
+---
+description: Nombres de dominio y comentarios de negocio en español
+alwaysApply: true
+---
+
+# Dominio en español
+
+Campos, eventos, motores y comentarios de negocio usan la nomenclatura del boceto:
+
+- `mineral_magnesio`, `mineral_potasio`, `cantidad_sol`, `oxigeno`, `plagas`, `solucion_plagas`
+- Eventos: `nodo:creado`, `nodo:actualizado`, `arista:creada`, `pipeline:ejecutar`
+
+No traducir esos identificadores al inglés (`magnesium`, `nodeCreated`, `pestSolution`).
+
+APIs de librerías (React Flow, Prisma, Fastify) se quedan en el idioma de la librería.

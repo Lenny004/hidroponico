@@ -1,0 +1,33 @@
+---
+description: JSDoc en español para APIs públicas de dominio y motores
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+
+# Documentación JSDoc
+
+Toda función, tipo o clase **pública** de dominio, motores u orquestación lleva JSDoc en español.
+
+Incluir: propósito, `@param`, `@returns`, y qué ocurre con `null` o datos faltantes.
+
+No documentar getters triviales. Sí documentar reglas de negocio (agregación, DAG, pipeline).
+
+```ts
+// ❌ MAL
+export function agregarGrupo(nodos: NodoCultivo[]): number | null {
+  return nodos.reduce((a, n) => a + (n.variables.mineral_potasio ?? 0), 0);
+}
+
+// ✅ BIEN
+/**
+ * Suma una categoría en un grupo conectado.
+ * Si algún nodo tiene la variable en `null` o ausente, el grupo entero queda `null`.
+ * @param nodos - Nodos de la componente conexa (misma categoría).
+ * @param categoria - Clave de `variables` a agregar.
+ * @returns Total numérico, o `null` si falta un dato.
+ */
+export function agregarGrupo(
+  nodos: NodoCultivo[],
+  categoria: string,
+): number | null { /* ... */ }
+```
