@@ -24,11 +24,13 @@ Click en un nodo abre panel editable con `NodoCultivo`.
 
 Bus TREE.JS y `motor.minerales` de punta a punta (agregación por grupo y regla de `null`). **Antes:** confirmar [reglas-negocio.md](reglas-negocio.md).
 
-**Hecha:** Union-Find, `motor.minerales`, orquestador en paralelo, POST `/pipeline`. Un grupo en `null` avisa y no bloquea. Oxígeno y plagas aún no están registrados.
+**Hecha:** Union-Find, `motor.minerales`, orquestador en paralelo, POST `/pipeline`. Un grupo en `null` avisa y no bloquea.
 
 ## Fase 4 — Motores restantes
 
 `motor.oxigeno`, `motor.plagas`, orquestador (botón play central). No implementar los tres de una vez.
+
+**Hecha:** oxígeno suma `oxigeno` por grupo; plagas recopila `plagas` y `solucion_plagas` con la misma regla de `null`. Los cuatro plays están activos.
 
 ## Fase 5 — Simulación de insumos
 

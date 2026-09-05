@@ -9,7 +9,7 @@ El sistema mantiene **dos grafos separados** de forma intencional:
 | **Construcción** | Cliente (canvas) | Trabajo en progreso: posiciones, nodos incompletos, aristas temporales. |
 | **Base de datos** | PostgreSQL (`nodos`, `aristas`) | Sistema confirmado en producción. Fuente de verdad para cálculos reales y reportes. |
 
-**Asunción abierta:** no está confirmado si el paso de construcción → persistido es automático o requiere un botón explícito «Guardar / Publicar». Ver [asunciones](asunciones.md). Hasta confirmarlo, **no implementar sincronización**.
+La sincronización construcción → persistido es **automática** (confirmada). Ver [asunciones](asunciones.md). Aún no implementar: es Fase 6.
 
 Ambos grafos deben ser **DAG** (acíclicos). Antes de aceptar una arista hay que detectar ciclos (DFS con colores o algoritmo de Kahn).
 
@@ -32,7 +32,7 @@ Implementación prevista: `EventEmitter` tipado en el backend. Escalar después 
 
 ## Motores (Strategy + Registry)
 
-Interfaz prevista (aún no implementada):
+Interfaz:
 
 ```ts
 interface MotorHidroponico {
@@ -50,7 +50,7 @@ interface MotorHidroponico {
 
 El orquestador **registra** motores. Añadir `motor.ph` en el futuro no debe exigir tocar el orquestador.
 
-El botón central de la UI ejecuta el pipeline (los tres motores) y combina resultados. **Asunción abierta:** paralelo vs. secuencia con dependencias. Ver [asunciones](asunciones.md).
+El botón central de la UI ejecuta el pipeline (los tres motores) y combina resultados. Corren **en paralelo** (`Promise.all`). Ver [asunciones](asunciones.md).
 
 ## Patrones
 

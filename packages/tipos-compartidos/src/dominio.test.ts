@@ -4,6 +4,7 @@ import { idsComponenteConexa } from "./componente-conexa";
 import { crearNodoDesdePlantilla } from "./factory-nodo";
 import { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
 import { agregarCategoriaEnGrupo, agregarCategoriasPorGrupos } from "./agregar-grupos";
+import { agregarPlagasEnGrupo } from "./agregar-plagas";
 import { conteoPorTipo } from "./conteo-por-tipo";
 import { normalizarPlagas, parsearNumeroONull } from "./parsear-valores";
 
@@ -148,6 +149,42 @@ describe("agregarCategoriasPorGrupos", () => {
     expect(
       grupoC?.categorias.find((item) => item.categoria === "mineral_potasio")?.total,
     ).toBe(9);
+  });
+});
+
+describe("agregarPlagasEnGrupo", () => {
+  it("une nombres y deja null si un nodo no tiene plagas", () => {
+    const conDatos = agregarPlagasEnGrupo([
+      {
+        id: "a",
+        tipoCultivo: "lechuga",
+        variables: {},
+        plagas: ["Pulgón"],
+        solucion_plagas: "aceite",
+      },
+      {
+        id: "b",
+        tipoCultivo: "tomate",
+        variables: {},
+        plagas: ["Mosca"],
+        solucion_plagas: "aceite",
+      },
+    ]);
+    expect(conDatos.plagas).toEqual(["Pulgón", "Mosca"]);
+    expect(conDatos.solucion_plagas).toEqual(["aceite"]);
+
+    const incompleto = agregarPlagasEnGrupo([
+      {
+        id: "a",
+        tipoCultivo: "lechuga",
+        variables: {},
+        plagas: ["Pulgón"],
+        solucion_plagas: "aceite",
+      },
+      { id: "b", tipoCultivo: "tomate", variables: {}, plagas: null },
+    ]);
+    expect(incompleto.plagas).toBeNull();
+    expect(incompleto.invalidadoPorNullPlagas).toBe(true);
   });
 });
 

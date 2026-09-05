@@ -5,6 +5,13 @@ function etiquetaDe(clave: string): string {
   return (ETIQUETAS_VARIABLES as Record<string, string>)[clave] ?? clave;
 }
 
+function textoLista(valores: string[] | null | undefined): string {
+  if (valores == null) {
+    return "null";
+  }
+  return valores.join(", ");
+}
+
 export default function PanelResultados() {
   const resultado = usarGrafoConstruccion((estado) => estado.resultadoPipeline);
   if (!resultado) {
@@ -34,6 +41,7 @@ export default function PanelResultados() {
             {motor.grupos.map((grupo, indice) => {
               const ids = grupo.datos.idsNodos?.join(", ") ?? `grupo ${indice + 1}`;
               const totales = grupo.datos.totales ?? {};
+              const tienePlagas = "plagas" in grupo.datos || "solucion_plagas" in grupo.datos;
               return (
                 <p key={ids} className="text-muted">
                   [{ids}]{" "}
@@ -45,6 +53,32 @@ export default function PanelResultados() {
                       </span>{" "}
                     </span>
                   ))}
+                  {tienePlagas ? (
+                    <>
+                      <span className="mr-3">
+                        plagas:{" "}
+                        <span
+                          className={
+                            grupo.datos.plagas == null ? "text-amber-300" : "text-texto"
+                          }
+                        >
+                          {textoLista(grupo.datos.plagas)}
+                        </span>{" "}
+                      </span>
+                      <span className="mr-3">
+                        solucion_plagas:{" "}
+                        <span
+                          className={
+                            grupo.datos.solucion_plagas == null
+                              ? "text-amber-300"
+                              : "text-texto"
+                          }
+                        >
+                          {textoLista(grupo.datos.solucion_plagas)}
+                        </span>
+                      </span>
+                    </>
+                  ) : null}
                 </p>
               );
             })}

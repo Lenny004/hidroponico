@@ -22,6 +22,7 @@ export {
   type AgregadoCategoria,
   type GrupoAgregado,
 } from "./agregar-grupos";
+export { agregarPlagasEnGrupo, type AgregadoPlagas } from "./agregar-plagas";
 export { conteoPorTipo, sumaVariablePorTipo } from "./conteo-por-tipo";
 
 export { EVENTOS_GRAFO, type NombreEventoGrafo } from "./eventos-grafo";

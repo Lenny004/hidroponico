@@ -1,6 +1,11 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { motorMinerales, RegistroMotores } from "@hidroponico/motores";
+import {
+  motorMinerales,
+  motorOxigeno,
+  motorPlagas,
+  RegistroMotores,
+} from "@hidroponico/motores";
 import { crearBusEventosTree } from "./tree-js/bus-eventos";
 import { registrarRutaPipeline } from "./rutas/pipeline";
 
@@ -14,6 +19,8 @@ await app.register(cors, {
 const bus = crearBusEventosTree();
 const registroMotores = new RegistroMotores();
 registroMotores.registrar(motorMinerales);
+registroMotores.registrar(motorOxigeno);
+registroMotores.registrar(motorPlagas);
 
 await registrarRutaPipeline(app, bus, registroMotores);
 

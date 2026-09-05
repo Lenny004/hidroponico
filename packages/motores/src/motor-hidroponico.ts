@@ -13,7 +13,7 @@ export interface ResultadoMotor {
 
 /**
  * Contrato Strategy de los motores hidropónicos.
- * Implementaciones concretas (minerales, oxígeno, plagas) llegan en las Fases 3–4.
+ * Implementaciones: minerales, oxígeno y plagas.
  */
 export interface MotorHidroponico {
   nombre: string;

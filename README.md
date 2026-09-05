@@ -32,7 +32,7 @@ Copia `apps/backend/.env.example` a `apps/backend/.env` cuando vayas a generar e
 | Fase 1 — canvas, arrastre, conexiones DAG, resaltado de grupo | Hecho |
 | Fase 2 — panel editable de `NodoCultivo` | Hecho |
 | Fase 3 — TREE.JS + motor.minerales | Hecho |
-| Motores oxígeno / plagas | Pendiente (Fase 4) |
+| Fase 4 — motores oxígeno / plagas | Hecho |
 | Agregación de minerales | Hecha (null no bloquea el pipeline) |
 
 ## Estructura

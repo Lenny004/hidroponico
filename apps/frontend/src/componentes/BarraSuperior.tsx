@@ -72,7 +72,11 @@ export default function BarraSuperior() {
           <span className="text-[10px] text-muted">Minerales</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <BotonPlay etiqueta="Oxígeno" deshabilitado />
+          <BotonPlay
+            etiqueta="Oxígeno"
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline("oxigeno")}
+          />
           <span className="text-[10px] text-muted">Oxígeno</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
@@ -85,7 +89,11 @@ export default function BarraSuperior() {
           <span className="text-[10px] font-medium text-acento">Pipeline</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <BotonPlay etiqueta="Plagas" deshabilitado />
+          <BotonPlay
+            etiqueta="Plagas"
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline("plagas")}
+          />
           <span className="text-[10px] text-muted">Plagas</span>
         </div>
       </div>

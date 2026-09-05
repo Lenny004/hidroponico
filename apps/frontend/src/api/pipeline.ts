@@ -5,6 +5,8 @@ export interface ResultadoMotorApi {
   datos: {
     idsNodos?: string[];
     totales?: Record<string, number | null>;
+    plagas?: string[] | null;
+    solucion_plagas?: string[] | null;
   };
 }
 
