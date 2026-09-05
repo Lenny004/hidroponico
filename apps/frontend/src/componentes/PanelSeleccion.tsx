@@ -6,6 +6,7 @@ import {
   obtenerCultivoPorId,
 } from "@hidroponico/tipos-compartidos";
 import CampoNumerico from "./CampoNumerico";
+import { resumenGrupoDeNodo } from "../api/resumen-grupo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
 export default function PanelSeleccion() {
@@ -15,9 +16,11 @@ export default function PanelSeleccion() {
   const actualizarVariable = usarGrafoConstruccion((estado) => estado.actualizarVariable);
   const actualizarTextoNodo = usarGrafoConstruccion((estado) => estado.actualizarTextoNodo);
   const actualizarPlagas = usarGrafoConstruccion((estado) => estado.actualizarPlagas);
+  const resultadoPipeline = usarGrafoConstruccion((estado) => estado.resultadoPipeline);
 
   const nodo = nodos.find((item) => item.id === idSeleccionado);
   const cultivo = nodo?.data.cultivo;
+  const resumenGrupo = nodo ? resumenGrupoDeNodo(resultadoPipeline, nodo.id) : null;
   const nombre = cultivo
     ? (obtenerCultivoPorId(cultivo.tipoCultivo)?.nombre ?? cultivo.tipoCultivo)
     : null;
@@ -57,7 +60,7 @@ export default function PanelSeleccion() {
           </label>
 
           <p className="text-[11px] text-muted">
-            Las variables del boceto: vacío = null, no 0.
+            Cada campo es de esta planta. El total del grupo conectado aparece debajo al calcular.
           </p>
 
           {GRUPOS_VARIABLES.map((grupo) => (
@@ -72,6 +75,7 @@ export default function PanelSeleccion() {
                   etiqueta={ETIQUETAS_VARIABLES[clave]}
                   claveTecnica={clave}
                   valor={cultivo.variables[clave]}
+                  totalGrupo={resumenGrupo?.totales[clave]}
                   onConfirmar={(valor) => actualizarVariable(nodo.id, clave, valor)}
                 />
               ))}
@@ -82,6 +86,8 @@ export default function PanelSeleccion() {
             idNodo={nodo.id}
             plagas={cultivo.plagas ?? null}
             onCambiar={(plagas) => actualizarPlagas(nodo.id, plagas)}
+            plagasGrupo={resumenGrupo?.plagas}
+            solucionGrupo={resumenGrupo?.solucion_plagas}
           />
 
           <label className="flex flex-col gap-1 text-xs">
@@ -119,10 +125,14 @@ function CampoPlagas({
   idNodo,
   plagas,
   onCambiar,
+  plagasGrupo,
+  solucionGrupo,
 }: {
   idNodo: string;
   plagas: string[] | null;
   onCambiar: (plagas: string[] | null) => void;
+  plagasGrupo?: string[] | null;
+  solucionGrupo?: string[] | null;
 }) {
   const [alta, setAlta] = useState("");
   const actuales = plagas ?? [];
@@ -183,6 +193,15 @@ function CampoPlagas({
           Añadir
         </button>
       </div>
+      {plagasGrupo !== undefined || solucionGrupo !== undefined ? (
+        <p className="text-[11px] text-acento">
+          Grupo: {plagasGrupo == null ? "plagas null" : plagasGrupo.join(", ") || "plagas null"}
+          {" · "}
+          {solucionGrupo == null
+            ? "solucion_plagas null"
+            : solucionGrupo.join(", ") || "solucion_plagas null"}
+        </p>
+      ) : null}
     </fieldset>
   );
 }

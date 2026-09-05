@@ -15,6 +15,7 @@ import {
   normalizarPlagas,
   obtenerCultivoPorId,
   type ClaveVariableCultivo,
+  type GrafoPersistido,
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
 import { solicitarPipeline, type ResultadoPipelineApi } from "../api/pipeline";
@@ -25,6 +26,8 @@ export type DatosNodoCultivo = {
 };
 
 export type NodoFlujo = Node<DatosNodoCultivo>;
+
+export type EstadoPersistencia = "local" | "sincronizado" | "error";
 
 type EstadoGrafoConstruccion = {
   nodos: NodoFlujo[];
@@ -49,7 +52,10 @@ type EstadoGrafoConstruccion = {
   actualizarPlagas: (id: string, plagas: string[] | null) => void;
   resultadoPipeline: ResultadoPipelineApi | null;
   ejecutandoPipeline: boolean;
-  ejecutarPipeline: (nombreMotor?: string) => Promise<void>;
+  estadoPersistencia: EstadoPersistencia;
+  ejecutarPipeline: (nombreMotor?: string, opciones?: { silencioso?: boolean }) => Promise<void>;
+  hidratarGrafo: (grafo: GrafoPersistido) => void;
+  setEstadoPersistencia: (estado: EstadoPersistencia) => void;
   setBusquedaCatalogo: (valor: string) => void;
   setFiltroLienzo: (valor: string) => void;
 };
@@ -81,6 +87,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   mensajeEstado: "Arrastra un cultivo al lienzo para empezar.",
   resultadoPipeline: null,
   ejecutandoPipeline: false,
+  estadoPersistencia: "local",
 
   onNodosChange: (cambios) => {
     set((estado) => {
@@ -260,13 +267,22 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
     }));
   },
 
-  ejecutarPipeline: async (nombreMotor) => {
+  ejecutarPipeline: async (nombreMotor, opciones) => {
     const { nodos, aristas } = get();
+    if (nodos.length === 0) {
+      set({ resultadoPipeline: null });
+      return;
+    }
+    const silencioso = opciones?.silencioso === true;
     set({
       ejecutandoPipeline: true,
-      mensajeEstado: nombreMotor
-        ? `Ejecutando motor ${nombreMotor}…`
-        : "Ejecutando pipeline (motores en paralelo)…",
+      ...(silencioso
+        ? {}
+        : {
+            mensajeEstado: nombreMotor
+              ? `Ejecutando motor ${nombreMotor}…`
+              : "Ejecutando pipeline (motores en paralelo)…",
+          }),
     });
     try {
       const resultado = await solicitarPipeline(
@@ -283,16 +299,61 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       set({
         resultadoPipeline: resultado,
         ejecutandoPipeline: false,
-        mensajeEstado: `Pipeline listo${extras}.`,
+        ...(silencioso ? {} : { mensajeEstado: `Pipeline listo${extras}.` }),
       });
     } catch {
       set({
         ejecutandoPipeline: false,
-        mensajeEstado: "No se pudo contactar TREE.JS. ¿Está corriendo el backend?",
+        ...(silencioso
+          ? {}
+          : { mensajeEstado: "No se pudo contactar TREE.JS. ¿Está corriendo el backend?" }),
       });
     }
   },
 
   setBusquedaCatalogo: (valor) => set({ busquedaCatalogo: valor }),
   setFiltroLienzo: (valor) => set({ filtroLienzo: valor }),
+
+  setEstadoPersistencia: (estadoPersistencia) => set({ estadoPersistencia }),
+
+  hidratarGrafo: (grafo) => {
+    const nodos: NodoFlujo[] = [];
+    for (const nodo of grafo.nodos) {
+      const definicion = obtenerCultivoPorId(nodo.tipoCultivo);
+      if (!definicion) {
+        continue;
+      }
+      nodos.push({
+        id: nodo.id,
+        type: "cultivo",
+        position: { x: nodo.posicionX, y: nodo.posicionY },
+        data: {
+          color: definicion.color,
+          cultivo: {
+            id: nodo.id,
+            tipoCultivo: definicion.id,
+            variables: nodo.variables,
+            plagas: nodo.plagas,
+            solucion_plagas: nodo.solucion_plagas,
+            comentarios: nodo.comentarios,
+          },
+        },
+      });
+    }
+    const ids = new Set(nodos.map((nodo) => nodo.id));
+    const aristas: Edge[] = grafo.aristas
+      .filter((arista) => ids.has(arista.origenId) && ids.has(arista.destinoId))
+      .map((arista) => ({
+        id: arista.id,
+        source: arista.origenId,
+        target: arista.destinoId,
+      }));
+    set({
+      nodos,
+      aristas,
+      idSeleccionado: null,
+      idsGrupo: [],
+      mensajeEstado: `Grafo persistido cargado (${nodos.length} nodos).`,
+    });
+  },
 }));

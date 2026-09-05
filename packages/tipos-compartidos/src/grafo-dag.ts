@@ -72,6 +72,21 @@ export function aristaCreariaCiclo(
 }
 
 /**
+ * Indica si el conjunto de aristas ya forma un ciclo.
+ * @param aristas - Aristas dirigidas del grafo completo.
+ */
+export function grafoTieneCiclo(aristas: AristaDirigida[]): boolean {
+  const acumuladas: AristaDirigida[] = [];
+  for (const arista of aristas) {
+    if (aristaCreariaCiclo(acumuladas, arista.origenId, arista.destinoId)) {
+      return true;
+    }
+    acumuladas.push(arista);
+  }
+  return false;
+}
+
+/**
  * Normaliza aristas del dominio o del canvas a pares dirigidos.
  */
 export function aAristasDirigidas(

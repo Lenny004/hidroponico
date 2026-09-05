@@ -9,6 +9,7 @@ type PropsCampoNumerico = {
   etiqueta: string;
   claveTecnica: string;
   valor: number | null | undefined;
+  totalGrupo?: number | null;
   onConfirmar: (valor: number | null) => void;
 };
 
@@ -20,6 +21,7 @@ export default function CampoNumerico({
   etiqueta,
   claveTecnica,
   valor,
+  totalGrupo,
   onConfirmar,
 }: PropsCampoNumerico) {
   const [texto, setTexto] = useState(valor == null ? "" : String(valor));
@@ -44,7 +46,7 @@ export default function CampoNumerico({
       <input
         value={texto}
         inputMode="decimal"
-        placeholder="null"
+        placeholder="Vacío = null"
         onChange={(evento) => {
           const siguiente = evento.target.value;
           setTexto(siguiente);
@@ -53,6 +55,11 @@ export default function CampoNumerico({
         onBlur={() => onConfirmar(parsearNumeroONull(texto))}
         className="rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
       />
+      {totalGrupo !== undefined ? (
+        <span className={totalGrupo == null ? "text-[11px] text-amber-300" : "text-[11px] text-acento"}>
+          {totalGrupo == null ? "Grupo conectado: null" : `Grupo conectado: ${totalGrupo} ml`}
+        </span>
+      ) : null}
     </label>
   );
 }

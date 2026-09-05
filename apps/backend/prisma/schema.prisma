@@ -8,11 +8,11 @@ datasource db {
 }
 
 /// Grafo persistido (producción). Distinto del grafo de construcción del cliente.
-/// La sincronización Guardar/Publicar está pendiente de confirmar (docs/asunciones.md).
+/// La sincronización es automática (docs/asunciones.md).
 model Nodo {
   id               String   @id @default(uuid())
   tipoCultivo      String
-  /// JSONB con las 15 variables (valores number | null). Esquema flexible a propósito.
+  /// JSONB con las variables del boceto (number | null).
   variables        Json
   plagas           Json?
   solucion_plagas  String?
@@ -31,7 +31,7 @@ model Arista {
   id        String   @id @default(uuid())
   origenId  String
   destinoId String
-  /// Reservado para agregación por categoría (Fase 3). Null en aristas solo visuales.
+  /// Reservado por si una arista deja de ser solo visual. Null en el MVP.
   categoria String?
   creadoEn  DateTime @default(now())
   origen    Nodo     @relation("AristaOrigen", fields: [origenId], references: [id], onDelete: Cascade)

@@ -9,6 +9,7 @@ export default tseslint.config(
       "**/node_modules/**",
       "**/.pnpm-store/**",
       "**/generated/**",
+      "scripts/**",
     ],
   },
   js.configs.recommended,

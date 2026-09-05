@@ -5,8 +5,12 @@ import CanvasGrafo from "./componentes/CanvasGrafo";
 import PanelCultivo from "./componentes/PanelCultivo";
 import PanelResultados from "./componentes/PanelResultados";
 import PanelSeleccion from "./componentes/PanelSeleccion";
+import { usarCalculoAutomatico } from "./hooks/usarCalculoAutomatico";
+import { usarSincronizacionGrafo } from "./hooks/usarSincronizacionGrafo";
 
 export default function App() {
+  usarSincronizacionGrafo();
+  usarCalculoAutomatico();
   return (
     <ReactFlowProvider>
       <div className="flex h-full flex-col">

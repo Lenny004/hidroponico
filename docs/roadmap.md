@@ -42,4 +42,4 @@ Cantidad total de solución nutritiva para hidratar el sistema.
 
 ## Fase 6 — Persistencia real
 
-Separar grafo de construcción (cliente) del grafo de base de datos. El persistido es la fuente de verdad para reportes. Sincronización **automática** (confirmada). Aún no hay Prisma en caliente.
+**Hecha:** GET/PUT `/grafo`, Prisma en caliente, sync automática con debounce. Sin botón Publicar. Si PostgreSQL no está, el canvas sigue en local.

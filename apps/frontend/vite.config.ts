@@ -9,6 +9,7 @@ export default defineConfig({
     proxy: {
       "/salud": "http://localhost:3001",
       "/pipeline": "http://localhost:3001",
+      "/grafo": "http://localhost:3001",
     },
   },
 });

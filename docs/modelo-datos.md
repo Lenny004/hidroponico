@@ -35,7 +35,7 @@ Preferencia: **Open Crop Icons** (`openfarmcc/open-crop-icons`), licencia CC0. N
 
 ## Persistencia (Fase 6)
 
-- `nodos`: id, tipo, variables JSONB, plagas, comentarios, metadatos.
+- `nodos`: id, tipo, variables JSONB, plagas, comentarios, metadatos de posición.
 - `aristas`: origen, destino, categoría de enlace (si aplica).
 
-El grafo persistido es distinto del grafo de construcción. No mezclar ambos modelos en el mismo store del cliente sin una frontera explícita.
+El grafo persistido es distinto del grafo de construcción. El canvas serializa hacia `GrafoPersistido`; el color se reconstruye del catálogo al hidratar.

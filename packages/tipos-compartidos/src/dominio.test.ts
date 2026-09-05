@@ -5,6 +5,8 @@ import { crearNodoDesdePlantilla } from "./factory-nodo";
 import { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
 import { agregarCategoriaEnGrupo, agregarCategoriasPorGrupos } from "./agregar-grupos";
 import { agregarPlagasEnGrupo } from "./agregar-plagas";
+import { grafoTieneCiclo } from "./grafo-dag";
+import { serializarGrafoConstruccion, validarGrafoPersistido } from "./grafo-persistido";
 import { conteoPorTipo } from "./conteo-por-tipo";
 import { normalizarPlagas, parsearNumeroONull } from "./parsear-valores";
 
@@ -196,5 +198,43 @@ describe("conteoPorTipo", () => {
       { id: "3", tipoCultivo: "tomate", variables: {} },
     ];
     expect(conteoPorTipo(nodos)).toEqual({ lechuga: 2, tomate: 1 });
+  });
+});
+
+describe("grafo persistido", () => {
+  it("serializa el canvas sin color y rechaza ciclos", () => {
+    const grafo = serializarGrafoConstruccion(
+      [
+        {
+          id: "a",
+          position: { x: 1, y: 2 },
+          cultivo: {
+            id: "a",
+            tipoCultivo: "lechuga",
+            variables: { mineral_magnesio: 3, mineral_potasio: null },
+            plagas: [" Pulgón "],
+            solucion_plagas: "  ",
+          },
+        },
+      ],
+      [{ id: "arista-a-b", origenId: "a", destinoId: "b" }],
+    );
+    expect(grafo.nodos[0]?.variables.mineral_magnesio).toBe(3);
+    expect(grafo.nodos[0]?.plagas).toEqual(["Pulgón"]);
+    expect(grafo.nodos[0]?.solucion_plagas).toBeNull();
+
+    expect(grafoTieneCiclo([{ origenId: "a", destinoId: "b" }])).toBe(false);
+    expect(
+      grafoTieneCiclo([
+        { origenId: "a", destinoId: "b" },
+        { origenId: "b", destinoId: "a" },
+      ]),
+    ).toBe(true);
+
+    const invalido = validarGrafoPersistido({
+      nodos: [{ id: "a", tipoCultivo: "lechuga", variables: {} }],
+      aristas: [{ id: "x", origenId: "a", destinoId: "fantasma" }],
+    });
+    expect(invalido.ok).toBe(false);
   });
 });

@@ -11,6 +11,7 @@ export {
   aAristasDirigidas,
   aristaCreariaCiclo,
   existeCaminoDirigido,
+  grafoTieneCiclo,
 } from "./grafo-dag";
 
 export { idsComponenteConexa } from "./componente-conexa";
@@ -26,6 +27,15 @@ export { agregarPlagasEnGrupo, type AgregadoPlagas } from "./agregar-plagas";
 export { conteoPorTipo, sumaVariablePorTipo } from "./conteo-por-tipo";
 
 export { EVENTOS_GRAFO, type NombreEventoGrafo } from "./eventos-grafo";
+
+export {
+  serializarGrafoConstruccion,
+  validarGrafoPersistido,
+  type AristaPersistida,
+  type GrafoPersistido,
+  type NodoConstruccionSerial,
+  type NodoPersistido,
+} from "./grafo-persistido";
 
 export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES } from "./etiquetas-variables";
 export {

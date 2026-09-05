@@ -21,7 +21,7 @@ Campos de texto / listas: `comentarios`, `plagas`, `solucion_plagas`.
 
 **Automática** (sin botón Guardar/Publicar). El grafo de construcción se sincroniza solo.
 
-Pendiente de implementación en Fase 6 (Prisma). Hasta entonces el canvas sigue siendo la fuente de trabajo en el cliente.
+Implementada en Fase 6: GET al recargar, PUT automático al editar. Si la base no responde, el canvas sigue siendo usable.
 
 ## 3. UI cuando un grupo queda en `null`
 

@@ -16,13 +16,14 @@ pnpm dev
 
 Solo frontend: `pnpm dev:frontend`. Solo API: `pnpm dev:backend`.
 
-PostgreSQL (opcional, aún no hay persistencia real):
+PostgreSQL (persistencia del grafo):
 
 ```bash
 docker compose up -d
+pnpm --filter @hidroponico/backend prisma:migrate
 ```
 
-Copia `apps/backend/.env.example` a `apps/backend/.env` cuando vayas a generar el cliente Prisma.
+Copia `apps/backend/.env.example` a `apps/backend/.env`. Si Postgres no está, el canvas funciona igual y la barra indica «BD no disponible».
 
 ## Estado
 
@@ -34,6 +35,7 @@ Copia `apps/backend/.env.example` a `apps/backend/.env` cuando vayas a generar e
 | Fase 3 — TREE.JS + motor.minerales | Hecho |
 | Fase 4 — motores oxígeno / plagas | Hecho |
 | Fase 5 — insumos (`cantidad_sol` por grupo) | Hecho |
+| Fase 6 — persistencia Prisma (sync automática) | Hecho |
 | Agregación de minerales | Hecha (null no bloquea el pipeline) |
 
 ## Estructura

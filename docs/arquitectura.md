@@ -9,7 +9,7 @@ El sistema mantiene **dos grafos separados** de forma intencional:
 | **Construcción** | Cliente (canvas) | Trabajo en progreso: posiciones, nodos incompletos, aristas temporales. |
 | **Base de datos** | PostgreSQL (`nodos`, `aristas`) | Sistema confirmado en producción. Fuente de verdad para cálculos reales y reportes. |
 
-La sincronización construcción → persistido es **automática** (confirmada). Ver [asunciones](asunciones.md). Aún no implementar: es Fase 6.
+La sincronización construcción → persistido es **automática** (confirmada). Ver [asunciones](asunciones.md). El cliente hace GET al cargar y PUT con debounce al cambiar el canvas.
 
 Ambos grafos deben ser **DAG** (acíclicos). Antes de aceptar una arista hay que detectar ciclos (DFS con colores o algoritmo de Kahn).
 
@@ -68,5 +68,3 @@ Seguir [PRINCIPIOS.md](PRINCIPIOS.md): presentación, dominio, persistencia e in
 ## Persistencia prevista (Fase 6)
 
 Tablas `nodos` y `aristas`. Variables flexibles en JSONB para permitir `null` y evolucionar el esquema sin migraciones constantes.
-
-No modelar ni migrar la base de datos en este primer paso.
