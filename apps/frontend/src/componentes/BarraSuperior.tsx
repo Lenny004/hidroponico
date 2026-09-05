@@ -1,13 +1,16 @@
-import { Play } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Bug, Droplets, FlaskConical, Play } from "lucide-react";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
 function BotonPlay({
   etiqueta,
+  icono: Icono,
   destacado = false,
   deshabilitado = false,
   onClick,
 }: {
   etiqueta: string;
+  icono: LucideIcon;
   destacado?: boolean;
   deshabilitado?: boolean;
   onClick?: () => void;
@@ -16,22 +19,16 @@ function BotonPlay({
     <button
       type="button"
       disabled={deshabilitado}
-      title={
-        deshabilitado && !onClick
-          ? "Disponible cuando exista ese motor"
-          : deshabilitado
-            ? "Ejecutando…"
-            : etiqueta
-      }
+      title={deshabilitado ? "Ejecutando…" : etiqueta}
       onClick={onClick}
       className={
         destacado
           ? "flex size-12 items-center justify-center rounded-full bg-acento-fuerte text-lienzo shadow-[0_0_24px_rgba(16,185,129,0.45)] disabled:cursor-not-allowed disabled:opacity-50"
           : "flex size-9 items-center justify-center rounded-full border border-borde bg-panel text-acento disabled:cursor-not-allowed disabled:opacity-60"
       }
-      aria-label={deshabilitado && !onClick ? `${etiqueta} (aún no disponible)` : etiqueta}
+      aria-label={etiqueta}
     >
-      <Play className={destacado ? "size-6 fill-current" : "size-4 fill-current"} />
+      <Icono className={destacado ? "size-6" : "size-4"} strokeWidth={2.25} />
     </button>
   );
 }
@@ -66,6 +63,7 @@ export default function BarraSuperior() {
         <div className="flex flex-col items-center gap-0.5">
           <BotonPlay
             etiqueta="Minerales"
+            icono={FlaskConical}
             deshabilitado={ejecutandoPipeline}
             onClick={() => void ejecutarPipeline("minerales")}
           />
@@ -74,6 +72,7 @@ export default function BarraSuperior() {
         <div className="flex flex-col items-center gap-0.5">
           <BotonPlay
             etiqueta="Oxígeno"
+            icono={Droplets}
             deshabilitado={ejecutandoPipeline}
             onClick={() => void ejecutarPipeline("oxigeno")}
           />
@@ -82,6 +81,7 @@ export default function BarraSuperior() {
         <div className="flex flex-col items-center gap-0.5">
           <BotonPlay
             etiqueta="Pipeline"
+            icono={Play}
             destacado
             deshabilitado={ejecutandoPipeline}
             onClick={() => void ejecutarPipeline()}
@@ -91,6 +91,7 @@ export default function BarraSuperior() {
         <div className="flex flex-col items-center gap-0.5">
           <BotonPlay
             etiqueta="Plagas"
+            icono={Bug}
             deshabilitado={ejecutandoPipeline}
             onClick={() => void ejecutarPipeline("plagas")}
           />

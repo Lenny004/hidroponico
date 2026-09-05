@@ -1,5 +1,5 @@
 import { CATALOGO_CULTIVOS } from "@hidroponico/tipos-compartidos";
-import { ICONOS_CULTIVO } from "../iconos/iconos-cultivo";
+import GlifoCultivo from "../iconos/GlifoCultivo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
 export default function PanelCultivo() {
@@ -30,9 +30,7 @@ export default function PanelCultivo() {
         <p className="mt-1 text-xs text-muted">Arrastra o haz click para crear un nodo</p>
       </div>
       <div className="grid grid-cols-2 gap-2 overflow-y-auto">
-        {cultivos.map((cultivo) => {
-          const Icono = ICONOS_CULTIVO[cultivo.id];
-          return (
+        {cultivos.map((cultivo) => (
             <button
               key={cultivo.id}
               type="button"
@@ -47,16 +45,10 @@ export default function PanelCultivo() {
               }}
               className="flex flex-col items-center gap-1 rounded-xl border border-borde bg-lienzo/60 p-2 text-center hover:border-acento"
             >
-              <span
-                className="flex size-10 items-center justify-center rounded-full text-white"
-                style={{ backgroundColor: cultivo.color }}
-              >
-                <Icono className="size-5" />
-              </span>
+              <GlifoCultivo tipoCultivo={cultivo.id} color={cultivo.color} />
               <span className="text-[11px] font-medium">{cultivo.nombre}</span>
             </button>
-          );
-        })}
+        ))}
       </div>
     </aside>
   );

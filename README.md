@@ -33,6 +33,7 @@ Copia `apps/backend/.env.example` a `apps/backend/.env` cuando vayas a generar e
 | Fase 2 — panel editable de `NodoCultivo` | Hecho |
 | Fase 3 — TREE.JS + motor.minerales | Hecho |
 | Fase 4 — motores oxígeno / plagas | Hecho |
+| Fase 5 — insumos (`cantidad_sol` por grupo) | Hecho |
 | Agregación de minerales | Hecha (null no bloquea el pipeline) |
 
 ## Estructura

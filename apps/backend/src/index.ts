@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import {
+  motorInsumos,
   motorMinerales,
   motorOxigeno,
   motorPlagas,
@@ -21,6 +22,7 @@ const registroMotores = new RegistroMotores();
 registroMotores.registrar(motorMinerales);
 registroMotores.registrar(motorOxigeno);
 registroMotores.registrar(motorPlagas);
+registroMotores.registrar(motorInsumos);
 
 await registrarRutaPipeline(app, bus, registroMotores);
 

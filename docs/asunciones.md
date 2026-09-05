@@ -29,7 +29,7 @@ Pendiente de implementación en Fase 6 (Prisma). Hasta entonces el canvas sigue 
 
 ## 4. Orden de los motores
 
-**En paralelo.** No hay dependencia entre minerales, oxígeno y plagas. El orquestador usa `Promise.all` sobre el registro. Añadir un motor no cambia el orquestador.
+**En paralelo.** No hay dependencia entre minerales, oxígeno, plagas e insumos. El orquestador usa `Promise.all` sobre el registro. Añadir un motor no cambia el orquestador.
 
 ## 5. Fórmula de solución nutritiva
 

@@ -13,7 +13,7 @@ export interface ResultadoMotor {
 
 /**
  * Contrato Strategy de los motores hidropónicos.
- * Implementaciones: minerales, oxígeno y plagas.
+ * Implementaciones: minerales, oxígeno, plagas e insumos.
  */
 export interface MotorHidroponico {
   nombre: string;

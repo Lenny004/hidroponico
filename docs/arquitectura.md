@@ -47,10 +47,11 @@ interface MotorHidroponico {
 | `motor.minerales` | Agrega minerales por grupo conectado de la misma categoría. |
 | `motor.oxigeno` | Agrega oxígeno disuelto necesario por grupo. |
 | `motor.plagas` | Recopila plagas activas y solución sugerida por nodo/grupo. |
+| `motor.insumos` | Suma `cantidad_sol` (ml) por grupo. Sustituir cuando Ferresal dé la fórmula. |
 
 El orquestador **registra** motores. Añadir `motor.ph` en el futuro no debe exigir tocar el orquestador.
 
-El botón central de la UI ejecuta el pipeline (los tres motores) y combina resultados. Corren **en paralelo** (`Promise.all`). Ver [asunciones](asunciones.md).
+El botón central de la UI ejecuta el pipeline (motores registrados) y combina resultados. Corren **en paralelo** (`Promise.all`). Ver [asunciones](asunciones.md).
 
 ## Patrones
 

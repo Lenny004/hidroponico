@@ -1,6 +1,6 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { obtenerCultivoPorId } from "@hidroponico/tipos-compartidos";
-import { ICONOS_CULTIVO } from "../iconos/iconos-cultivo";
+import GlifoCultivo from "../iconos/GlifoCultivo";
 import {
   usarGrafoConstruccion,
   type NodoFlujo,
@@ -11,9 +11,6 @@ export default function NodoCultivoNodo({ id, data, selected }: NodeProps<NodoFl
   const filtroLienzo = usarGrafoConstruccion((estado) => estado.filtroLienzo);
   const definicion = obtenerCultivoPorId(data.cultivo.tipoCultivo);
   const nombre = definicion?.nombre ?? data.cultivo.tipoCultivo;
-  const Icono =
-    ICONOS_CULTIVO[data.cultivo.tipoCultivo as keyof typeof ICONOS_CULTIVO] ??
-    ICONOS_CULTIVO.lechuga;
   const enGrupo = idsGrupo.includes(id);
   const filtro = filtroLienzo.trim().toLowerCase();
   const coincideFiltro =
@@ -35,11 +32,12 @@ export default function NodoCultivoNodo({ id, data, selected }: NodeProps<NodoFl
       className={`relative flex flex-col items-center gap-1 ${coincideFiltro ? "opacity-100" : "opacity-25"}`}
     >
       <Handle type="target" position={Position.Left} className="!size-2.5 !bg-white" />
-      <div
-        className={`flex size-16 items-center justify-center rounded-full text-white shadow-lg ${anillo}`}
-        style={{ backgroundColor: data.color }}
-      >
-        <Icono className="size-8" />
+      <div className={`rounded-2xl ${anillo}`}>
+        <GlifoCultivo
+          tipoCultivo={data.cultivo.tipoCultivo}
+          color={data.color}
+          tamano="nodo"
+        />
       </div>
       <span className="rounded-full bg-black/50 px-2 py-0.5 text-[11px] font-medium text-white">
         {nombre}

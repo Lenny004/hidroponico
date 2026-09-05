@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ejecutarPipeline,
+  motorInsumos,
   motorMinerales,
   motorOxigeno,
   motorPlagas,
@@ -85,17 +86,44 @@ describe("MotorPlagas", () => {
   });
 });
 
+describe("MotorInsumos", () => {
+  it("suma cantidad_sol incluido 0 y deja null si falta un dato", () => {
+    const completo = motorInsumos.procesar([
+      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 250 } },
+      { id: "b", tipoCultivo: "lechuga", variables: { cantidad_sol: 0 } },
+    ]);
+    expect(completo.datos).toMatchObject({ totales: { cantidad_sol: 250 } });
+
+    const incompleto = motorInsumos.procesar([
+      { id: "a", tipoCultivo: "lechuga", variables: { cantidad_sol: 250 } },
+      { id: "b", tipoCultivo: "tomate", variables: { cantidad_sol: null } },
+    ]);
+    expect(incompleto.exitoso).toBe(true);
+    expect(incompleto.datos).toMatchObject({ totales: { cantidad_sol: null } });
+    expect(incompleto.advertencias.length).toBeGreaterThan(0);
+  });
+});
+
 describe("ejecutarPipeline", () => {
   it("corre motores en paralelo desde el registro", async () => {
     const registro = new RegistroMotores();
     registro.registrar(motorMinerales);
     registro.registrar(motorOxigeno);
     registro.registrar(motorPlagas);
+    registro.registrar(motorInsumos);
     const resultado = await ejecutarPipeline(
       registro,
       [
-        { id: "a", tipoCultivo: "lechuga", variables: { mineral_hierro: 2, oxigeno: 1 } },
-        { id: "b", tipoCultivo: "tomate", variables: { mineral_hierro: 5, oxigeno: 3 } },
+        {
+          id: "a",
+          tipoCultivo: "lechuga",
+          variables: { mineral_hierro: 2, oxigeno: 1, cantidad_sol: 100 },
+        },
+        {
+          id: "b",
+          tipoCultivo: "tomate",
+          variables: { mineral_hierro: 5, oxigeno: 3, cantidad_sol: 50 },
+        },
       ],
       [{ origenId: "a", destinoId: "b" }],
     );
@@ -104,6 +132,10 @@ describe("ejecutarPipeline", () => {
       "minerales",
       "oxigeno",
       "plagas",
+      "insumos",
     ]);
+    expect(resultado.motores.find((motor) => motor.nombre === "insumos")?.grupos[0]?.datos).toMatchObject(
+      { totales: { cantidad_sol: 150 } },
+    );
   });
 });

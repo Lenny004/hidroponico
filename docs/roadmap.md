@@ -38,6 +38,8 @@ Cantidad total de solución nutritiva para hidratar el sistema.
 
 **Criterio usable (mientras Ferresal no entregue otra):** sumar `cantidad_sol` (ml) por grupo, con la misma regla de `null`. Ver [asunciones.md](asunciones.md).
 
+**Hecha:** `motor.insumos` registrado en el pipeline. No hay fórmula minerales→litros.
+
 ## Fase 6 — Persistencia real
 
 Separar grafo de construcción (cliente) del grafo de base de datos. El persistido es la fuente de verdad para reportes. Sincronización **automática** (confirmada). Aún no hay Prisma en caliente.
