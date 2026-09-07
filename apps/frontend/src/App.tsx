@@ -1,4 +1,3 @@
-import { ReactFlowProvider } from "@xyflow/react";
 import BarraEstado from "./componentes/BarraEstado";
 import BarraSuperior from "./componentes/BarraSuperior";
 import CanvasGrafo from "./componentes/CanvasGrafo";
@@ -12,17 +11,15 @@ export default function App() {
   usarSincronizacionGrafo();
   usarCalculoAutomatico();
   return (
-    <ReactFlowProvider>
-      <div className="flex h-full flex-col">
-        <BarraSuperior />
-        <div className="flex min-h-0 flex-1">
-          <PanelCultivo />
-          <CanvasGrafo />
-          <PanelSeleccion />
-        </div>
-        <PanelResultados />
-        <BarraEstado />
+    <div className="app">
+      <BarraSuperior />
+      <div className="app__cuerpo">
+        <PanelCultivo />
+        <CanvasGrafo />
+        <PanelSeleccion />
       </div>
-    </ReactFlowProvider>
+      <PanelResultados />
+      <BarraEstado />
+    </div>
   );
 }

@@ -43,13 +43,13 @@ export default function CampoNumerico({
   };
 
   return (
-    <label className="flex flex-col gap-1">
-      <span className="flex items-baseline justify-between gap-2 text-xs">
+    <label className="campo">
+      <span className="campo__cabecera">
         <span>
           {etiqueta}{" "}
-          <span className="text-muted">({unidadNodo})</span>
+          <span className="campo__unidad">({unidadNodo})</span>
         </span>
-        <span className="font-mono text-[10px] text-muted">{claveTecnica}</span>
+        <span className="campo__clave">{claveTecnica}</span>
       </span>
       <input
         value={texto}
@@ -61,10 +61,10 @@ export default function CampoNumerico({
           confirmar(siguiente);
         }}
         onBlur={() => onConfirmar(parsearNumeroONull(texto))}
-        className="rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
+        className="campo__control"
       />
       {totalGrupo !== undefined ? (
-        <span className={totalGrupo == null ? "text-[11px] text-amber-300" : "text-[11px] text-acento"}>
+        <span className={totalGrupo == null ? "campo__grupo campo__grupo--nulo" : "campo__grupo"}>
           {totalGrupo == null
             ? "Grupo conectado: null"
             : `Grupo conectado: ${formatearMedida(totalGrupo, unidadAgregado)}`}

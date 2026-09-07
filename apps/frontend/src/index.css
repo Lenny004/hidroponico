@@ -1,7 +1,5 @@
-@import "tailwindcss";
-@import "@xyflow/react/dist/style.css";
-
-@theme {
+:root {
+  color-scheme: dark;
   --color-lienzo: #0b1220;
   --color-panel: #121a2a;
   --color-borde: #243049;
@@ -9,6 +7,21 @@
   --color-acento-fuerte: #10b981;
   --color-texto: #e8eef9;
   --color-muted: #93a4c3;
+  --color-aviso: #fcd34d;
+  --color-plaga: #fda4af;
+  --color-plaga-anillo: rgb(251 113 133 / 0.8);
+  --color-lienzo-60: rgb(11 18 32 / 0.6);
+  --color-lienzo-80: rgb(11 18 32 / 0.8);
+  --color-panel-95: rgb(18 26 42 / 0.95);
+  --color-placeholder: rgb(147 164 195 / 0.5);
+  --sombra-nodo: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --sombra-play: 0 0 24px rgb(16 185 129 / 0.45);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html,
@@ -24,12 +37,672 @@ body {
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
-.react-flow__node-cultivo {
-  background: transparent;
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
   border: none;
   padding: 0;
 }
 
-.react-flow__attribution {
-  display: none;
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* --- App --- */
+
+.app {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.app__cuerpo {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+
+/* --- Barra superior --- */
+
+.barra-superior {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: 0.5rem 1rem;
+}
+
+.barra-superior__marca {
+  flex-shrink: 0;
+}
+
+.barra-superior__titulo {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.barra-superior__subtitulo {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.barra-superior__campo {
+  width: 11rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-borde);
+  background: var(--color-lienzo);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.barra-superior__campo:focus {
+  border-color: var(--color-acento);
+}
+
+.barra-superior__plays {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.barra-superior__play {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.barra-superior__play-etiqueta {
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+.barra-superior__play-etiqueta--acento {
+  font-weight: 500;
+  color: var(--color-acento);
+}
+
+.boton-play {
+  display: flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-borde);
+  border-radius: 9999px;
+  background: var(--color-panel);
+  color: var(--color-acento);
+}
+
+.boton-play:disabled {
+  opacity: 0.6;
+}
+
+.boton-play--destacado {
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  background: var(--color-acento-fuerte);
+  color: var(--color-lienzo);
+  box-shadow: var(--sombra-play);
+}
+
+.boton-play--destacado:disabled {
+  opacity: 0.5;
+}
+
+.boton-play__icono {
+  width: 1rem;
+  height: 1rem;
+}
+
+.boton-play--destacado .boton-play__icono {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* --- Panel cultivo --- */
+
+.panel-cultivo {
+  display: flex;
+  width: 14rem;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-right: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: 0.75rem;
+}
+
+.panel-cultivo__titulo {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.panel-cultivo__ayuda {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-cultivo__rejilla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+
+.tarjeta-cultivo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  background: var(--color-lienzo-60);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.tarjeta-cultivo:hover {
+  border-color: var(--color-acento);
+}
+
+.tarjeta-cultivo__nombre {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tarjeta-cultivo__meta {
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+/* --- Lienzo --- */
+
+.lienzo {
+  position: relative;
+  height: 100%;
+  min-width: 0;
+  flex: 1;
+  background: var(--color-lienzo);
+}
+
+.lienzo__flujo {
+  height: 100%;
+  width: 100%;
+}
+
+.lienzo__three {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
+/* --- Panel detalle --- */
+
+.panel-detalle {
+  display: flex;
+  width: 20rem;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: 0.75rem;
+}
+
+.panel-detalle__titulo {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.panel-detalle__vacio {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.panel-detalle__formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.panel-detalle__nombre {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.panel-detalle__id {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.panel-detalle__nota {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+/* --- Campos de formulario --- */
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.campo__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.campo__unidad,
+.campo__clave {
+  color: var(--color-muted);
+}
+
+.campo__clave {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+}
+
+.campo__control {
+  width: 100%;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  background: var(--color-lienzo);
+  padding: 0.375rem 0.5rem;
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.campo__control:focus {
+  border-color: var(--color-acento);
+}
+
+.campo__control::placeholder {
+  color: var(--color-placeholder);
+}
+
+.campo__control--area {
+  resize: vertical;
+}
+
+.campo__fila {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.campo__fila .campo__control {
+  min-width: 0;
+  flex: 1;
+}
+
+.campo__grupo {
+  font-size: 11px;
+  color: var(--color-acento);
+}
+
+.campo__grupo--nulo {
+  color: var(--color-aviso);
+}
+
+.grupo-campos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+  border: none;
+}
+
+.grupo-campos__titulo {
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.boton-secundario {
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  background: transparent;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.boton-secundario:hover {
+  border-color: var(--color-acento);
+}
+
+.boton-secundario--compacto {
+  font-size: 0.75rem;
+}
+
+.chip {
+  border: 1px solid var(--color-borde);
+  border-radius: 9999px;
+  background: var(--color-lienzo);
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.chip:hover {
+  border-color: var(--color-acento);
+}
+
+.chip:disabled {
+  opacity: 0.4;
+}
+
+.chip-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+/* --- Ficha de vida --- */
+
+.ficha-vida {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ficha-vida__dato {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.ficha-vida__dato--vacio {
+  color: var(--color-muted);
+}
+
+.ficha-vida__ayuda {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.ficha-vida__resumen {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.625;
+  color: var(--color-muted);
+}
+
+.ficha-vida__etapas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ficha-vida__etapa {
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.ficha-vida__etapa--actual {
+  border: 1px solid rgb(52 211 153 / 0.4);
+  background: var(--color-lienzo);
+  color: var(--color-texto);
+}
+
+.progreso {
+  height: 0.375rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--color-lienzo);
+}
+
+.progreso--nodo {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.progreso__barra {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+/* --- Plagas --- */
+
+.campo-plagas__bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.campo-plagas__ayuda,
+.campo-plagas__vacio,
+.campo-plagas__sin-ficha {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.campo-plagas__vacio {
+  font-size: 0.75rem;
+}
+
+.campo-plagas__grupo {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-acento);
+}
+
+.ficha-plaga {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  background: var(--color-lienzo-80);
+  padding: 0.375rem 0.5rem;
+}
+
+.ficha-plaga__nombre {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.ficha-plaga__texto {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.625;
+  color: var(--color-muted);
+}
+
+.ficha-plaga__etiqueta {
+  color: var(--color-texto);
+}
+
+/* --- Resultados --- */
+
+.panel-resultados {
+  max-height: 11rem;
+  overflow-y: auto;
+  border-top: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+}
+
+.panel-resultados__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.panel-resultados__titulo {
+  margin: 0;
+  font-weight: 600;
+}
+
+.panel-resultados__conteo {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.panel-resultados__aviso {
+  margin: 0;
+  color: var(--color-aviso);
+}
+
+.panel-resultados__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.panel-resultados__motor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.panel-resultados__motor-nombre {
+  margin: 0;
+  color: var(--color-acento);
+}
+
+.panel-resultados__grupo {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.panel-resultados__dato {
+  margin-right: 0.75rem;
+}
+
+.panel-resultados__valor {
+  color: var(--color-texto);
+}
+
+.panel-resultados__valor--nulo {
+  color: var(--color-aviso);
+}
+
+/* --- Barra de estado --- */
+
+.barra-estado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: 0.375rem 1rem;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+/* --- Orificios del tubo NFT --- */
+
+.orificio-etiqueta {
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.6);
+  color: var(--color-texto);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.orificio-etiqueta--filtrada {
+  opacity: 0.3;
+}
+
+/* --- Glifo --- */
+
+.glifo-cultivo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.glifo-cultivo__icono {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.glifo-cultivo--catalogo {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: var(--color-lienzo);
+}
+
+.glifo-cultivo--ficha {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 0.75rem;
+  background: var(--color-lienzo);
+}
+
+.glifo-cultivo--ficha .glifo-cultivo__icono {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.glifo-cultivo--nodo {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background: var(--color-panel);
+  box-shadow: var(--sombra-nodo);
+}
+
+.glifo-cultivo--nodo .glifo-cultivo__icono {
+  width: 2rem;
+  height: 2rem;
 }

@@ -1,4 +1,4 @@
-import { CATALOGO_CULTIVOS } from "@hidroponico/tipos-compartidos";
+import { CATALOGO_CULTIVOS, obtenerPlagaPorIdONombre } from "@hidroponico/tipos-compartidos";
 import GlifoCultivo from "../iconos/GlifoCultivo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
@@ -10,26 +10,29 @@ export default function PanelCultivo() {
     if (!q) {
       return true;
     }
-    return cultivo.nombre.toLowerCase().includes(q) || cultivo.id.includes(q);
+    if (cultivo.nombre.toLowerCase().includes(q) || cultivo.id.includes(q)) {
+      return true;
+    }
+    if (cultivo.proceso.resumen.toLowerCase().includes(q)) {
+      return true;
+    }
+    return cultivo.plagas_tipicas.some((id) => {
+      const plaga = obtenerPlagaPorIdONombre(id);
+      return plaga?.nombre.toLowerCase().includes(q) || id.includes(q);
+    });
   });
 
   const colocarCultivo = (tipoCultivo: string) => {
-    const cantidad = usarGrafoConstruccion.getState().nodos.length;
-    agregarNodo(tipoCultivo, {
-      x: 80 + (cantidad % 4) * 180,
-      y: 80 + Math.floor(cantidad / 4) * 140,
-    });
+    agregarNodo(tipoCultivo);
   };
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-3 border-r border-borde bg-panel p-3">
+    <aside className="panel-cultivo">
       <div>
-        <p className="text-xs font-semibold tracking-wide text-muted uppercase">
-          Cultivo
-        </p>
-        <p className="mt-1 text-xs text-muted">Arrastra o haz click para crear un nodo</p>
+        <p className="panel-cultivo__titulo">Cultivo</p>
+        <p className="panel-cultivo__ayuda">Arrastra un cultivo a un orificio del tubo</p>
       </div>
-      <div className="grid grid-cols-2 gap-2 overflow-y-auto">
+      <div className="panel-cultivo__rejilla">
         {cultivos.map((cultivo) => (
             <button
               key={cultivo.id}
@@ -43,10 +46,14 @@ export default function PanelCultivo() {
                 );
                 evento.dataTransfer.effectAllowed = "move";
               }}
-              className="flex flex-col items-center gap-1 rounded-xl border border-borde bg-lienzo/60 p-2 text-center hover:border-acento"
+              className="tarjeta-cultivo"
+              title={cultivo.proceso.resumen}
             >
               <GlifoCultivo tipoCultivo={cultivo.id} color={cultivo.color} />
-              <span className="text-[11px] font-medium">{cultivo.nombre}</span>
+              <span className="tarjeta-cultivo__nombre">{cultivo.nombre}</span>
+              <span className="tarjeta-cultivo__meta">
+                {cultivo.proceso.dias_cosecha} d · {cultivo.plagas_tipicas.length} plagas
+              </span>
             </button>
         ))}
       </div>

@@ -13,7 +13,7 @@ export default function BarraEstado() {
         : "solo canvas";
 
   return (
-    <footer className="flex items-center justify-between gap-4 border-t border-borde bg-panel px-4 py-1.5 text-xs text-muted">
+    <footer className="barra-estado">
       <span>{mensajeEstado}</span>
       <span>
         {nodos.length} nodos · {aristas.length} aristas · grafo de construcción · {etiquetaBd}

@@ -48,6 +48,32 @@ export {
   type NodoPersistido,
 } from "./grafo-persistido";
 
+export type { FamiliaCultivo, EtapaVida, EtapaProceso, ProcesoCultivo } from "./etapas-vida";
+export {
+  ETAPAS_VIDA,
+  ETIQUETAS_ETAPA_VIDA,
+  ETIQUETAS_FAMILIA,
+  construirProceso,
+  diasDeVida,
+  etapaSugeridaPorDias,
+  fechaInicioHoy,
+  parsearEtapaVida,
+  parsearFechaInicio,
+  progresoCosecha,
+} from "./etapas-vida";
+
+export type { DefinicionPlaga, IdPlagaCatalogo } from "./catalogo-plagas";
+export {
+  CATALOGO_PLAGAS,
+  obtenerPlagaPorIdONombre,
+} from "./catalogo-plagas";
+
+export {
+  fichasPlagasDeNodo,
+  resumenTrazabilidad,
+  type ResumenTrazabilidad,
+} from "./resumen-trazabilidad";
+
 export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES, UNIDAD_AGREGADO, UNIDAD_NODO, formatearMedida } from "./etiquetas-variables";
 export {
   esBorradorNumerico,

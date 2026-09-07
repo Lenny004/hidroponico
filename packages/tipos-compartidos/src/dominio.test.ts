@@ -14,6 +14,16 @@ import { grafoTieneCiclo } from "./grafo-dag";
 import { serializarGrafoConstruccion, validarGrafoPersistido } from "./grafo-persistido";
 import { conteoPorTipo } from "./conteo-por-tipo";
 import { normalizarPlagas, parsearNumeroONull } from "./parsear-valores";
+import {
+  construirProceso,
+  diasDeVida,
+  etapaSugeridaPorDias,
+  parsearEtapaVida,
+  parsearFechaInicio,
+  progresoCosecha,
+} from "./etapas-vida";
+import { obtenerPlagaPorIdONombre } from "./catalogo-plagas";
+import { resumenTrazabilidad } from "./resumen-trazabilidad";
 
 describe("aristaCreariaCiclo", () => {
   it("rechaza un bucle sobre el mismo nodo", () => {
@@ -67,6 +77,8 @@ describe("crearNodoDesdePlantilla", () => {
     expect(nodo?.variables.cantidad_sol).toBe(4);
     expect(nodo?.variables.oxigeno).toBe(6);
     expect(nodo?.plagas).toBeNull();
+    expect(nodo?.etapa_vida).toBeNull();
+    expect(nodo?.iniciado_en).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
   it("cubre los 10 cultivos con las 6 variables en número finito", () => {
@@ -75,6 +87,9 @@ describe("crearNodoDesdePlantilla", () => {
       for (const clave of CLAVES_VARIABLES_CULTIVO) {
         expect(Number.isFinite(cultivo.plantilla[clave])).toBe(true);
       }
+      expect(cultivo.proceso.dias_cosecha).toBeGreaterThan(0);
+      expect(cultivo.proceso.etapas.length).toBeGreaterThan(0);
+      expect(cultivo.plagas_tipicas.length).toBeGreaterThan(0);
     }
   });
 
@@ -319,6 +334,8 @@ describe("grafo persistido", () => {
     expect(grafo.nodos[0]?.variables.mineral_magnesio).toBe(3);
     expect(grafo.nodos[0]?.plagas).toEqual(["Pulgón"]);
     expect(grafo.nodos[0]?.solucion_plagas).toBeNull();
+    expect(grafo.nodos[0]?.etapa_vida).toBeNull();
+    expect(grafo.nodos[0]?.iniciado_en).toBeNull();
 
     expect(grafoTieneCiclo([{ origenId: "a", destinoId: "b" }])).toBe(false);
     expect(
@@ -335,3 +352,48 @@ describe("grafo persistido", () => {
     expect(invalido.ok).toBe(false);
   });
 });
+
+describe("trazabilidad de vida", () => {
+  it("cuenta días desde la fecha de alta y sugiere etapa", () => {
+    expect(parsearFechaInicio("2026-09-07")).toBe("2026-09-07");
+    expect(parsearFechaInicio("no-es-fecha")).toBeNull();
+    expect(parsearEtapaVida("vegetativo")).toBe("vegetativo");
+    expect(parsearEtapaVida("flor")).toBeNull();
+
+    const ahora = new Date(2026, 8, 17);
+    expect(diasDeVida("2026-09-07", ahora)).toBe(10);
+
+    const proceso = construirProceso("hoja", 35, "test");
+    expect(etapaSugeridaPorDias(proceso, 0)).toBe("germinacion");
+    expect(etapaSugeridaPorDias(proceso, 15)).toBe("vegetativo");
+    expect(etapaSugeridaPorDias(proceso, 40)).toBe("cosecha");
+    expect(progresoCosecha(proceso, 35)).toBe(1);
+  });
+
+  it("usa etapa del nodo si existe y si no la sugerida", () => {
+    const ahora = new Date(2026, 8, 21);
+    const conEtapa = resumenTrazabilidad(
+      { tipoCultivo: "lechuga", etapa_vida: "cosecha", iniciado_en: "2026-09-07" },
+      ahora,
+    );
+    expect(conEtapa.dias).toBe(14);
+    expect(conEtapa.etapa).toBe("cosecha");
+    expect(conEtapa.etapaSugerida).toBe("vegetativo");
+
+    const sinEtapa = resumenTrazabilidad(
+      { tipoCultivo: "tomate", etapa_vida: null, iniciado_en: "2026-09-07" },
+      ahora,
+    );
+    expect(sinEtapa.proceso?.familia).toBe("fruto");
+    expect(sinEtapa.etapa).toBe(sinEtapa.etapaSugerida);
+  });
+});
+
+describe("catálogo de plagas", () => {
+  it("resuelve por id o nombre y ignora desconocidas", () => {
+    expect(obtenerPlagaPorIdONombre("Pulgón")?.id).toBe("pulgon");
+    expect(obtenerPlagaPorIdONombre("mosca_blanca")?.nombre).toBe("Mosca blanca");
+    expect(obtenerPlagaPorIdONombre("alien")).toBeNull();
+  });
+});
+

@@ -1,6 +1,7 @@
 import { normalizarPlagas } from "./parsear-valores";
 import { grafoTieneCiclo, type AristaDirigida } from "./grafo-dag";
 import { obtenerCultivoPorId } from "./catalogo-cultivos";
+import { parsearEtapaVida, parsearFechaInicio } from "./etapas-vida";
 import {
   CLAVES_VARIABLES_CULTIVO,
   type NodoCultivo,
@@ -14,6 +15,8 @@ export interface NodoPersistido {
   plagas: string[] | null;
   solucion_plagas: string | null;
   comentarios: string | null;
+  etapa_vida: string | null;
+  iniciado_en: string | null;
   posicionX: number;
   posicionY: number;
 }
@@ -69,6 +72,8 @@ export function serializarGrafoConstruccion(
       plagas: normalizarPlagas(nodo.cultivo.plagas),
       solucion_plagas: textoONull(nodo.cultivo.solucion_plagas),
       comentarios: textoONull(nodo.cultivo.comentarios),
+      etapa_vida: parsearEtapaVida(nodo.cultivo.etapa_vida),
+      iniciado_en: parsearFechaInicio(nodo.cultivo.iniciado_en),
       posicionX: nodo.position.x,
       posicionY: nodo.position.y,
     })),
@@ -130,6 +135,8 @@ export function validarGrafoPersistido(crudo: unknown): GrafoValidado | ErrorVal
       plagas: normalizarPlagas(nodo.plagas as string[] | null | undefined),
       solucion_plagas: textoONull(nodo.solucion_plagas),
       comentarios: textoONull(nodo.comentarios),
+      etapa_vida: parsearEtapaVida(nodo.etapa_vida),
+      iniciado_en: parsearFechaInicio(nodo.iniciado_en),
       posicionX: Number.isFinite(nodo.posicionX) ? Number(nodo.posicionX) : 0,
       posicionY: Number.isFinite(nodo.posicionY) ? Number(nodo.posicionY) : 0,
     });

@@ -42,7 +42,7 @@ Copia `apps/backend/.env.example` a `apps/backend/.env`. Si Postgres no está, e
 
 ```
 hidroponico/
-├── apps/frontend/           # React + Vite + @xyflow/react + Zustand + Tailwind v4
+├── apps/frontend/           # React + Vite + @xyflow/react + Zustand + CSS BEM
 ├── apps/backend/            # Fastify + TREE.JS (bus) + Prisma schema
 ├── packages/motores/        # Interfaz Strategy + Registry (sin motores concretos)
 ├── packages/tipos-compartidos/

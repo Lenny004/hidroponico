@@ -39,6 +39,10 @@ export interface NodoCultivo {
   plagas?: string[] | null;
   solucion_plagas?: string | null;
   comentarios?: string | null;
+  /** Etapa actual. `null` = usar la sugerida por días de vida. */
+  etapa_vida?: string | null;
+  /** Alta en el sistema, `YYYY-MM-DD`. `null` si no hay trazabilidad. */
+  iniciado_en?: string | null;
 }
 
 export interface AristaCultivo {

@@ -3,6 +3,12 @@ import {
   type ClaveVariableCultivo,
   type VariablesCultivo,
 } from "./nodo-cultivo";
+import {
+  construirProceso,
+  type FamiliaCultivo,
+  type ProcesoCultivo,
+} from "./etapas-vida";
+import type { IdPlagaCatalogo } from "./catalogo-plagas";
 
 /**
  * Concentración (mg/L) y litros de tanque que propone el catálogo.
@@ -18,6 +24,9 @@ export interface DefinicionCultivo {
   nombre: string;
   color: string;
   plantilla: VariablesPlantilla;
+  familia: FamiliaCultivo;
+  proceso: ProcesoCultivo;
+  plagas_tipicas: readonly IdPlagaCatalogo[];
 }
 
 function plantillaNutritiva(valores: {
@@ -72,19 +81,139 @@ const FRUTO = plantillaNutritiva({
 });
 
 /**
- * Catálogo MVP: color distintivo y plantilla en unidades de solución nutritiva.
+ * Catálogo MVP: color, receta, ciclo de vida informativo y plagas frecuentes.
  */
 export const CATALOGO_CULTIVOS = [
-  { id: "lechuga", nombre: "Lechuga", color: "#7CB342", plantilla: HOJA },
-  { id: "tomate", nombre: "Tomate", color: "#E53935", plantilla: FRUTO },
-  { id: "albahaca", nombre: "Albahaca", color: "#43A047", plantilla: AROMA },
-  { id: "espinaca", nombre: "Espinaca", color: "#2E7D32", plantilla: HOJA },
-  { id: "fresa", nombre: "Fresa", color: "#EC407A", plantilla: FRUTO },
-  { id: "apio", nombre: "Apio", color: "#9CCC65", plantilla: AROMA },
-  { id: "acelga", nombre: "Acelga", color: "#C0CA33", plantilla: HOJA },
-  { id: "pepino", nombre: "Pepino", color: "#66BB6A", plantilla: FRUTO },
-  { id: "menta", nombre: "Menta", color: "#26A69A", plantilla: AROMA },
-  { id: "rucula", nombre: "Rúcula", color: "#558B2F", plantilla: HOJA },
+  {
+    id: "lechuga",
+    nombre: "Lechuga",
+    color: "#7CB342",
+    plantilla: HOJA,
+    familia: "hoja",
+    proceso: construirProceso(
+      "hoja",
+      35,
+      "Siembra en cubo, transplante al canal NFT y corte de cabeza o hojas. Evitar sombra entre plantas.",
+    ),
+    plagas_tipicas: ["pulgon", "mildiu", "mosca_del_suelo"],
+  },
+  {
+    id: "tomate",
+    nombre: "Tomate",
+    color: "#E53935",
+    plantilla: FRUTO,
+    familia: "fruto",
+    proceso: construirProceso(
+      "fruto",
+      80,
+      "Tutorado, desbrote y polinización en floración. Receta de fruto (más K y Fe) hasta cosecha continua.",
+    ),
+    plagas_tipicas: ["mosca_blanca", "arana_roja", "minador", "oidio"],
+  },
+  {
+    id: "albahaca",
+    nombre: "Albahaca",
+    color: "#43A047",
+    plantilla: AROMA,
+    familia: "aroma",
+    proceso: construirProceso(
+      "aroma",
+      32,
+      "Poda de brotes apicales para ramificar. Cosecha de hojas; no dejar florar si se busca aroma.",
+    ),
+    plagas_tipicas: ["pulgon", "trips"],
+  },
+  {
+    id: "espinaca",
+    nombre: "Espinaca",
+    color: "#2E7D32",
+    plantilla: HOJA,
+    familia: "hoja",
+    proceso: construirProceso(
+      "hoja",
+      38,
+      "Prefiere solución más fresca y sombra parcial. Cosecha de hojas o planta entera antes de espigar.",
+    ),
+    plagas_tipicas: ["pulgon", "mildiu"],
+  },
+  {
+    id: "fresa",
+    nombre: "Fresa",
+    color: "#EC407A",
+    plantilla: FRUTO,
+    familia: "fruto",
+    proceso: construirProceso(
+      "fruto",
+      90,
+      "Estolones a canal o maceta NFT. Floración y cuaje; retirar frutos dañados para no atraer plagas.",
+    ),
+    plagas_tipicas: ["arana_roja", "trips", "oidio"],
+  },
+  {
+    id: "apio",
+    nombre: "Apio",
+    color: "#9CCC65",
+    plantilla: AROMA,
+    familia: "aroma",
+    proceso: construirProceso(
+      "aroma",
+      85,
+      "Ciclo largo de pencas. Mantener solución constante; cosecha de tallos externos o planta completa.",
+    ),
+    plagas_tipicas: ["pulgon", "minador"],
+  },
+  {
+    id: "acelga",
+    nombre: "Acelga",
+    color: "#C0CA33",
+    plantilla: HOJA,
+    familia: "hoja",
+    proceso: construirProceso(
+      "hoja",
+      50,
+      "Cosecha escalonada de hojas externas. Tolera bien NFT; no dejar el canal seco entre riegos.",
+    ),
+    plagas_tipicas: ["pulgon", "mosca_blanca"],
+  },
+  {
+    id: "pepino",
+    nombre: "Pepino",
+    color: "#66BB6A",
+    plantilla: FRUTO,
+    familia: "fruto",
+    proceso: construirProceso(
+      "fruto",
+      60,
+      "Tutor vertical y raleo de frutos. Alta demanda de K en cuaje; vigilar oídio en hoja.",
+    ),
+    plagas_tipicas: ["mosca_blanca", "oidio", "arana_roja"],
+  },
+  {
+    id: "menta",
+    nombre: "Menta",
+    color: "#26A69A",
+    plantilla: AROMA,
+    familia: "aroma",
+    proceso: construirProceso(
+      "aroma",
+      40,
+      "Crecimiento agresivo; recortar para densificar. Cosecha continua de tallos aromáticos.",
+    ),
+    plagas_tipicas: ["pulgon", "arana_roja"],
+  },
+  {
+    id: "rucula",
+    nombre: "Rúcula",
+    color: "#558B2F",
+    plantilla: HOJA,
+    familia: "hoja",
+    proceso: construirProceso(
+      "hoja",
+      25,
+      "Ciclo corto. Cortar hojas jóvenes; si espiga, el sabor se vuelve picante y amargo.",
+    ),
+    plagas_tipicas: ["pulgon", "mosca_del_suelo"],
+  },
 ] as const satisfies readonly DefinicionCultivo[];
 
 export type IdCultivoCatalogo = (typeof CATALOGO_CULTIVOS)[number]["id"];

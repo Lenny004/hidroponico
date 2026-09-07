@@ -1,13 +1,16 @@
 import { useEffect, useState, type FormEvent, type KeyboardEvent } from "react";
 import {
   CATALOGO_CULTIVOS,
+  CATALOGO_PLAGAS,
   ETIQUETAS_VARIABLES,
   GRUPOS_VARIABLES,
   UNIDAD_AGREGADO,
   UNIDAD_NODO,
   obtenerCultivoPorId,
+  obtenerPlagaPorIdONombre,
 } from "@hidroponico/tipos-compartidos";
 import CampoNumerico from "./CampoNumerico";
+import FichaVidaCultivo from "./FichaVidaCultivo";
 import { resumenGrupoDeNodo } from "../api/resumen-grupo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
@@ -18,6 +21,7 @@ export default function PanelSeleccion() {
   const actualizarVariable = usarGrafoConstruccion((estado) => estado.actualizarVariable);
   const actualizarTextoNodo = usarGrafoConstruccion((estado) => estado.actualizarTextoNodo);
   const actualizarPlagas = usarGrafoConstruccion((estado) => estado.actualizarPlagas);
+  const actualizarTrazabilidad = usarGrafoConstruccion((estado) => estado.actualizarTrazabilidad);
   const resultadoPipeline = usarGrafoConstruccion((estado) => estado.resultadoPipeline);
 
   const nodo = nodos.find((item) => item.id === idSeleccionado);
@@ -28,30 +32,28 @@ export default function PanelSeleccion() {
     : null;
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col gap-3 overflow-y-auto border-l border-borde bg-panel p-3">
-      <p className="text-xs font-semibold tracking-wide text-muted uppercase">
-        Detalle
-      </p>
+    <aside className="panel-detalle">
+      <p className="panel-detalle__titulo">Detalle</p>
       {!nodo || !cultivo || !nombre ? (
-        <p className="text-sm text-muted">
-          Haz click en un nodo para ver y editar su ficha.
+        <p className="panel-detalle__vacio">
+          Haz click en un cultivo del tubo para ver y editar su ficha.
         </p>
       ) : (
         <form
-          className="flex flex-col gap-4"
+          className="panel-detalle__formulario"
           onSubmit={(evento) => evento.preventDefault()}
         >
           <div>
-            <p className="text-lg font-semibold">{nombre}</p>
-            <p className="break-all text-[11px] text-muted">{nodo.id}</p>
+            <p className="panel-detalle__nombre">{nombre}</p>
+            <p className="panel-detalle__id">{nodo.id}</p>
           </div>
 
-          <label className="flex flex-col gap-1 text-xs">
+          <label className="campo">
             <span>Tipo de cultivo</span>
             <select
               value={cultivo.tipoCultivo}
               onChange={(evento) => actualizarTipoCultivo(nodo.id, evento.target.value)}
-              className="rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none focus:border-acento"
+              className="campo__control"
             >
               {CATALOGO_CULTIVOS.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -61,16 +63,24 @@ export default function PanelSeleccion() {
             </select>
           </label>
 
-          <p className="text-[11px] text-muted">
+          <FichaVidaCultivo
+            cultivo={cultivo}
+            onCambiarEtapa={(etapa) =>
+              actualizarTrazabilidad(nodo.id, "etapa_vida", etapa)
+            }
+            onCambiarInicio={(fecha) =>
+              actualizarTrazabilidad(nodo.id, "iniciado_en", fecha)
+            }
+          />
+
+          <p className="panel-detalle__nota">
             Minerales y O₂ en mg/L (ppm). Solución en litros. El grupo dosifica mg =
             concentración × litros. Vacío = null.
           </p>
 
           {GRUPOS_VARIABLES.map((grupo) => (
-            <fieldset key={grupo.titulo} className="flex flex-col gap-2">
-              <legend className="text-xs font-semibold tracking-wide text-muted uppercase">
-                {grupo.titulo}
-              </legend>
+            <fieldset key={grupo.titulo} className="grupo-campos">
+              <legend className="grupo-campos__titulo">{grupo.titulo}</legend>
               {grupo.claves.map((clave) => (
                 <CampoNumerico
                   key={`${nodo.id}-${clave}`}
@@ -89,13 +99,18 @@ export default function PanelSeleccion() {
 
           <CampoPlagas
             idNodo={nodo.id}
+            tipoCultivo={cultivo.tipoCultivo}
             plagas={cultivo.plagas ?? null}
+            solucionActual={cultivo.solucion_plagas ?? null}
             onCambiar={(plagas) => actualizarPlagas(nodo.id, plagas)}
+            onSolucion={(texto) =>
+              actualizarTextoNodo(nodo.id, "solucion_plagas", texto)
+            }
             plagasGrupo={resumenGrupo?.plagas}
             solucionGrupo={resumenGrupo?.solucion_plagas}
           />
 
-          <label className="flex flex-col gap-1 text-xs">
+          <label className="campo">
             <span>solucion_plagas</span>
             <textarea
               rows={2}
@@ -104,11 +119,11 @@ export default function PanelSeleccion() {
               onChange={(evento) =>
                 actualizarTextoNodo(nodo.id, "solucion_plagas", evento.target.value)
               }
-              className="resize-y rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
+              className="campo__control campo__control--area"
             />
           </label>
 
-          <label className="flex flex-col gap-1 text-xs">
+          <label className="campo">
             <span>comentarios</span>
             <textarea
               rows={3}
@@ -117,7 +132,7 @@ export default function PanelSeleccion() {
               onChange={(evento) =>
                 actualizarTextoNodo(nodo.id, "comentarios", evento.target.value)
               }
-              className="resize-y rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
+              className="campo__control campo__control--area"
             />
           </label>
         </form>
@@ -128,49 +143,90 @@ export default function PanelSeleccion() {
 
 function CampoPlagas({
   idNodo,
+  tipoCultivo,
   plagas,
+  solucionActual,
   onCambiar,
+  onSolucion,
   plagasGrupo,
   solucionGrupo,
 }: {
   idNodo: string;
+  tipoCultivo: string;
   plagas: string[] | null;
+  solucionActual: string | null;
   onCambiar: (plagas: string[] | null) => void;
+  onSolucion: (texto: string | null) => void;
   plagasGrupo?: string[] | null;
   solucionGrupo?: string[] | null;
 }) {
   const [alta, setAlta] = useState("");
   const actuales = plagas ?? [];
+  const definicion = obtenerCultivoPorId(tipoCultivo);
+  const tipicas = (definicion?.plagas_tipicas ?? [])
+    .map((id) => obtenerPlagaPorIdONombre(id))
+    .filter((item): item is NonNullable<typeof item> => item != null);
 
   useEffect(() => {
     setAlta("");
   }, [idNodo]);
 
-  const agregar = (evento?: FormEvent | KeyboardEvent) => {
-    evento?.preventDefault();
-    const nombre = alta.trim();
-    if (!nombre) {
+  const registrar = (nombre: string) => {
+    const limpio = nombre.trim();
+    if (!limpio) {
       return;
     }
-    onCambiar([...actuales, nombre]);
+    const catalogo = obtenerPlagaPorIdONombre(limpio);
+    const etiqueta = catalogo?.nombre ?? limpio;
+    onCambiar([...actuales, etiqueta]);
+    if (!solucionActual && catalogo) {
+      onSolucion(catalogo.solucion_plagas);
+    }
+  };
+
+  const agregar = (evento?: FormEvent | KeyboardEvent) => {
+    evento?.preventDefault();
+    registrar(alta);
     setAlta("");
   };
 
   return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="text-xs font-semibold tracking-wide text-muted uppercase">
-        Plagas
-      </legend>
-      <div className="flex flex-wrap gap-1">
+    <fieldset className="grupo-campos">
+      <legend className="grupo-campos__titulo">Plagas</legend>
+      {tipicas.length > 0 ? (
+        <div className="campo-plagas__bloque">
+          <p className="campo-plagas__ayuda">Frecuentes en este cultivo</p>
+          <div className="chip-lista">
+            {tipicas.map((plaga) => {
+              const yaEsta = actuales.some(
+                (item) => item.toLowerCase() === plaga.nombre.toLowerCase(),
+              );
+              return (
+                <button
+                  key={plaga.id}
+                  type="button"
+                  disabled={yaEsta}
+                  title={plaga.descripcion}
+                  onClick={() => registrar(plaga.nombre)}
+                  className="chip"
+                >
+                  + {plaga.nombre}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+      <div className="chip-lista">
         {actuales.length === 0 ? (
-          <span className="text-xs text-muted">Ninguna (null)</span>
+          <span className="campo-plagas__vacio">Ninguna (null)</span>
         ) : (
           actuales.map((plaga) => (
             <button
               key={plaga}
               type="button"
               onClick={() => onCambiar(actuales.filter((item) => item !== plaga))}
-              className="rounded-full border border-borde bg-lienzo px-2 py-0.5 text-xs hover:border-acento"
+              className="chip"
               title="Quitar plaga"
             >
               {plaga} ×
@@ -178,9 +234,33 @@ function CampoPlagas({
           ))
         )}
       </div>
-      <div className="flex gap-1">
+      {actuales.map((nombre) => {
+        const ficha = obtenerPlagaPorIdONombre(nombre);
+        if (!ficha) {
+          return (
+            <p key={nombre} className="campo-plagas__sin-ficha">
+              {nombre}: sin ficha de catálogo (queda como texto libre).
+            </p>
+          );
+        }
+        return (
+          <article key={ficha.id} className="ficha-plaga">
+            <p className="ficha-plaga__nombre">{ficha.nombre}</p>
+            <p className="ficha-plaga__texto">{ficha.descripcion}</p>
+            <p className="ficha-plaga__texto">
+              <span className="ficha-plaga__etiqueta">Síntomas:</span> {ficha.sintomas}
+            </p>
+            <p className="ficha-plaga__texto">
+              <span className="ficha-plaga__etiqueta">solucion_plagas:</span>{" "}
+              {ficha.solucion_plagas}
+            </p>
+          </article>
+        );
+      })}
+      <div className="campo__fila">
         <input
           value={alta}
+          list={`plagas-catalogo-${idNodo}`}
           placeholder="Añadir plaga"
           onChange={(evento) => setAlta(evento.target.value)}
           onKeyDown={(evento) => {
@@ -188,18 +268,19 @@ function CampoPlagas({
               agregar(evento);
             }
           }}
-          className="min-w-0 flex-1 rounded-lg border border-borde bg-lienzo px-2 py-1.5 text-sm outline-none placeholder:text-muted/50 focus:border-acento"
+          className="campo__control"
         />
-        <button
-          type="button"
-          onClick={() => agregar()}
-          className="rounded-lg border border-borde px-2 text-sm hover:border-acento"
-        >
+        <datalist id={`plagas-catalogo-${idNodo}`}>
+          {CATALOGO_PLAGAS.map((plaga) => (
+            <option key={plaga.id} value={plaga.nombre} />
+          ))}
+        </datalist>
+        <button type="button" onClick={() => agregar()} className="boton-secundario">
           Añadir
         </button>
       </div>
       {plagasGrupo !== undefined || solucionGrupo !== undefined ? (
-        <p className="text-[11px] text-acento">
+        <p className="campo-plagas__grupo">
           Grupo: {plagasGrupo == null ? "plagas null" : plagasGrupo.join(", ") || "plagas null"}
           {" · "}
           {solucionGrupo == null

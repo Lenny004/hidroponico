@@ -17,6 +17,8 @@ model Nodo {
   plagas           Json?
   solucion_plagas  String?
   comentarios      String?
+  etapa_vida       String?
+  iniciado_en      String?
   posicionX        Float?
   posicionY        Float?
   creadoEn         DateTime @default(now())

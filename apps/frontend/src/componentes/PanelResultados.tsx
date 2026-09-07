@@ -28,36 +28,42 @@ export default function PanelResultados() {
   }
 
   return (
-    <section className="max-h-44 overflow-y-auto border-t border-borde bg-panel px-4 py-2 text-xs">
-      <div className="mb-2 flex flex-wrap items-center gap-3">
-        <p className="font-semibold">Resultado TREE.JS</p>
-        <p className="text-muted">
+    <section className="panel-resultados">
+      <div className="panel-resultados__cabecera">
+        <p className="panel-resultados__titulo">Resultado TREE.JS</p>
+        <p className="panel-resultados__conteo">
           Conteo:{" "}
           {Object.entries(resultado.conteoPorTipo)
             .map(([tipo, n]) => `${tipo} × ${n}`)
             .join(" · ") || "sin nodos"}
         </p>
         {resultado.advertencias.length > 0 ? (
-          <p className="text-amber-300">
+          <p className="panel-resultados__aviso">
             {resultado.advertencias.length} advertencia(s) · el pipeline no se bloqueó
           </p>
         ) : null}
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="panel-resultados__lista">
         {resultado.motores.map((motor) => (
-          <div key={motor.nombre} className="flex flex-col gap-1">
-            <p className="text-acento">{motor.nombre}</p>
+          <div key={motor.nombre} className="panel-resultados__motor">
+            <p className="panel-resultados__motor-nombre">{motor.nombre}</p>
             {motor.grupos.map((grupo, indice) => {
               const ids = grupo.datos.idsNodos?.join(", ") ?? `grupo ${indice + 1}`;
               const totales = grupo.datos.totales ?? {};
               const tienePlagas = "plagas" in grupo.datos || "solucion_plagas" in grupo.datos;
               return (
-                <p key={ids} className="text-muted">
+                <p key={ids} className="panel-resultados__grupo">
                   [{ids}]{" "}
                   {Object.entries(totales).map(([clave, total]) => (
-                    <span key={clave} className="mr-3">
+                    <span key={clave} className="panel-resultados__dato">
                       {etiquetaDe(clave as ClaveVariableCultivo)}:{" "}
-                      <span className={total == null ? "text-amber-300" : "text-texto"}>
+                      <span
+                        className={
+                          total == null
+                            ? "panel-resultados__valor panel-resultados__valor--nulo"
+                            : "panel-resultados__valor"
+                        }
+                      >
                         {total == null
                           ? "null"
                           : formatearMedida(total, unidadDe(clave))}
@@ -66,23 +72,25 @@ export default function PanelResultados() {
                   ))}
                   {tienePlagas ? (
                     <>
-                      <span className="mr-3">
+                      <span className="panel-resultados__dato">
                         plagas:{" "}
                         <span
                           className={
-                            grupo.datos.plagas == null ? "text-amber-300" : "text-texto"
+                            grupo.datos.plagas == null
+                              ? "panel-resultados__valor panel-resultados__valor--nulo"
+                              : "panel-resultados__valor"
                           }
                         >
                           {textoLista(grupo.datos.plagas)}
                         </span>{" "}
                       </span>
-                      <span className="mr-3">
+                      <span className="panel-resultados__dato">
                         solucion_plagas:{" "}
                         <span
                           className={
                             grupo.datos.solucion_plagas == null
-                              ? "text-amber-300"
-                              : "text-texto"
+                              ? "panel-resultados__valor panel-resultados__valor--nulo"
+                              : "panel-resultados__valor"
                           }
                         >
                           {textoLista(grupo.datos.solucion_plagas)}

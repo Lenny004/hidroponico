@@ -15,11 +15,18 @@ import {
   idsComponenteConexa,
   normalizarPlagas,
   obtenerCultivoPorId,
+  parsearEtapaVida,
+  parsearFechaInicio,
   type ClaveVariableCultivo,
   type GrafoPersistido,
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
 import { solicitarPipeline, type ResultadoPipelineApi } from "../api/pipeline";
+import {
+  CANTIDAD_ORIFICIOS,
+  indiceOrificioDePosicion,
+  primerOrificioLibre,
+} from "../componentes/three/orificios-nft";
 
 export type DatosNodoCultivo = {
   cultivo: NodoCultivo;
@@ -41,7 +48,8 @@ type EstadoGrafoConstruccion = {
   onNodosChange: (cambios: NodeChange<NodoFlujo>[]) => void;
   onAristasChange: (cambios: EdgeChange<Edge>[]) => void;
   conectar: (conexion: Connection) => boolean;
-  agregarNodo: (tipoCultivo: string, posicion: { x: number; y: number }) => void;
+  agregarNodo: (tipoCultivo: string, orificio?: number) => void;
+  quitarNodo: (id: string) => void;
   seleccionar: (id: string | null) => void;
   actualizarTipoCultivo: (id: string, tipoCultivo: string) => void;
   actualizarVariable: (id: string, clave: ClaveVariableCultivo, valor: number | null) => void;
@@ -51,6 +59,11 @@ type EstadoGrafoConstruccion = {
     valor: string | null,
   ) => void;
   actualizarPlagas: (id: string, plagas: string[] | null) => void;
+  actualizarTrazabilidad: (
+    id: string,
+    campo: "etapa_vida" | "iniciado_en",
+    valor: string | null,
+  ) => void;
   resultadoPipeline: ResultadoPipelineApi | null;
   ejecutandoPipeline: boolean;
   estadoPersistencia: EstadoPersistencia;
@@ -66,6 +79,45 @@ function aristasDirigidas(aristas: Edge[]) {
     origenId: arista.source,
     destinoId: arista.target,
   }));
+}
+
+function orificiosOcupados(nodos: NodoFlujo[]): Set<number> {
+  const ocupados = new Set<number>();
+  for (const nodo of nodos) {
+    const indice = indiceOrificioDePosicion(nodo.position.x);
+    if (indice != null) {
+      ocupados.add(indice);
+    }
+  }
+  return ocupados;
+}
+
+function aristasEnCadena(nodos: NodoFlujo[]): Edge[] {
+  const ordenados = [...nodos].sort((a, b) => a.position.x - b.position.x);
+  const aristas: Edge[] = [];
+  for (let i = 0; i < ordenados.length - 1; i += 1) {
+    const origen = ordenados[i];
+    const destino = ordenados[i + 1];
+    aristas.push({
+      id: `arista-${origen.id}-${destino.id}`,
+      source: origen.id,
+      target: destino.id,
+    });
+  }
+  return aristas;
+}
+
+function asignarOrificios(nodos: NodoFlujo[]): NodoFlujo[] {
+  const usados = new Set<number>();
+  return nodos.map((nodo, orden) => {
+    const actual = indiceOrificioDePosicion(nodo.position.x);
+    let indice = actual != null && !usados.has(actual) ? actual : primerOrificioLibre(usados);
+    if (indice == null) {
+      indice = orden % CANTIDAD_ORIFICIOS;
+    }
+    usados.add(indice);
+    return { ...nodo, position: { x: indice, y: 0 } };
+  });
 }
 
 function grupoDesde(nodos: NodoFlujo[], aristas: Edge[], id: string | null): string[] {
@@ -85,7 +137,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   idsGrupo: [],
   busquedaCatalogo: "",
   filtroLienzo: "",
-  mensajeEstado: "Arrastra un cultivo al lienzo para empezar.",
+  mensajeEstado: "Arrastra un cultivo a un orificio del tubo NFT.",
   resultadoPipeline: null,
   ejecutandoPipeline: false,
   estadoPersistencia: "local",
@@ -156,7 +208,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
     return true;
   },
 
-  agregarNodo: (tipoCultivo, posicion) => {
+  agregarNodo: (tipoCultivo, orificio) => {
     const id = crypto.randomUUID();
     const cultivo = crearNodoDesdePlantilla(tipoCultivo, id);
     const definicion = obtenerCultivoPorId(tipoCultivo);
@@ -165,17 +217,48 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       return;
     }
 
+    const ocupados = orificiosOcupados(get().nodos);
+    const hueco = orificio ?? primerOrificioLibre(ocupados);
+    if (hueco == null) {
+      set({ mensajeEstado: `El tubo NFT está lleno (${CANTIDAD_ORIFICIOS} orificios).` });
+      return;
+    }
+    if (ocupados.has(hueco)) {
+      set({ mensajeEstado: "Ese orificio ya tiene un cultivo." });
+      return;
+    }
+
     const nodo: NodoFlujo = {
       id,
       type: "cultivo",
-      position: posicion,
+      position: { x: hueco, y: 0 },
       data: { cultivo, color: definicion.color },
     };
 
-    set((estado) => ({
-      nodos: [...estado.nodos, nodo],
-      mensajeEstado: `Nodo de ${definicion.nombre} creado.`,
-    }));
+    set((estado) => {
+      const nodos = [...estado.nodos, nodo];
+      const aristas = aristasEnCadena(nodos);
+      return {
+        nodos,
+        aristas,
+        mensajeEstado: `${definicion.nombre} colocado en el orificio ${hueco + 1}.`,
+      };
+    });
+  },
+
+  quitarNodo: (id) => {
+    set((estado) => {
+      const nodos = estado.nodos.filter((nodo) => nodo.id !== id);
+      const aristas = aristasEnCadena(nodos);
+      const seleccionado = estado.idSeleccionado === id ? null : estado.idSeleccionado;
+      return {
+        nodos,
+        aristas,
+        idSeleccionado: seleccionado,
+        idsGrupo: grupoDesde(nodos, aristas, seleccionado),
+        mensajeEstado: "Cultivo retirado del orificio.",
+      };
+    });
   },
 
   seleccionar: (id) => {
@@ -273,6 +356,32 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
     }));
   },
 
+  actualizarTrazabilidad: (id, campo, valor) => {
+    const limpio =
+      campo === "etapa_vida" ? parsearEtapaVida(valor) : parsearFechaInicio(valor);
+    set((estado) => ({
+      nodos: estado.nodos.map((nodo) =>
+        nodo.id === id
+          ? {
+              ...nodo,
+              data: {
+                ...nodo.data,
+                cultivo: { ...nodo.data.cultivo, [campo]: limpio },
+              },
+            }
+          : nodo,
+      ),
+      mensajeEstado:
+        campo === "etapa_vida"
+          ? limpio
+            ? `Etapa de vida: ${limpio}.`
+            : "Etapa de vida: automática según días."
+          : limpio
+            ? `Inicio de vida: ${limpio}.`
+            : "Sin fecha de inicio.",
+    }));
+  },
+
   ejecutarPipeline: async (nombreMotor, opciones) => {
     const { nodos, aristas } = get();
     if (nodos.length === 0) {
@@ -323,13 +432,13 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   setEstadoPersistencia: (estadoPersistencia) => set({ estadoPersistencia }),
 
   hidratarGrafo: (grafo) => {
-    const nodos: NodoFlujo[] = [];
+    const sinAsignar: NodoFlujo[] = [];
     for (const nodo of grafo.nodos) {
       const definicion = obtenerCultivoPorId(nodo.tipoCultivo);
       if (!definicion) {
         continue;
       }
-      nodos.push({
+      sinAsignar.push({
         id: nodo.id,
         type: "cultivo",
         position: { x: nodo.posicionX, y: nodo.posicionY },
@@ -342,24 +451,20 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
             plagas: nodo.plagas,
             solucion_plagas: nodo.solucion_plagas,
             comentarios: nodo.comentarios,
+            etapa_vida: nodo.etapa_vida,
+            iniciado_en: nodo.iniciado_en,
           },
         },
       });
     }
-    const ids = new Set(nodos.map((nodo) => nodo.id));
-    const aristas: Edge[] = grafo.aristas
-      .filter((arista) => ids.has(arista.origenId) && ids.has(arista.destinoId))
-      .map((arista) => ({
-        id: arista.id,
-        source: arista.origenId,
-        target: arista.destinoId,
-      }));
+    const nodos = asignarOrificios(sinAsignar).slice(0, CANTIDAD_ORIFICIOS);
+    const aristas = aristasEnCadena(nodos);
     set({
       nodos,
       aristas,
       idSeleccionado: null,
       idsGrupo: [],
-      mensajeEstado: `Grafo persistido cargado (${nodos.length} nodos).`,
+      mensajeEstado: `Grafo persistido cargado (${nodos.length} cultivos en el tubo).`,
     });
   },
 }));

@@ -7,21 +7,16 @@ export default function GlifoCultivo({
 }: {
   tipoCultivo: string;
   color: string;
-  tamano?: "catalogo" | "nodo";
+  tamano?: "catalogo" | "nodo" | "ficha";
 }) {
   const Icono = iconoDeCultivo(tipoCultivo);
-  const esNodo = tamano === "nodo";
   return (
     <span
-      className={
-        esNodo
-          ? "flex size-16 items-center justify-center rounded-2xl border-2 bg-panel shadow-lg"
-          : "flex size-10 items-center justify-center rounded-xl border-2 bg-lienzo"
-      }
+      className={`glifo-cultivo glifo-cultivo--${tamano}`}
       style={{ borderColor: color, color }}
       aria-hidden
     >
-      <Icono className={esNodo ? "size-8" : "size-5"} strokeWidth={2} />
+      <Icono className="glifo-cultivo__icono" strokeWidth={2} />
     </span>
   );
 }
