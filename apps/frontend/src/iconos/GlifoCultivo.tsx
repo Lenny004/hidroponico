@@ -7,7 +7,7 @@ export default function GlifoCultivo({
 }: {
   tipoCultivo: string;
   color: string;
-  tamano?: "catalogo" | "nodo" | "ficha";
+  tamano?: "catalogo" | "nodo" | "ficha" | "lista";
 }) {
   const Icono = iconoDeCultivo(tipoCultivo);
   return (

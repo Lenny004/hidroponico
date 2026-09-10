@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { Bug, Droplets, FlaskConical, Play } from "lucide-react";
+import { Bug, Droplets, FlaskConical, Moon, Play, Sun } from "lucide-react";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
+import { usarTema } from "../store/usarTema";
 
 function BotonPlay({
   etiqueta,
@@ -36,6 +37,10 @@ export default function BarraSuperior() {
   const setBusquedaCatalogo = usarGrafoConstruccion((estado) => estado.setBusquedaCatalogo);
   const setFiltroLienzo = usarGrafoConstruccion((estado) => estado.setFiltroLienzo);
   const ejecutarPipeline = usarGrafoConstruccion((estado) => estado.ejecutarPipeline);
+  const tema = usarTema((estado) => estado.tema);
+  const alternarTema = usarTema((estado) => estado.alternarTema);
+  const etiquetaTema = tema === "oscuro" ? "Cambiar a modo claro" : "Cambiar a modo oscuro";
+  const IconoTema = tema === "oscuro" ? Sun : Moon;
 
   return (
     <header className="barra-superior">
@@ -55,45 +60,58 @@ export default function BarraSuperior() {
         placeholder="Filtrar lienzo"
         className="barra-superior__campo"
       />
-      <div className="barra-superior__plays">
-        <div className="barra-superior__play">
-          <BotonPlay
-            etiqueta="Minerales"
-            icono={FlaskConical}
-            deshabilitado={ejecutandoPipeline}
-            onClick={() => void ejecutarPipeline("minerales")}
-          />
-          <span className="barra-superior__play-etiqueta">Minerales</span>
-        </div>
-        <div className="barra-superior__play">
-          <BotonPlay
-            etiqueta="Oxígeno"
-            icono={Droplets}
-            deshabilitado={ejecutandoPipeline}
-            onClick={() => void ejecutarPipeline("oxigeno")}
-          />
-          <span className="barra-superior__play-etiqueta">Oxígeno</span>
-        </div>
-        <div className="barra-superior__play">
-          <BotonPlay
-            etiqueta="Pipeline"
-            icono={Play}
-            destacado
-            deshabilitado={ejecutandoPipeline}
-            onClick={() => void ejecutarPipeline()}
-          />
-          <span className="barra-superior__play-etiqueta barra-superior__play-etiqueta--acento">
-            Pipeline
-          </span>
-        </div>
-        <div className="barra-superior__play">
-          <BotonPlay
-            etiqueta="Plagas"
-            icono={Bug}
-            deshabilitado={ejecutandoPipeline}
-            onClick={() => void ejecutarPipeline("plagas")}
-          />
-          <span className="barra-superior__play-etiqueta">Plagas</span>
+      <div className="barra-superior__acciones">
+        <button
+          type="button"
+          className="boton-tema"
+          title={etiquetaTema}
+          aria-label={etiquetaTema}
+          role="switch"
+          aria-checked={tema === "oscuro"}
+          onClick={alternarTema}
+        >
+          <IconoTema className="boton-tema__icono" strokeWidth={2.25} />
+        </button>
+        <div className="barra-superior__plays">
+          <div className="barra-superior__play">
+            <BotonPlay
+              etiqueta="Minerales"
+              icono={FlaskConical}
+              deshabilitado={ejecutandoPipeline}
+              onClick={() => void ejecutarPipeline("minerales")}
+            />
+            <span className="barra-superior__play-etiqueta">Minerales</span>
+          </div>
+          <div className="barra-superior__play">
+            <BotonPlay
+              etiqueta="Oxígeno"
+              icono={Droplets}
+              deshabilitado={ejecutandoPipeline}
+              onClick={() => void ejecutarPipeline("oxigeno")}
+            />
+            <span className="barra-superior__play-etiqueta">Oxígeno</span>
+          </div>
+          <div className="barra-superior__play">
+            <BotonPlay
+              etiqueta="Pipeline"
+              icono={Play}
+              destacado
+              deshabilitado={ejecutandoPipeline}
+              onClick={() => void ejecutarPipeline()}
+            />
+            <span className="barra-superior__play-etiqueta barra-superior__play-etiqueta--acento">
+              Pipeline
+            </span>
+          </div>
+          <div className="barra-superior__play">
+            <BotonPlay
+              etiqueta="Plagas"
+              icono={Bug}
+              deshabilitado={ejecutandoPipeline}
+              onClick={() => void ejecutarPipeline("plagas")}
+            />
+            <span className="barra-superior__play-etiqueta">Plagas</span>
+          </div>
         </div>
       </div>
     </header>

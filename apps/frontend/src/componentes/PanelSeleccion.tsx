@@ -10,7 +10,9 @@ import {
   obtenerPlagaPorIdONombre,
 } from "@hidroponico/tipos-compartidos";
 import CampoNumerico from "./CampoNumerico";
+import CatalogoPlantado from "./CatalogoPlantado";
 import FichaVidaCultivo from "./FichaVidaCultivo";
+import ProyeccionInsumos from "./ProyeccionInsumos";
 import { resumenGrupoDeNodo } from "../api/resumen-grupo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
@@ -22,6 +24,7 @@ export default function PanelSeleccion() {
   const actualizarTextoNodo = usarGrafoConstruccion((estado) => estado.actualizarTextoNodo);
   const actualizarPlagas = usarGrafoConstruccion((estado) => estado.actualizarPlagas);
   const actualizarTrazabilidad = usarGrafoConstruccion((estado) => estado.actualizarTrazabilidad);
+  const quitarNodo = usarGrafoConstruccion((estado) => estado.quitarNodo);
   const resultadoPipeline = usarGrafoConstruccion((estado) => estado.resultadoPipeline);
 
   const nodo = nodos.find((item) => item.id === idSeleccionado);
@@ -34,9 +37,11 @@ export default function PanelSeleccion() {
   return (
     <aside className="panel-detalle">
       <p className="panel-detalle__titulo">Detalle</p>
+      <ProyeccionInsumos />
+      <CatalogoPlantado />
       {!nodo || !cultivo || !nombre ? (
         <p className="panel-detalle__vacio">
-          Haz click en un cultivo del tubo para ver y editar su ficha.
+          Haz click en un cultivo de los tubos o de la lista para ver y editar su ficha.
         </p>
       ) : (
         <form
@@ -46,6 +51,13 @@ export default function PanelSeleccion() {
           <div>
             <p className="panel-detalle__nombre">{nombre}</p>
             <p className="panel-detalle__id">{nodo.id}</p>
+            <button
+              type="button"
+              className="boton-peligro"
+              onClick={() => quitarNodo(nodo.id)}
+            >
+              − Quitar cultivo
+            </button>
           </div>
 
           <label className="campo">

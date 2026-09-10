@@ -24,6 +24,13 @@ import {
 } from "./etapas-vida";
 import { obtenerPlagaPorIdONombre } from "./catalogo-plagas";
 import { resumenTrazabilidad } from "./resumen-trazabilidad";
+import {
+  fichasPlantados,
+  formatearParInsumos,
+  masaMineralesNodo,
+  proyectarInsumos,
+} from "./proyeccion-insumos";
+import { fichaHoverDesdeCatalogo, fichaHoverDesdeNodo } from "./ficha-hover-cultivo";
 
 describe("aristaCreariaCiclo", () => {
   it("rechaza un bucle sobre el mismo nodo", () => {
@@ -386,6 +393,87 @@ describe("trazabilidad de vida", () => {
     );
     expect(sinEtapa.proceso?.familia).toBe("fruto");
     expect(sinEtapa.etapa).toBe(sinEtapa.etapaSugerida);
+  });
+});
+
+describe("proyección de insumos", () => {
+  it("calcula masa elemental de una lechuga (mg/L × L)", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1");
+    expect(lechuga).not.toBeNull();
+    expect(masaMineralesNodo(lechuga!)).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4);
+  });
+
+  it("deja masa en null si falta cantidad_sol o un mineral", () => {
+    expect(
+      masaMineralesNodo({
+        id: "a",
+        tipoCultivo: "lechuga",
+        variables: { mineral_magnesio: 48.6, mineral_potasio: 235, mineral_manganeso: 0.5, mineral_hierro: 1, cantidad_sol: null },
+      }),
+    ).toBeNull();
+    expect(
+      masaMineralesNodo({
+        id: "b",
+        tipoCultivo: "lechuga",
+        variables: { mineral_magnesio: 48.6, mineral_potasio: null, mineral_manganeso: 0.5, mineral_hierro: 1, cantidad_sol: 4 },
+      }),
+    ).toBeNull();
+  });
+
+  it("escala litros y masa a 1, 7 y 30 recambios", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const tomate = crearNodoDesdePlantilla("tomate", "n2")!;
+    const dia = proyectarInsumos([lechuga, tomate], 1);
+    expect(dia.litros).toBe(12);
+    expect(dia.masaMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4 + (60 + 350 + 0.55 + 2) * 8);
+    expect(dia.omitidos).toBe(0);
+    expect(proyectarInsumos([lechuga, tomate], 7).litros).toBe(84);
+    expect(proyectarInsumos([lechuga, tomate], 30).litros).toBe(360);
+  });
+
+  it("omite nodos incompletos y no anula el resto", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const incompleto = {
+      id: "x",
+      tipoCultivo: "tomate",
+      variables: { cantidad_sol: null },
+    };
+    const dia = proyectarInsumos([lechuga, incompleto], 1);
+    expect(dia.litros).toBe(4);
+    expect(dia.omitidos).toBe(1);
+    expect(proyectarInsumos([], 7)).toEqual({ litros: 0, masaMg: 0, omitidos: 0 });
+  });
+
+  it("lista plantados y formatea el par L | mg", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const fichas = fichasPlantados([lechuga]);
+    expect(fichas[0]?.nombre).toBe("Lechuga");
+    expect(fichas[0]?.litros).toBe(4);
+    expect(formatearParInsumos(39.2, 19200)).toBe("39.2 L | 19200 mg");
+    expect(formatearParInsumos(null, null)).toBe("— L | — mg");
+  });
+});
+
+describe("ficha hover de cultivo", () => {
+  it("arma la plantilla de lechuga con masa elemental", () => {
+    const ficha = fichaHoverDesdeCatalogo("lechuga");
+    expect(ficha?.nombre).toBe("Lechuga");
+    expect(ficha?.litros).toBe(4);
+    expect(ficha?.minerales.find((item) => item.clave === "mineral_potasio")?.concentracion).toBe(235);
+    expect(ficha?.masaTotalMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4);
+    expect(fichaHoverDesdeCatalogo("no-existe")).toBeNull();
+  });
+
+  it("respeta null del nodo plantado", () => {
+    const ficha = fichaHoverDesdeNodo({
+      id: "n1",
+      tipoCultivo: "tomate",
+      variables: { mineral_hierro: 2, cantidad_sol: 8 },
+    });
+    expect(ficha.nombre).toBe("Tomate");
+    expect(ficha.minerales.find((item) => item.clave === "mineral_hierro")?.masaMg).toBe(16);
+    expect(ficha.minerales.find((item) => item.clave === "mineral_potasio")?.masaMg).toBeNull();
+    expect(ficha.masaTotalMg).toBeNull();
   });
 });
 

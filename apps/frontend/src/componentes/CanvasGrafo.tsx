@@ -2,6 +2,7 @@ import { useCallback, useRef, type DragEvent } from "react";
 import LienzoThree from "./three/LienzoThree";
 import { resolverOrificioEnPantalla } from "./three/apuntador-orificio";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
+import BarraAccionesCultivo from "./BarraAccionesCultivo";
 
 export default function CanvasGrafo() {
   const origenEventos = useRef<HTMLDivElement>(null);
@@ -38,6 +39,7 @@ export default function CanvasGrafo() {
         }
       }}
     >
+      <BarraAccionesCultivo />
       <LienzoThree origenEventos={origenEventos} />
     </div>
   );

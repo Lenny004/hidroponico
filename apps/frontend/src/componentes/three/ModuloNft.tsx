@@ -1,8 +1,13 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Html, useCursor } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
-import { POSICIONES_X_ORIFICIO } from "./orificios-nft";
+import { FichaHoverDeNodo } from "../FichaHoverCultivo";
+import {
+  indiceOrificio,
+  POSICIONES_X_ORIFICIO,
+  POSICIONES_Z_TUBO,
+} from "./orificios-nft";
 import type { CultivoEnOrificio } from "./tipos-orificio";
 
 const COLOR_TUBO = "#c9c4e8";
@@ -19,20 +24,80 @@ type PropsModuloNft = {
   orificioHover: number | null;
   onOrificio: (indice: number) => void;
   onHover: (indice: number | null) => void;
+  onQuitar: (id: string) => void;
 };
 
 /**
- * Módulo NFT isométrico: un tubo, dos pilares y seis orificios.
- * Cada hueco vacío es un ancla para un nodo de cultivo.
+ * Módulo NFT isométrico: cinco tubos en paralelo sobre un bastidor,
+ * seis orificios por tubo.
  */
 export default function ModuloNft({
   cultivos,
   orificioHover,
   onOrificio,
   onHover,
+  onQuitar,
 }: PropsModuloNft) {
   return (
     <group position={[0, -0.55, 0]}>
+      <Bastidor />
+      {POSICIONES_Z_TUBO.map((z, tubo) => (
+        <Tubo
+          key={tubo}
+          z={z}
+          indiceBase={indiceOrificio(tubo, 0)}
+          cultivos={cultivos}
+          orificioHover={orificioHover}
+          onOrificio={onOrificio}
+          onHover={onHover}
+          onQuitar={onQuitar}
+        />
+      ))}
+    </group>
+  );
+}
+
+function Bastidor() {
+  const zExtremo = Math.max(...POSICIONES_Z_TUBO.map((z) => Math.abs(z)));
+  const largoZ = zExtremo * 2 + 0.7;
+
+  return (
+    <group>
+      <mesh position={[-1.72, 0.38, 0]}>
+        <boxGeometry args={[0.22, 0.16, largoZ]} />
+        <meshLambertMaterial color={COLOR_TUBO} />
+      </mesh>
+      <mesh position={[1.72, 0.38, 0]}>
+        <boxGeometry args={[0.22, 0.16, largoZ]} />
+        <meshLambertMaterial color={COLOR_TUBO} />
+      </mesh>
+      <Pilar x={-1.72} z={-zExtremo} />
+      <Pilar x={1.72} z={-zExtremo} />
+      <Pilar x={-1.72} z={zExtremo} />
+      <Pilar x={1.72} z={zExtremo} />
+    </group>
+  );
+}
+
+function Tubo({
+  z,
+  indiceBase,
+  cultivos,
+  orificioHover,
+  onOrificio,
+  onHover,
+  onQuitar,
+}: {
+  z: number;
+  indiceBase: number;
+  cultivos: Map<number, CultivoEnOrificio>;
+  orificioHover: number | null;
+  onOrificio: (indice: number) => void;
+  onHover: (indice: number | null) => void;
+  onQuitar: (id: string) => void;
+}) {
+  return (
+    <group position={[0, 0, z]}>
       <mesh position={[0, 0.82, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.36, 0.36, 4.7, 24]} />
         <meshLambertMaterial color={COLOR_TUBO} />
@@ -45,28 +110,28 @@ export default function ModuloNft({
         <cylinderGeometry args={[0.37, 0.37, 0.12, 16]} />
         <meshLambertMaterial color={COLOR_TUBO_OSCURO} />
       </mesh>
-
-      <Pilar x={-1.72} />
-      <Pilar x={1.72} />
-
-      {POSICIONES_X_ORIFICIO.map((x, indice) => (
-        <Orificio
-          key={indice}
-          indice={indice}
-          x={x}
-          cultivo={cultivos.get(indice) ?? null}
-          hover={orificioHover === indice}
-          onOrificio={onOrificio}
-          onHover={onHover}
-        />
-      ))}
+      {POSICIONES_X_ORIFICIO.map((x, hueco) => {
+        const indice = indiceBase + hueco;
+        return (
+          <Orificio
+            key={indice}
+            indice={indice}
+            x={x}
+            cultivo={cultivos.get(indice) ?? null}
+            hover={orificioHover === indice}
+            onOrificio={onOrificio}
+            onHover={onHover}
+            onQuitar={onQuitar}
+          />
+        );
+      })}
     </group>
   );
 }
 
-function Pilar({ x }: { x: number }) {
+function Pilar({ x, z }: { x: number; z: number }) {
   return (
-    <group position={[x, 0, 0]}>
+    <group position={[x, 0, z]}>
       <mesh position={[0, 0.22, 0]}>
         <boxGeometry args={[0.28, 1.15, 0.28]} />
         <meshLambertMaterial color={COLOR_TUBO} />
@@ -86,6 +151,7 @@ function Orificio({
   hover,
   onOrificio,
   onHover,
+  onQuitar,
 }: {
   indice: number;
   x: number;
@@ -93,9 +159,20 @@ function Orificio({
   hover: boolean;
   onOrificio: (indice: number) => void;
   onHover: (indice: number | null) => void;
+  onQuitar: (id: string) => void;
 }) {
   const activo = hover || cultivo?.seleccionado === true;
+  const [mostrarFicha, setMostrarFicha] = useState(false);
   useCursor(hover);
+
+  useEffect(() => {
+    if (!hover || !cultivo) {
+      setMostrarFicha(false);
+      return;
+    }
+    const espera = window.setTimeout(() => setMostrarFicha(true), 180);
+    return () => window.clearTimeout(espera);
+  }, [hover, cultivo]);
 
   let colorAnillo = COLOR_ANILLO;
   if (cultivo?.seleccionado) {
@@ -142,9 +219,9 @@ function Orificio({
             colorPlanta={cultivo.color}
             escala={1.15 + 0.35 * (cultivo.progreso ?? 0.45)}
             atenuado={cultivo.atenuado}
-            desfase={x}
+            desfase={x + indice * 0.17}
           />
-          <Html position={[0, 1.72, 0]} center style={{ pointerEvents: "none" }}>
+          <Html position={[0, 1.72, 0]} center>
             <div
               className={
                 cultivo.atenuado
@@ -152,9 +229,33 @@ function Orificio({
                   : "orificio-etiqueta"
               }
             >
-              {cultivo.nombre}
+              <span>{cultivo.nombre}</span>
+              <button
+                type="button"
+                className="orificio-quitar"
+                title={`Quitar ${cultivo.nombre}`}
+                aria-label={`Quitar ${cultivo.nombre}`}
+                onPointerDown={(evento) => evento.stopPropagation()}
+                onClick={(evento) => {
+                  evento.stopPropagation();
+                  onQuitar(cultivo.id);
+                }}
+              >
+                ×
+              </button>
             </div>
           </Html>
+          {mostrarFicha ? (
+            <Html
+              position={[0, 2.2, 0]}
+              center
+              transform={false}
+              zIndexRange={[80, 0]}
+              style={{ pointerEvents: "none" }}
+            >
+              <FichaHoverDeNodo idNodo={cultivo.id} />
+            </Html>
+          ) : null}
         </>
       ) : null}
     </group>

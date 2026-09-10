@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hidropónico</title>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("hidroponico-tema");
+          if (t !== "claro" && t !== "oscuro") {
+            t = window.matchMedia("(prefers-color-scheme: light)").matches ? "claro" : "oscuro";
+          }
+          document.documentElement.setAttribute("data-tema", t);
+        } catch (e) {
+          document.documentElement.setAttribute("data-tema", "oscuro");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="raiz"></div>

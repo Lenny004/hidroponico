@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-tema="oscuro"] {
   color-scheme: dark;
   --color-lienzo: #0b1220;
   --color-panel: #121a2a;
@@ -8,14 +9,50 @@
   --color-texto: #e8eef9;
   --color-muted: #93a4c3;
   --color-aviso: #fcd34d;
+  --color-peligro: #ef4444;
+  --color-reset: #c2410c;
   --color-plaga: #fda4af;
   --color-plaga-anillo: rgb(251 113 133 / 0.8);
   --color-lienzo-60: rgb(11 18 32 / 0.6);
   --color-lienzo-80: rgb(11 18 32 / 0.8);
   --color-panel-95: rgb(18 26 42 / 0.95);
   --color-placeholder: rgb(147 164 195 / 0.5);
+  --color-sobre-acento: #0b1220;
+  --color-barra-acciones: #f6f1e8;
+  --color-barra-acciones-hover: rgb(0 0 0 / 0.05);
+  --color-etiqueta-fondo: rgb(0 0 0 / 0.6);
+  --color-etiqueta-texto: #e8eef9;
+  --color-progreso-pista: rgb(0 0 0 / 0.4);
   --sombra-nodo: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --sombra-play: 0 0 24px rgb(16 185 129 / 0.45);
+}
+
+[data-tema="claro"] {
+  color-scheme: light;
+  --color-lienzo: #f3efe6;
+  --color-panel: #fffdf8;
+  --color-borde: #d8d0c0;
+  --color-acento: #047857;
+  --color-acento-fuerte: #059669;
+  --color-texto: #1c2434;
+  --color-muted: #5a6780;
+  --color-aviso: #b45309;
+  --color-peligro: #dc2626;
+  --color-reset: #c2410c;
+  --color-plaga: #e11d48;
+  --color-plaga-anillo: rgb(225 29 72 / 0.75);
+  --color-lienzo-60: rgb(243 239 230 / 0.65);
+  --color-lienzo-80: rgb(243 239 230 / 0.85);
+  --color-panel-95: rgb(255 253 248 / 0.96);
+  --color-placeholder: rgb(90 103 128 / 0.45);
+  --color-sobre-acento: #f7fff9;
+  --color-barra-acciones: #fffdf8;
+  --color-barra-acciones-hover: rgb(28 36 52 / 0.06);
+  --color-etiqueta-fondo: rgb(28 36 52 / 0.78);
+  --color-etiqueta-texto: #f7f4ee;
+  --color-progreso-pista: rgb(28 36 52 / 0.12);
+  --sombra-nodo: 0 10px 15px -3px rgb(28 36 52 / 0.08), 0 4px 6px -4px rgb(28 36 52 / 0.06);
+  --sombra-play: 0 0 20px rgb(5 150 105 / 0.28);
 }
 
 *,
@@ -113,11 +150,39 @@ button:disabled {
   border-color: var(--color-acento);
 }
 
-.barra-superior__plays {
+.barra-superior__acciones {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-left: auto;
+}
+
+.boton-tema {
+  display: flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-borde);
+  border-radius: 9999px;
+  background: var(--color-lienzo);
+  color: var(--color-muted);
+}
+
+.boton-tema:hover {
+  border-color: var(--color-acento);
+  color: var(--color-acento);
+}
+
+.boton-tema__icono {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.barra-superior__plays {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .barra-superior__play {
@@ -158,7 +223,7 @@ button:disabled {
   height: 3rem;
   border: none;
   background: var(--color-acento-fuerte);
-  color: var(--color-lienzo);
+  color: var(--color-sobre-acento);
   box-shadow: var(--sombra-play);
 }
 
@@ -223,8 +288,13 @@ button:disabled {
   text-align: center;
 }
 
-.tarjeta-cultivo:hover {
+.tarjeta-cultivo:hover,
+.tarjeta-cultivo--activa {
   border-color: var(--color-acento);
+}
+
+.tarjeta-cultivo--activa {
+  background: var(--color-lienzo);
 }
 
 .tarjeta-cultivo__nombre {
@@ -258,6 +328,49 @@ button:disabled {
   width: 100% !important;
   height: 100% !important;
   z-index: 1;
+}
+
+.barra-acciones-cultivo {
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  transform: translateX(-50%);
+  border-top: 3px solid var(--color-acento-fuerte);
+  border-radius: 9999px;
+  background: var(--color-barra-acciones);
+  padding: 0.3rem 0.4rem;
+  box-shadow: var(--sombra-nodo);
+}
+
+.barra-acciones-cultivo__boton {
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.barra-acciones-cultivo__boton:disabled {
+  opacity: 0.35;
+}
+
+.barra-acciones-cultivo__boton--agregar {
+  color: #16a34a;
+}
+
+.barra-acciones-cultivo__boton--quitar {
+  color: #dc2626;
+}
+
+.barra-acciones-cultivo__boton--resetear {
+  color: var(--color-reset);
+}
+
+.barra-acciones-cultivo__boton:hover:not(:disabled) {
+  background: var(--color-barra-acciones-hover);
 }
 
 /* --- Panel detalle --- */
@@ -311,6 +424,143 @@ button:disabled {
 .panel-detalle__nota {
   margin: 0;
   font-size: 11px;
+  color: var(--color-muted);
+}
+
+/* --- Plantados + proyección --- */
+
+.catalogo-plantado,
+.proyeccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.catalogo-plantado__titulo,
+.proyeccion__titulo {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.catalogo-plantado__vacio,
+.proyeccion__ayuda,
+.proyeccion__aviso {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.proyeccion__aviso {
+  color: var(--color-aviso);
+}
+
+.catalogo-plantado__lista,
+.proyeccion__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.catalogo-plantado__fila {
+  display: flex;
+  align-items: stretch;
+  gap: 0.375rem;
+}
+
+.catalogo-plantado__item {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  background: var(--color-lienzo-60);
+  padding: 0.375rem 0.5rem;
+  text-align: left;
+}
+
+.catalogo-plantado__quitar {
+  display: flex;
+  width: 2rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(239 68 68 / 0.4);
+  border-radius: 0.75rem;
+  color: var(--color-peligro);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.catalogo-plantado__quitar:hover {
+  border-color: var(--color-peligro);
+  background: rgb(239 68 68 / 0.12);
+}
+
+.catalogo-plantado__item:hover {
+  border-color: var(--color-acento);
+}
+
+.catalogo-plantado__item--activo {
+  border-color: var(--color-acento);
+  background: var(--color-lienzo);
+}
+
+.catalogo-plantado__cuerpo {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.catalogo-plantado__nombre {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.catalogo-plantado__meta {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.proyeccion__fila {
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  background: var(--color-lienzo);
+  padding: 0.5rem 0.75rem;
+  border-left-width: 4px;
+}
+
+.proyeccion__fila--dia {
+  border-left-color: #38bdf8;
+}
+
+.proyeccion__fila--semana {
+  border-left-color: var(--color-aviso);
+}
+
+.proyeccion__fila--mes {
+  border-left-color: var(--color-plaga);
+}
+
+.proyeccion__horizonte {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.proyeccion__valores {
+  margin: 0.125rem 0 0;
+  font-size: 0.75rem;
   color: var(--color-muted);
 }
 
@@ -417,6 +667,20 @@ button:disabled {
   font-size: 0.75rem;
 }
 
+.boton-peligro {
+  margin-top: 0.5rem;
+  border: 1px solid rgb(239 68 68 / 0.45);
+  border-radius: 0.5rem;
+  padding: 0.375rem 0.65rem;
+  font-size: 0.8125rem;
+  color: var(--color-peligro);
+}
+
+.boton-peligro:hover {
+  border-color: var(--color-peligro);
+  background: rgb(239 68 68 / 0.1);
+}
+
 .chip {
   border: 1px solid var(--color-borde);
   border-radius: 9999px;
@@ -499,7 +763,7 @@ button:disabled {
 }
 
 .progreso--nodo {
-  background: rgb(0 0 0 / 0.4);
+  background: var(--color-progreso-pista);
 }
 
 .progreso__barra {
@@ -645,14 +909,29 @@ button:disabled {
 /* --- Orificios del tubo NFT --- */
 
 .orificio-etiqueta {
-  padding: 0.15rem 0.55rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.25rem 0.15rem 0.55rem;
   border-radius: 9999px;
-  background: rgb(0 0 0 / 0.6);
-  color: var(--color-texto);
+  background: var(--color-etiqueta-fondo);
+  color: var(--color-etiqueta-texto);
   font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
-  pointer-events: none;
+}
+
+.orificio-quitar {
+  display: flex;
+  width: 1.05rem;
+  height: 1.05rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgb(220 38 38 / 0.92);
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1;
 }
 
 .orificio-etiqueta--filtrada {
@@ -681,6 +960,19 @@ button:disabled {
   background: var(--color-lienzo);
 }
 
+.glifo-cultivo--lista {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  background: var(--color-lienzo);
+}
+
+.glifo-cultivo--lista .glifo-cultivo__icono {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
 .glifo-cultivo--ficha {
   width: 2.75rem;
   height: 2.75rem;
@@ -705,4 +997,126 @@ button:disabled {
 .glifo-cultivo--nodo .glifo-cultivo__icono {
   width: 2rem;
   height: 2rem;
+}
+
+/* --- Ficha hover --- */
+
+.ancla-hover {
+  display: flex;
+  min-width: 0;
+}
+
+.panel-cultivo__rejilla > .ancla-hover {
+  width: 100%;
+}
+
+.catalogo-plantado__fila > .ancla-hover {
+  flex: 1;
+}
+
+.ancla-hover .tarjeta-cultivo,
+.ancla-hover .catalogo-plantado__item {
+  width: 100%;
+}
+
+.ancla-hover__globo {
+  position: fixed;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.ficha-hover {
+  width: 17rem;
+  overflow: hidden;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  background: var(--color-panel);
+  box-shadow: var(--sombra-nodo);
+  color: var(--color-texto);
+}
+
+.ficha-hover__cabecera {
+  margin: 0;
+  background: var(--color-acento-fuerte);
+  color: var(--color-lienzo);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.ficha-hover__radar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  padding: 0.75rem 0.85rem 0.5rem;
+}
+
+.ficha-hover__punto {
+  min-width: 0;
+}
+
+.ficha-hover__punto--mg {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.ficha-hover__punto--k {
+  grid-column: 3;
+  grid-row: 1;
+  text-align: right;
+}
+
+.ficha-hover__punto--mn {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.ficha-hover__punto--fe {
+  grid-column: 3;
+  grid-row: 3;
+  text-align: right;
+}
+
+.ficha-hover__centro {
+  display: flex;
+  grid-column: 2;
+  grid-row: 2;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ficha-hover__simbolo {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-acento);
+}
+
+.ficha-hover__valor,
+.ficha-hover__masa,
+.ficha-hover__litros,
+.ficha-hover__pie,
+.ficha-hover__consumo {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.ficha-hover__litros {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.ficha-hover__consumo {
+  border-top: 1px solid var(--color-borde);
+  padding: 0.45rem 0.85rem 0.15rem;
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.ficha-hover__pie {
+  padding: 0.15rem 0.85rem 0.6rem;
 }

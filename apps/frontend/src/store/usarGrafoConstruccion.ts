@@ -44,12 +44,14 @@ type EstadoGrafoConstruccion = {
   idsGrupo: string[];
   busquedaCatalogo: string;
   filtroLienzo: string;
+  tipoCatalogoActivo: string | null;
   mensajeEstado: string;
   onNodosChange: (cambios: NodeChange<NodoFlujo>[]) => void;
   onAristasChange: (cambios: EdgeChange<Edge>[]) => void;
   conectar: (conexion: Connection) => boolean;
   agregarNodo: (tipoCultivo: string, orificio?: number) => void;
   quitarNodo: (id: string) => void;
+  vaciarTubo: () => void;
   seleccionar: (id: string | null) => void;
   actualizarTipoCultivo: (id: string, tipoCultivo: string) => void;
   actualizarVariable: (id: string, clave: ClaveVariableCultivo, valor: number | null) => void;
@@ -137,7 +139,8 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   idsGrupo: [],
   busquedaCatalogo: "",
   filtroLienzo: "",
-  mensajeEstado: "Arrastra un cultivo a un orificio del tubo NFT.",
+  tipoCatalogoActivo: null,
+  mensajeEstado: "Arrastra un cultivo a un orificio de los tubos NFT.",
   resultadoPipeline: null,
   ejecutandoPipeline: false,
   estadoPersistencia: "local",
@@ -220,11 +223,17 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
     const ocupados = orificiosOcupados(get().nodos);
     const hueco = orificio ?? primerOrificioLibre(ocupados);
     if (hueco == null) {
-      set({ mensajeEstado: `El tubo NFT está lleno (${CANTIDAD_ORIFICIOS} orificios).` });
+      set({
+        tipoCatalogoActivo: tipoCultivo,
+        mensajeEstado: `Los tubos NFT están llenos (${CANTIDAD_ORIFICIOS} orificios).`,
+      });
       return;
     }
     if (ocupados.has(hueco)) {
-      set({ mensajeEstado: "Ese orificio ya tiene un cultivo." });
+      set({
+        tipoCatalogoActivo: tipoCultivo,
+        mensajeEstado: "Ese orificio ya tiene un cultivo.",
+      });
       return;
     }
 
@@ -241,6 +250,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       return {
         nodos,
         aristas,
+        tipoCatalogoActivo: tipoCultivo,
         mensajeEstado: `${definicion.nombre} colocado en el orificio ${hueco + 1}.`,
       };
     });
@@ -258,6 +268,21 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
         idsGrupo: grupoDesde(nodos, aristas, seleccionado),
         mensajeEstado: "Cultivo retirado del orificio.",
       };
+    });
+  },
+
+  vaciarTubo: () => {
+    if (get().nodos.length === 0) {
+      set({ mensajeEstado: "Los tubos ya están vacíos." });
+      return;
+    }
+    set({
+      nodos: [],
+      aristas: [],
+      idSeleccionado: null,
+      idsGrupo: [],
+      resultadoPipeline: null,
+      mensajeEstado: "Tubos NFT vacíos.",
     });
   },
 
@@ -464,7 +489,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       aristas,
       idSeleccionado: null,
       idsGrupo: [],
-      mensajeEstado: `Grafo persistido cargado (${nodos.length} cultivos en el tubo).`,
+      mensajeEstado: `Grafo persistido cargado (${nodos.length} cultivos en los tubos).`,
     });
   },
 }));

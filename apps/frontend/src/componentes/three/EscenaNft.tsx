@@ -7,6 +7,7 @@ import {
   resumenTrazabilidad,
 } from "@hidroponico/tipos-compartidos";
 import { usarGrafoConstruccion } from "../../store/usarGrafoConstruccion";
+import { COLOR_LIENZO, usarTema } from "../../store/usarTema";
 import { crearApuntadorOrificios, registrarResolverOrificio } from "./apuntador-orificio";
 import ModuloNft from "./ModuloNft";
 import { indiceOrificioDePosicion } from "./orificios-nft";
@@ -15,13 +16,36 @@ import type { CultivoEnOrificio } from "./tipos-orificio";
 function CamaraYControles() {
   return (
     <>
-      <OrthographicCamera makeDefault position={[5.2, 5.8, 8.4]} zoom={22} near={0.1} far={80} />
+      <OrthographicCamera makeDefault position={[5.8, 6.6, 9.2]} zoom={26} near={0.1} far={80} />
       <OrbitControls
         makeDefault
-        target={[0, 0.45, 0]}
+        target={[0, 0.5, 0]}
         enableDamping
-        minZoom={28}
-        maxZoom={90}
+        minZoom={14}
+        maxZoom={70}
+      />
+    </>
+  );
+}
+
+function FondoYLuces() {
+  const tema = usarTema((estado) => estado.tema);
+  const colorFondo = COLOR_LIENZO[tema];
+  const { gl } = useThree();
+
+  useEffect(() => {
+    gl.setClearColor(colorFondo, 1);
+  }, [colorFondo, gl]);
+
+  return (
+    <>
+      <color attach="background" args={[colorFondo]} />
+      <ambientLight intensity={tema === "claro" ? 0.82 : 0.65} />
+      <directionalLight position={[-5, 8, 3]} intensity={tema === "claro" ? 1.15 : 1.45} />
+      <directionalLight
+        position={[4, 1.5, 5]}
+        intensity={tema === "claro" ? 0.22 : 0.35}
+        color={tema === "claro" ? "#fff4d6" : "#c5c8ff"}
       />
     </>
   );
@@ -116,15 +140,13 @@ export default function EscenaNft() {
     <>
       <CamaraYControles />
       <RegistrarApuntador />
-      <color attach="background" args={["#0b1220"]} />
-      <ambientLight intensity={0.65} />
-      <directionalLight position={[-5, 8, 3]} intensity={1.45} />
-      <directionalLight position={[4, 1.5, 5]} intensity={0.35} color="#c5c8ff" />
+      <FondoYLuces />
       <ModuloNft
         cultivos={cultivos}
         orificioHover={orificioHover}
         onOrificio={onOrificio}
         onHover={setOrificioHover}
+        onQuitar={quitarNodo}
       />
     </>
   );

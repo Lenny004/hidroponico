@@ -74,6 +74,26 @@ export {
   type ResumenTrazabilidad,
 } from "./resumen-trazabilidad";
 
+export {
+  HORIZONTES_PROYECCION,
+  fichaPlantado,
+  fichasPlantados,
+  formatearParInsumos,
+  masaMineralesNodo,
+  proyectarInsumos,
+  type FichaPlantado,
+  type IdHorizonteProyeccion,
+  type ProyeccionInsumos,
+} from "./proyeccion-insumos";
+
+export {
+  SIMBOLOS_MINERAL,
+  fichaHoverDesdeCatalogo,
+  fichaHoverDesdeNodo,
+  type DatoHoverMineral,
+  type FichaHoverCultivo,
+} from "./ficha-hover-cultivo";
+
 export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES, UNIDAD_AGREGADO, UNIDAD_NODO, formatearMedida } from "./etiquetas-variables";
 export {
   esBorradorNumerico,
