@@ -24,11 +24,18 @@ export default function LienzoThree({
       }}
       dpr={[1, 1.5]}
       orthographic
-      camera={{ position: [5.8, 6.6, 9.2], zoom: 26, near: 0.1, far: 80 }}
+      camera={{ position: [6.2, 6.4, 14], zoom: 32, near: 0.1, far: 120 }}
       onCreated={({ gl }) => {
         gl.setClearColor(COLOR_LIENZO[usarTema.getState().tema], 1);
       }}
-      onPointerMissed={() => {
+      onPointerMissed={(evento) => {
+        const destino = evento.target;
+        if (
+          destino instanceof Element &&
+          destino.closest(".barra-acciones-cultivo, button, input, select, textarea")
+        ) {
+          return;
+        }
         usarGrafoConstruccion.getState().seleccionar(null);
       }}
     >

@@ -31,6 +31,21 @@ import {
   proyectarInsumos,
 } from "./proyeccion-insumos";
 import { fichaHoverDesdeCatalogo, fichaHoverDesdeNodo } from "./ficha-hover-cultivo";
+import {
+  ArbolPatricia,
+  arbolPatriciaDeNodos,
+  bitEnClave,
+  clavePatricia,
+  primerBitDistinto,
+  vistaArbolPatricia,
+  comprimirVistaPorTipo,
+  hojasDeVista,
+} from "./arbol-patricia";
+import {
+  consumoTemporalGrupo,
+  consumoTemporalNodo,
+  diasRestantesCosecha,
+} from "./consumo-temporal";
 
 describe("aristaCreariaCiclo", () => {
   it("rechaza un bucle sobre el mismo nodo", () => {
@@ -474,6 +489,103 @@ describe("ficha hover de cultivo", () => {
     expect(ficha.minerales.find((item) => item.clave === "mineral_hierro")?.masaMg).toBe(16);
     expect(ficha.minerales.find((item) => item.clave === "mineral_potasio")?.masaMg).toBeNull();
     expect(ficha.masaTotalMg).toBeNull();
+  });
+});
+
+describe("árbol Patricia binario", () => {
+  it("comparte prefijo y ramifica en el primer bit distinto", () => {
+    expect(clavePatricia("lechuga", "n1")).toBe("lechuga/n1");
+    expect(primerBitDistinto("lechuga/a", "lechuga/a")).toBeNull();
+    expect(primerBitDistinto("aa", "ab")).toBeGreaterThanOrEqual(0);
+    expect(bitEnClave("A", 0)).toBe(0);
+    expect(bitEnClave("A", 1)).toBe(1);
+
+    const arbol = new ArbolPatricia<string>();
+    arbol.insertar("lechuga/n1", "a");
+    arbol.insertar("lechuga/n2", "b");
+    arbol.insertar("tomate/n3", "c");
+    expect(arbol.buscar("lechuga/n2")).toBe("b");
+    expect(arbol.buscar("fresa/x")).toBeNull();
+    expect(arbol.hojas().map((hoja) => hoja.clave)).toEqual([
+      "lechuga/n1",
+      "lechuga/n2",
+      "tomate/n3",
+    ]);
+
+    const raiz = arbol.obtenerRaiz();
+    expect(raiz?.bit).not.toBeNull();
+    const vista = vistaArbolPatricia(raiz, (valor, clave) => `${clave}:${valor}`);
+    expect(vista?.esHoja).toBe(false);
+    expect(vista?.hijos.length).toBeGreaterThan(0);
+  });
+
+  it("indexa nodos del grafo por tipo y deja el recambio en la hoja", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const tomate = crearNodoDesdePlantilla("tomate", "n2")!;
+    const arbol = arbolPatriciaDeNodos([tomate, lechuga]);
+    expect(arbol.buscar(clavePatricia("lechuga", "n1"))?.nombre).toBe("Lechuga");
+    expect(arbol.buscar(clavePatricia("tomate", "n2"))?.masaDiaMg).toBeCloseTo(
+      (60 + 350 + 0.55 + 2) * 8,
+    );
+  });
+
+  it("comprime internos del mismo tipo a tipo → hojas", () => {
+    const nodos = [
+      crearNodoDesdePlantilla("lechuga", "n1")!,
+      crearNodoDesdePlantilla("lechuga", "n2")!,
+      crearNodoDesdePlantilla("tomate", "n3")!,
+    ];
+    const arbol = arbolPatriciaDeNodos(nodos);
+    const cruda = vistaArbolPatricia(arbol.obtenerRaiz(), (hoja) => hoja.nombre);
+    expect(cruda).not.toBeNull();
+    const vista = comprimirVistaPorTipo(cruda!);
+    expect(vista.esHoja).toBe(false);
+    expect(hojasDeVista(vista)).toHaveLength(3);
+    const grupos = vista.hijos.filter((hijo) => !hijo.esHoja || hijo.valor);
+    const lechugas = grupos.filter((hijo) =>
+      hojasDeVista(hijo).every((hoja) => hoja.valor?.tipoCultivo === "lechuga"),
+    );
+    expect(lechugas.length).toBeGreaterThanOrEqual(1);
+    expect(hojasDeVista(lechugas[0]!).every((hoja) => hoja.esHoja)).toBe(true);
+  });
+});
+
+describe("consumo temporal y recambio", () => {
+  it("mide mg/L × L por etapa y suma al unirse", () => {
+    const ahora = new Date(2026, 8, 17);
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    lechuga.iniciado_en = "2026-09-07";
+    const consumo = consumoTemporalNodo(lechuga, ahora);
+    const masaDia = (48.6 + 235 + 0.5 + 1) * 4;
+    expect(consumo.masaDiaMg).toBeCloseTo(masaDia);
+    expect(consumo.dias).toBe(10);
+    expect(consumo.dias_restantes).toBe(25);
+    expect(consumo.masaHastaCosechaMg).toBeCloseTo(masaDia * 25);
+    expect(consumo.etapas.reduce((acum, etapa) => acum + etapa.duracionDias, 0)).toBe(35);
+    expect(consumo.minerales.find((item) => item.clave === "mineral_potasio")?.masaRecambioMg).toBe(
+      235 * 4,
+    );
+
+    const tomate = crearNodoDesdePlantilla("tomate", "n2")!;
+    const grupo = consumoTemporalGrupo([lechuga, tomate]);
+    expect(grupo.litros).toBe(12);
+    expect(grupo.masaDiaMg).toBeCloseTo(masaDia + (60 + 350 + 0.55 + 2) * 8);
+    expect(grupo.omitidos).toBe(0);
+    expect(diasRestantesCosecha(40, 35)).toBe(0);
+    expect(diasRestantesCosecha(null, 35)).toBeNull();
+  });
+
+  it("omite un nodo incompleto al sumar el tubo", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const incompleto = {
+      id: "x",
+      tipoCultivo: "tomate",
+      variables: { cantidad_sol: null },
+    };
+    const grupo = consumoTemporalGrupo([lechuga, incompleto]);
+    expect(grupo.litros).toBe(4);
+    expect(grupo.omitidos).toBe(1);
+    expect(consumoTemporalGrupo([]).masaDiaMg).toBe(0);
   });
 });
 

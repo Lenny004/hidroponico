@@ -94,6 +94,34 @@ export {
   type FichaHoverCultivo,
 } from "./ficha-hover-cultivo";
 
+export {
+  ArbolPatricia,
+  arbolPatriciaDeNodos,
+  bitEnClave,
+  clavePatricia,
+  construirArbolPatricia,
+  primerBitDistinto,
+  vistaArbolPatricia,
+  comprimirVistaPorTipo,
+  hojasDeVista,
+  type EntradaPatricia,
+  type HojaCultivoPatricia,
+  type NodoPatricia,
+  type VistaPatricia,
+} from "./arbol-patricia";
+
+export {
+  DIAS_RECAMBIO_DIARIO,
+  consumoTemporalGrupo,
+  consumoTemporalNodo,
+  diasRestantesCosecha,
+  masaMineralRecambio,
+  type ConsumoEtapaNodo,
+  type ConsumoMineralNodo,
+  type ConsumoTemporalGrupo,
+  type ConsumoTemporalNodo,
+} from "./consumo-temporal";
+
 export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES, UNIDAD_AGREGADO, UNIDAD_NODO, formatearMedida } from "./etiquetas-variables";
 export {
   esBorradorNumerico,

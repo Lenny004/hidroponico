@@ -2,22 +2,23 @@ export const ORIFICIOS_POR_TUBO = 6;
 export const CANTIDAD_TUBOS = 5;
 export const CANTIDAD_ORIFICIOS = ORIFICIOS_POR_TUBO * CANTIDAD_TUBOS;
 
-/** Posiciones X de los huecos en un tubo (izquierda a derecha). */
+/** Posiciones X de los huecos en un canal (izquierda a derecha). */
 export const POSICIONES_X_ORIFICIO = [-1.85, -1.11, -0.37, 0.37, 1.11, 1.85] as const;
 
-/** Distancia entre ejes de tubos paralelos (eje Z). */
-export const ESPACIADO_Z_TUBO = 1.15;
+/** Distancia vertical entre ejes de canales apilados. */
+export const ESPACIADO_Y_TUBO = 1.45;
 
 /**
- * Posiciones Z de los cinco tubos. El tubo 0 queda en el origen (el original);
- * 1–4 se colocan en paralelo a ambos lados.
+ * Posiciones Y de los cinco canales, de abajo hacia arriba.
+ * El tubo 0 (orificios 0–5) queda en el canal inferior; el índice
+ * persistido no cambia respecto al módulo horizontal.
  */
-export const POSICIONES_Z_TUBO = [0, -1.15, 1.15, -2.3, 2.3] as const;
+export const POSICIONES_Y_TUBO = [1.55, 3.0, 4.45, 5.9, 7.35] as const;
 
 /**
  * Índice global de un orificio (0 … CANTIDAD_ORIFICIOS-1).
- * @param tubo - Índice del tubo (0 … CANTIDAD_TUBOS-1).
- * @param hueco - Hueco dentro del tubo (0 … ORIFICIOS_POR_TUBO-1).
+ * @param tubo - Índice del canal (0 … CANTIDAD_TUBOS-1), 0 = inferior.
+ * @param hueco - Hueco dentro del canal (0 … ORIFICIOS_POR_TUBO-1).
  */
 export function indiceOrificio(tubo: number, hueco: number): number {
   return tubo * ORIFICIOS_POR_TUBO + hueco;

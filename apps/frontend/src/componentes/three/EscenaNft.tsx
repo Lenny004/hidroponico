@@ -16,13 +16,13 @@ import type { CultivoEnOrificio } from "./tipos-orificio";
 function CamaraYControles() {
   return (
     <>
-      <OrthographicCamera makeDefault position={[5.8, 6.6, 9.2]} zoom={26} near={0.1} far={80} />
+      <OrthographicCamera makeDefault position={[6.2, 6.4, 14]} zoom={32} near={0.1} far={120} />
       <OrbitControls
         makeDefault
-        target={[0, 0.5, 0]}
+        target={[0, 3.2, 0]}
         enableDamping
-        minZoom={14}
-        maxZoom={70}
+        minZoom={16}
+        maxZoom={80}
       />
     </>
   );
@@ -40,12 +40,12 @@ function FondoYLuces() {
   return (
     <>
       <color attach="background" args={[colorFondo]} />
-      <ambientLight intensity={tema === "claro" ? 0.82 : 0.65} />
-      <directionalLight position={[-5, 8, 3]} intensity={tema === "claro" ? 1.15 : 1.45} />
+      <ambientLight intensity={tema === "claro" ? 0.82 : 0.7} />
+      <directionalLight position={[-4, 11, 5]} intensity={tema === "claro" ? 1.15 : 1.12} />
       <directionalLight
         position={[4, 1.5, 5]}
-        intensity={tema === "claro" ? 0.22 : 0.35}
-        color={tema === "claro" ? "#fff4d6" : "#c5c8ff"}
+        intensity={tema === "claro" ? 0.22 : 0.28}
+        color={tema === "claro" ? "#fff4d6" : "#e8d5a8"}
       />
     </>
   );

@@ -245,11 +245,16 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
     };
 
     set((estado) => {
-      const nodos = [...estado.nodos, nodo];
+      const nodos = [...estado.nodos, nodo].map((item) => ({
+        ...item,
+        selected: item.id === id,
+      }));
       const aristas = aristasEnCadena(nodos);
       return {
         nodos,
         aristas,
+        idSeleccionado: id,
+        idsGrupo: grupoDesde(nodos, aristas, id),
         tipoCatalogoActivo: tipoCultivo,
         mensajeEstado: `${definicion.nombre} colocado en el orificio ${hueco + 1}.`,
       };
@@ -258,11 +263,17 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
 
   quitarNodo: (id) => {
     set((estado) => {
+      const indice = estado.nodos.findIndex((nodo) => nodo.id === id);
       const nodos = estado.nodos.filter((nodo) => nodo.id !== id);
       const aristas = aristasEnCadena(nodos);
-      const seleccionado = estado.idSeleccionado === id ? null : estado.idSeleccionado;
+      const vecino = nodos[indice] ?? nodos[indice - 1] ?? null;
+      const seleccionado =
+        estado.idSeleccionado === id ? (vecino?.id ?? null) : estado.idSeleccionado;
       return {
-        nodos,
+        nodos: nodos.map((nodo) => ({
+          ...nodo,
+          selected: nodo.id === seleccionado,
+        })),
         aristas,
         idSeleccionado: seleccionado,
         idsGrupo: grupoDesde(nodos, aristas, seleccionado),

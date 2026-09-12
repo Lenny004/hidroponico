@@ -10,9 +10,9 @@ import {
   obtenerPlagaPorIdONombre,
 } from "@hidroponico/tipos-compartidos";
 import CampoNumerico from "./CampoNumerico";
-import CatalogoPlantado from "./CatalogoPlantado";
+import ArbolPatricia from "./ArbolPatricia";
+import ConsumoTemporal from "./ConsumoTemporal";
 import FichaVidaCultivo from "./FichaVidaCultivo";
-import ProyeccionInsumos from "./ProyeccionInsumos";
 import { resumenGrupoDeNodo } from "../api/resumen-grupo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
@@ -37,8 +37,8 @@ export default function PanelSeleccion() {
   return (
     <aside className="panel-detalle">
       <p className="panel-detalle__titulo">Detalle</p>
-      <ProyeccionInsumos />
-      <CatalogoPlantado />
+      <ConsumoTemporal />
+      <ArbolPatricia />
       {!nodo || !cultivo || !nombre ? (
         <p className="panel-detalle__vacio">
           Haz click en un cultivo de los tubos o de la lista para ver y editar su ficha.

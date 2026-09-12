@@ -1,30 +1,31 @@
 :root,
 [data-tema="oscuro"] {
   color-scheme: dark;
-  --color-lienzo: #0b1220;
-  --color-panel: #121a2a;
-  --color-borde: #243049;
-  --color-acento: #34d399;
-  --color-acento-fuerte: #10b981;
-  --color-texto: #e8eef9;
-  --color-muted: #93a4c3;
-  --color-aviso: #fcd34d;
-  --color-peligro: #ef4444;
+  --color-lienzo: #1c1a14;
+  --color-panel: #26231b;
+  --color-borde: #4a4336;
+  --color-acento: #8fb56a;
+  --color-acento-fuerte: #4d7a36;
+  --color-texto: #f3ead6;
+  --color-muted: #b6ab93;
+  --color-aviso: #d4a054;
+  --color-peligro: #d4654f;
   --color-reset: #c2410c;
-  --color-plaga: #fda4af;
-  --color-plaga-anillo: rgb(251 113 133 / 0.8);
-  --color-lienzo-60: rgb(11 18 32 / 0.6);
-  --color-lienzo-80: rgb(11 18 32 / 0.8);
-  --color-panel-95: rgb(18 26 42 / 0.95);
-  --color-placeholder: rgb(147 164 195 / 0.5);
-  --color-sobre-acento: #0b1220;
-  --color-barra-acciones: #f6f1e8;
-  --color-barra-acciones-hover: rgb(0 0 0 / 0.05);
-  --color-etiqueta-fondo: rgb(0 0 0 / 0.6);
-  --color-etiqueta-texto: #e8eef9;
-  --color-progreso-pista: rgb(0 0 0 / 0.4);
-  --sombra-nodo: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --sombra-play: 0 0 24px rgb(16 185 129 / 0.45);
+  --color-plaga: #d4897a;
+  --color-plaga-anillo: rgb(212 137 122 / 0.8);
+  --color-riego: #7aab8e;
+  --color-lienzo-60: rgb(28 26 20 / 0.6);
+  --color-lienzo-80: rgb(28 26 20 / 0.8);
+  --color-panel-95: rgb(38 35 27 / 0.95);
+  --color-placeholder: rgb(182 171 147 / 0.5);
+  --color-sobre-acento: #f3ead6;
+  --color-barra-acciones: #f3ead6;
+  --color-barra-acciones-hover: rgb(28 26 20 / 0.08);
+  --color-etiqueta-fondo: rgb(28 26 20 / 0.72);
+  --color-etiqueta-texto: #f3ead6;
+  --color-progreso-pista: rgb(28 26 20 / 0.45);
+  --sombra-nodo: 0 10px 15px -3px rgb(28 26 20 / 0.35), 0 4px 6px -4px rgb(28 26 20 / 0.28);
+  --sombra-play: 0 0 16px rgb(77 122 54 / 0.28);
 }
 
 [data-tema="claro"] {
@@ -41,6 +42,7 @@
   --color-reset: #c2410c;
   --color-plaga: #e11d48;
   --color-plaga-anillo: rgb(225 29 72 / 0.75);
+  --color-riego: #3d7a62;
   --color-lienzo-60: rgb(243 239 230 / 0.65);
   --color-lienzo-80: rgb(243 239 230 / 0.85);
   --color-panel-95: rgb(255 253 248 / 0.96);
@@ -351,6 +353,7 @@ button:disabled {
   padding: 0.35rem 0.85rem;
   font-size: 0.875rem;
   font-weight: 500;
+  transition: background 0.15s ease, transform 0.12s ease, color 0.15s ease;
 }
 
 .barra-acciones-cultivo__boton:disabled {
@@ -369,8 +372,18 @@ button:disabled {
   color: var(--color-reset);
 }
 
+.barra-acciones-cultivo__boton--resetear-confirmar {
+  background: rgb(220 38 38 / 0.16);
+  color: #dc2626;
+  font-weight: 600;
+}
+
 .barra-acciones-cultivo__boton:hover:not(:disabled) {
   background: var(--color-barra-acciones-hover);
+}
+
+.barra-acciones-cultivo__boton:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 /* --- Panel detalle --- */
@@ -430,14 +443,16 @@ button:disabled {
 /* --- Plantados + proyección --- */
 
 .catalogo-plantado,
-.proyeccion {
+.proyeccion,
+.patricia {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
 .catalogo-plantado__titulo,
-.proyeccion__titulo {
+.proyeccion__titulo,
+.patricia__titulo {
   margin: 0;
   font-size: 0.75rem;
   font-weight: 600;
@@ -448,7 +463,9 @@ button:disabled {
 
 .catalogo-plantado__vacio,
 .proyeccion__ayuda,
-.proyeccion__aviso {
+.proyeccion__aviso,
+.patricia__ayuda,
+.patricia__vacio {
   margin: 0;
   font-size: 11px;
   color: var(--color-muted);
@@ -459,7 +476,9 @@ button:disabled {
 }
 
 .catalogo-plantado__lista,
-.proyeccion__lista {
+.proyeccion__lista,
+.patricia__lista,
+.patricia__hijos {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -541,7 +560,7 @@ button:disabled {
 }
 
 .proyeccion__fila--dia {
-  border-left-color: #38bdf8;
+  border-left-color: var(--color-riego);
 }
 
 .proyeccion__fila--semana {
@@ -562,6 +581,154 @@ button:disabled {
   margin: 0.125rem 0 0;
   font-size: 0.75rem;
   color: var(--color-muted);
+}
+
+.proyeccion__total {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.proyeccion__minerales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+}
+
+.proyeccion__mineral {
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  padding: 0.125rem 0.5rem;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.consumo-nodo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  background: var(--color-lienzo);
+  padding: 0.5rem 0.75rem;
+}
+
+.consumo-nodo__titulo {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.consumo-nodo__ayuda,
+.consumo-nodo__dia {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.consumo-nodo__minerales,
+.consumo-nodo__etapas {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.consumo-nodo__etapa--actual {
+  color: var(--color-texto);
+  font-weight: 600;
+}
+
+.patricia__fila {
+  display: flex;
+  align-items: stretch;
+  gap: 0.375rem;
+}
+
+.patricia__item,
+.patricia__interno {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  background: var(--color-lienzo-60);
+  padding: 0.375rem 0.5rem;
+  text-align: left;
+}
+
+.patricia__interno {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.125rem;
+}
+
+.patricia__item:hover,
+.patricia__interno:hover {
+  border-color: var(--color-acento);
+}
+
+.patricia__item--activo,
+.patricia__interno--activo {
+  border-color: var(--color-acento);
+  background: var(--color-lienzo);
+}
+
+.patricia__cuerpo {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.patricia__nombre {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.patricia__meta {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.patricia__quitar {
+  display: flex;
+  width: 2rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(239 68 68 / 0.4);
+  border-radius: 0.75rem;
+  color: var(--color-peligro);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.patricia__quitar:hover {
+  border-color: var(--color-peligro);
+  background: rgb(239 68 68 / 0.12);
+}
+
+.patricia__rama-cabecera {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+
+.patricia__plegar {
+  width: 1.5rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  color: var(--color-muted);
+}
+
+.patricia__hijos {
+  margin-top: 0.375rem;
 }
 
 /* --- Campos de formulario --- */
@@ -750,7 +917,7 @@ button:disabled {
 }
 
 .ficha-vida__etapa--actual {
-  border: 1px solid rgb(52 211 153 / 0.4);
+  border: 1px solid color-mix(in srgb, var(--color-acento) 45%, transparent);
   background: var(--color-lienzo);
   color: var(--color-texto);
 }
@@ -1010,12 +1177,14 @@ button:disabled {
   width: 100%;
 }
 
-.catalogo-plantado__fila > .ancla-hover {
+.catalogo-plantado__fila > .ancla-hover,
+.patricia__fila > .ancla-hover {
   flex: 1;
 }
 
 .ancla-hover .tarjeta-cultivo,
-.ancla-hover .catalogo-plantado__item {
+.ancla-hover .catalogo-plantado__item,
+.ancla-hover .patricia__item {
   width: 100%;
 }
 
@@ -1038,7 +1207,7 @@ button:disabled {
 .ficha-hover__cabecera {
   margin: 0;
   background: var(--color-acento-fuerte);
-  color: var(--color-lienzo);
+  color: var(--color-sobre-acento);
   padding: 0.4rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;

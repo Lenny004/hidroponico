@@ -6,7 +6,7 @@ export const CLAVE_TEMA = "hidroponico-tema";
 
 /** Color de fondo del lienzo 3D; debe coincidir con `--color-lienzo` en `index.css`. */
 export const COLOR_LIENZO: Record<TemaInterfaz, string> = {
-  oscuro: "#0b1220",
+  oscuro: "#1c1a14",
   claro: "#f3efe6",
 };
 
