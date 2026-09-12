@@ -1,8 +1,11 @@
 import {
   CATALOGO_CULTIVOS,
+  ETIQUETAS_FAMILIA,
   fichaHoverDesdeCatalogo,
   obtenerPlagaPorIdONombre,
 } from "@hidroponico/tipos-compartidos";
+import type { CSSProperties } from "react";
+import { Bug, Timer } from "lucide-react";
 import AnclaHoverCultivo from "./AnclaHoverCultivo";
 import GlifoCultivo from "../iconos/GlifoCultivo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
@@ -62,11 +65,36 @@ export default function PanelCultivo() {
                     ? "tarjeta-cultivo tarjeta-cultivo--activa"
                     : "tarjeta-cultivo"
                 }
+                style={
+                  {
+                    "--color-cultivo": cultivo.color,
+                  } as CSSProperties
+                }
               >
                 <GlifoCultivo tipoCultivo={cultivo.id} color={cultivo.color} />
                 <span className="tarjeta-cultivo__nombre">{cultivo.nombre}</span>
-                <span className="tarjeta-cultivo__meta">
-                  {cultivo.proceso.dias_cosecha} d · {cultivo.plagas_tipicas.length} plagas
+                <span className="tarjeta-cultivo__familia">
+                  {ETIQUETAS_FAMILIA[cultivo.familia]}
+                </span>
+                <span className="tarjeta-cultivo__chips">
+                  <span
+                    className="tarjeta-cultivo__chip"
+                    title={`${cultivo.proceso.dias_cosecha} días a cosecha`}
+                  >
+                    <Timer className="tarjeta-cultivo__chip-icono" aria-hidden />
+                    {cultivo.proceso.dias_cosecha} d
+                  </span>
+                  <span
+                    className={
+                      cultivo.plagas_tipicas.length > 0
+                        ? "tarjeta-cultivo__chip tarjeta-cultivo__chip--plaga"
+                        : "tarjeta-cultivo__chip"
+                    }
+                    title={`${cultivo.plagas_tipicas.length} plagas típicas`}
+                  >
+                    <Bug className="tarjeta-cultivo__chip-icono" aria-hidden />
+                    {cultivo.plagas_tipicas.length}
+                  </span>
                 </span>
               </button>
             </AnclaHoverCultivo>

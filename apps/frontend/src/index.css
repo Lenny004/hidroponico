@@ -247,7 +247,7 @@ button:disabled {
 
 .panel-cultivo {
   display: flex;
-  width: 14rem;
+  width: 15.5rem;
   flex-shrink: 0;
   flex-direction: column;
   gap: 0.75rem;
@@ -279,34 +279,127 @@ button:disabled {
 }
 
 .tarjeta-cultivo {
+  --color-cultivo: var(--color-acento);
+  position: relative;
   display: flex;
+  overflow: hidden;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
-  border: 1px solid var(--color-borde);
-  border-radius: 0.75rem;
-  background: var(--color-lienzo-60);
-  padding: 0.5rem;
+  gap: 0.12rem;
+  border: 1px solid color-mix(in srgb, var(--color-cultivo) 38%, var(--color-borde));
+  border-radius: 0.95rem;
+  background:
+    linear-gradient(
+      168deg,
+      color-mix(in srgb, var(--color-cultivo) 26%, var(--color-lienzo)) 0%,
+      var(--color-lienzo-60) 62%
+    );
+  padding: 0.7rem 0.4rem 0.45rem;
   text-align: center;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-cultivo) 22%, transparent);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.tarjeta-cultivo::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-cultivo) 55%, transparent),
+    var(--color-cultivo),
+    color-mix(in srgb, var(--color-cultivo) 55%, transparent)
+  );
 }
 
 .tarjeta-cultivo:hover,
 .tarjeta-cultivo--activa {
-  border-color: var(--color-acento);
+  border-color: var(--color-cultivo);
+  transform: translateY(-1px);
+  box-shadow:
+    var(--sombra-nodo),
+    0 0 0 1px color-mix(in srgb, var(--color-cultivo) 42%, transparent);
 }
 
 .tarjeta-cultivo--activa {
-  background: var(--color-lienzo);
+  background:
+    linear-gradient(
+      168deg,
+      color-mix(in srgb, var(--color-cultivo) 34%, var(--color-lienzo)) 0%,
+      color-mix(in srgb, var(--color-cultivo) 10%, var(--color-lienzo)) 100%
+    );
+}
+
+.tarjeta-cultivo:focus-visible {
+  outline: 2px solid var(--color-cultivo);
+  outline-offset: 2px;
 }
 
 .tarjeta-cultivo__nombre {
+  max-width: 100%;
+  overflow: hidden;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.tarjeta-cultivo__meta {
-  font-size: 10px;
+.tarjeta-cultivo__familia {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--color-muted);
+}
+
+.tarjeta-cultivo__chips {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.2rem;
+  margin-top: 0.2rem;
+}
+
+.tarjeta-cultivo__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+  border-radius: 9999px;
+  background: var(--color-lienzo-80);
+  padding: 0.08rem 0.3rem;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--color-muted);
+}
+
+.tarjeta-cultivo__chip--plaga {
+  background: color-mix(in srgb, var(--color-plaga) 18%, var(--color-lienzo));
+  color: var(--color-plaga);
+}
+
+.tarjeta-cultivo__chip-icono {
+  width: 0.65rem;
+  height: 0.65rem;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-cultivo {
+    transition: none;
+  }
+
+  .tarjeta-cultivo:hover,
+  .tarjeta-cultivo--activa {
+    transform: none;
+  }
 }
 
 /* --- Lienzo --- */
@@ -994,69 +1087,360 @@ button:disabled {
 /* --- Resultados --- */
 
 .panel-resultados {
-  max-height: 11rem;
+  flex-shrink: 0;
+  max-height: 20rem;
   overflow-y: auto;
   border-top: 1px solid var(--color-borde);
   background: var(--color-panel);
-  padding: 0.5rem 1rem;
-  font-size: 0.75rem;
+  padding: 0.75rem 1rem 0.9rem;
+}
+
+.panel-resultados--vacio {
+  max-height: none;
+  padding-block: 0.65rem;
 }
 
 .panel-resultados__cabecera {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
-.panel-resultados__titulo {
+.panel-resultados__kicker {
   margin: 0;
+  font-size: 10px;
   font-weight: 600;
-}
-
-.panel-resultados__conteo {
-  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--color-muted);
 }
 
-.panel-resultados__aviso {
+.panel-resultados__titulo {
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.panel-resultados__vacio {
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__cultivos,
+.panel-resultados__miembros,
+.panel-resultados__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
   margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-resultados__cultivos {
+  margin-top: 0.5rem;
+}
+
+.panel-resultados__chip,
+.panel-resultados__miembro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  background: var(--color-lienzo);
+  padding: 0.15rem 0.55rem 0.15rem 0.2rem;
+  font-size: 0.75rem;
+  color: var(--color-texto);
+}
+
+.panel-resultados__chip:hover,
+.panel-resultados__miembro:hover {
+  border-color: var(--color-acento);
+}
+
+.panel-resultados__chip:disabled {
+  opacity: 0.7;
+}
+
+.panel-resultados__chip-cuenta {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.panel-resultados__estado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  max-width: 22rem;
+}
+
+.panel-resultados__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.panel-resultados__badge-icono {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex-shrink: 0;
+}
+
+.panel-resultados__badge--ok {
+  background: color-mix(in srgb, var(--color-acento) 18%, transparent);
+  color: var(--color-acento);
+}
+
+.panel-resultados__badge--aviso {
+  background: color-mix(in srgb, var(--color-aviso) 18%, transparent);
   color: var(--color-aviso);
 }
 
-.panel-resultados__lista {
+.panel-resultados__badge--bloqueo {
+  background: color-mix(in srgb, var(--color-peligro) 16%, transparent);
+  color: var(--color-peligro);
+}
+
+.panel-resultados__estado-ayuda {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+  text-align: right;
+}
+
+.panel-resultados__avisos {
+  width: 100%;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__avisos summary {
+  cursor: pointer;
+  color: var(--color-aviso);
+  font-weight: 600;
+  text-align: right;
+}
+
+.panel-resultados__avisos ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
+}
+
+.panel-resultados__avisos li {
+  line-height: 1.4;
+}
+
+.panel-resultados__motores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
 }
 
 .panel-resultados__motor {
   display: flex;
+  flex: 1 1 16rem;
+  min-width: 0;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.55rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.9rem;
+  border-top-width: 3px;
+  background: var(--color-lienzo);
+  padding: 0.7rem 0.75rem 0.8rem;
+}
+
+.panel-resultados__motor--minerales {
+  border-top-color: var(--color-acento);
+}
+
+.panel-resultados__motor--oxigeno {
+  border-top-color: var(--color-riego);
+}
+
+.panel-resultados__motor--insumos {
+  border-top-color: var(--color-acento-fuerte);
+}
+
+.panel-resultados__motor--plagas {
+  border-top-color: var(--color-plaga);
+}
+
+.panel-resultados__motor-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.panel-resultados__motor-icono {
+  display: flex;
+  width: 1.85rem;
+  height: 1.85rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.55rem;
+  background: var(--color-panel);
+  color: var(--color-acento);
+}
+
+.panel-resultados__motor-icono svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.panel-resultados__motor--plagas .panel-resultados__motor-icono {
+  color: var(--color-plaga);
+}
+
+.panel-resultados__motor--oxigeno .panel-resultados__motor-icono {
+  color: var(--color-riego);
 }
 
 .panel-resultados__motor-nombre {
   margin: 0;
-  color: var(--color-acento);
+  font-size: 0.8125rem;
+  font-weight: 650;
 }
 
-.panel-resultados__grupo {
-  margin: 0;
+.panel-resultados__motor-ayuda {
+  margin: 0.1rem 0 0;
+  font-size: 11px;
+  line-height: 1.4;
   color: var(--color-muted);
 }
 
-.panel-resultados__dato {
-  margin-right: 0.75rem;
+.panel-resultados__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
-.panel-resultados__valor {
-  color: var(--color-texto);
+.panel-resultados__grupo-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
-.panel-resultados__valor--nulo {
+.panel-resultados__grupo-titulo {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.panel-resultados__volumen {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.panel-resultados__metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.6rem, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-resultados__metricas--simples {
+  grid-template-columns: 1fr;
+}
+
+.panel-resultados__metricas--simples .panel-resultados__metrica {
+  padding: 0.55rem 0.7rem;
+}
+
+.panel-resultados__metricas--simples .panel-resultados__metrica-valor {
+  font-size: 1.25rem;
+}
+
+.panel-resultados__metrica {
+  border: 1px solid var(--color-borde);
+  border-radius: 0.7rem;
+  background: var(--color-panel);
+  padding: 0.4rem 0.5rem 0.45rem;
+}
+
+.panel-resultados__metrica--nula {
+  border-style: dashed;
+}
+
+.panel-resultados__metrica-etiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--color-muted);
+}
+
+.panel-resultados__metrica-simbolo {
+  font-weight: 700;
+  color: var(--color-acento);
+}
+
+.panel-resultados__metrica-valor {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel-resultados__metrica-valor--nulo {
   color: var(--color-aviso);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.panel-resultados__plagas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.panel-resultados__lista-texto,
+.panel-resultados__lista-etiqueta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__lista-texto strong {
+  color: var(--color-texto);
+  font-weight: 600;
+}
+
+.panel-resultados__pill {
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  background: var(--color-panel);
+  padding: 0.15rem 0.5rem;
+  font-size: 11px;
+}
+
+.panel-resultados__fallo {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-peligro);
 }
 
 /* --- Barra de estado --- */
@@ -1121,10 +1505,14 @@ button:disabled {
 }
 
 .glifo-cultivo--catalogo {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.75rem;
-  background: var(--color-lienzo);
+  width: 2.65rem;
+  height: 2.65rem;
+  margin-bottom: 0.15rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, currentColor 16%, var(--color-lienzo));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, currentColor 12%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent);
 }
 
 .glifo-cultivo--lista {
@@ -1138,6 +1526,20 @@ button:disabled {
 .glifo-cultivo--lista .glifo-cultivo__icono {
   width: 0.875rem;
   height: 0.875rem;
+}
+
+.glifo-cultivo--chip {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border-width: 1.5px;
+  background: var(--color-panel);
+}
+
+.glifo-cultivo--chip .glifo-cultivo__icono {
+  width: 0.7rem;
+  height: 0.7rem;
 }
 
 .glifo-cultivo--ficha {

@@ -7,6 +7,8 @@ export interface ResultadoMotorApi {
     totales?: Record<string, number | null>;
     plagas?: string[] | null;
     solucion_plagas?: string[] | null;
+    volumen_L?: number | null;
+    concentraciones?: Record<string, number | null>;
   };
 }
 
