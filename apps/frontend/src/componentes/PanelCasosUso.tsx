@@ -28,7 +28,10 @@ export default function PanelCasosUso() {
 
   return (
     <section className="panel-casos" aria-label="Casos de uso">
-      <p className="panel-casos__kicker">Casos de uso</p>
+      <div>
+        <h2 className="panel-casos__titulo">Qué mirar</h2>
+        <p className="panel-casos__ayuda">Cambia el lente del consolidado, no el cálculo.</p>
+      </div>
       <div className="panel-casos__rejilla">
         {CATALOGO_CASOS_USO.map((caso) => {
           const Icono = ICONOS[caso.id];

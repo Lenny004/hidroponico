@@ -1,0 +1,73 @@
+.panel-cultivo {
+  display: flex;
+  width: 15.25rem;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 0.65rem;
+  border-right: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: var(--espacio);
+}
+
+.panel-cultivo__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.panel-cultivo__ayuda {
+  margin: 0.2rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-cultivo__rejilla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  overflow-y: auto;
+}
+
+.panel-cultivo__rejilla > .ancla-hover {
+  width: 100%;
+}
+
+.tarjeta-cultivo {
+  --color-cultivo: var(--color-acento);
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-lienzo);
+  padding: 0.55rem 0.35rem 0.5rem;
+  text-align: center;
+}
+
+.tarjeta-cultivo:hover,
+.tarjeta-cultivo--activa {
+  border-color: var(--color-cultivo);
+}
+
+.tarjeta-cultivo--activa {
+  background: color-mix(in srgb, var(--color-cultivo) 12%, var(--color-lienzo));
+}
+
+.tarjeta-cultivo__nombre {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tarjeta-cultivo__familia {
+  font-size: 0.68rem;
+  color: var(--color-muted);
+}

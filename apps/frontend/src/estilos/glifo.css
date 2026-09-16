@@ -1,0 +1,70 @@
+.glifo-cultivo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid currentColor;
+  background: var(--color-lienzo);
+}
+
+.glifo-cultivo__icono {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.glifo-cultivo--catalogo {
+  width: 2.35rem;
+  height: 2.35rem;
+  margin-bottom: 0.1rem;
+  border-radius: var(--radio);
+}
+
+.glifo-cultivo--lista {
+  width: 1.6rem;
+  height: 1.6rem;
+  flex-shrink: 0;
+  border-radius: var(--radio-s);
+}
+
+.glifo-cultivo--lista .glifo-cultivo__icono {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.glifo-cultivo--chip {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  border-width: 1px;
+  border-radius: var(--radio-s);
+  background: var(--color-panel);
+}
+
+.glifo-cultivo--chip .glifo-cultivo__icono {
+  width: 0.65rem;
+  height: 0.65rem;
+}
+
+.glifo-cultivo--ficha {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: var(--radio);
+}
+
+.glifo-cultivo--ficha .glifo-cultivo__icono {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.glifo-cultivo--nodo {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: var(--radio);
+  background: var(--color-panel);
+  box-shadow: var(--sombra);
+}
+
+.glifo-cultivo--nodo .glifo-cultivo__icono {
+  width: 1.8rem;
+  height: 1.8rem;
+}

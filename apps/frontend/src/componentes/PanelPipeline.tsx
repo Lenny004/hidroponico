@@ -18,7 +18,7 @@ export default function PanelPipeline() {
         type="button"
         className="panel-pipeline__hamburguesa"
         aria-expanded={abierto}
-        title={abierto ? "Ocultar cálculos" : "Mostrar cálculos del pipeline"}
+        title={abierto ? "Ocultar cálculos" : "Mostrar cálculos"}
         onClick={alternar}
       >
         {abierto ? <X strokeWidth={2.25} /> : <Menu strokeWidth={2.25} />}

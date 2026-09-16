@@ -1,0 +1,82 @@
+.panel-consolidado {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  overflow-y: auto;
+  background: var(--color-panel);
+  padding: 0.65rem 0.85rem 0.8rem;
+}
+
+.panel-consolidado__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.panel-consolidado__ayuda,
+.panel-consolidado__vacio {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.panel-consolidado__dato {
+  margin: 0.12rem 0 0;
+  font-size: 0.8125rem;
+}
+
+.panel-consolidado__tabla-envoltorio {
+  overflow: auto;
+}
+
+.tabla-consolidado {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.tabla-consolidado th,
+.tabla-consolidado td {
+  border-bottom: 1px solid var(--color-borde);
+  padding: 0.35rem 0.3rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabla-consolidado th {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.tabla-consolidado__pista {
+  margin-top: 0.2rem;
+}
+
+.agroservicio {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.agroservicio__entidad {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.agroservicio__lista {
+  margin: 0;
+  padding-left: 1.05rem;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.agroservicio__enlaces {
+  margin: 0;
+  font-size: 0.75rem;
+}

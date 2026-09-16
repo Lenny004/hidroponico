@@ -1,0 +1,47 @@
+.app {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.app__cuerpo {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+
+.app__principal {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.app__escenario {
+  display: flex;
+  min-height: 0;
+  flex: 1.35;
+}
+
+.app__inferior {
+  display: flex;
+  min-height: 12.5rem;
+  max-height: 42%;
+  flex: 0.85;
+  border-top: 1px solid var(--color-borde);
+}
+
+@media (max-width: 1100px) {
+  .app__inferior {
+    min-height: 11rem;
+  }
+
+  .panel-trazabilidad {
+    width: min(22rem, 46%);
+  }
+
+  .panel-pipeline {
+    width: 18rem;
+  }
+}

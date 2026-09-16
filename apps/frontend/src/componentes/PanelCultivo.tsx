@@ -39,8 +39,8 @@ export default function PanelCultivo() {
   return (
     <aside className="panel-cultivo">
       <div>
-        <p className="panel-cultivo__titulo">Cultivo</p>
-        <p className="panel-cultivo__ayuda">Arrastra o pulsa para plantar</p>
+        <h2 className="panel-cultivo__titulo">Catálogo</h2>
+        <p className="panel-cultivo__ayuda">Arrastra al tubo, o pulsa para plantar.</p>
       </div>
       <div className="panel-cultivo__rejilla">
         {cultivos.map((cultivo) => (

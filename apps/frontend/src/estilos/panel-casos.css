@@ -1,0 +1,64 @@
+.panel-casos {
+  display: flex;
+  width: min(22rem, 38%);
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  border-right: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: 0.65rem 0.7rem;
+}
+
+.panel-casos__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.panel-casos__ayuda {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-casos__rejilla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.caso-uso {
+  display: flex;
+  min-height: 2.6rem;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-lienzo);
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+}
+
+.caso-uso:hover,
+.caso-uso--activo {
+  border-color: var(--color-acento);
+}
+
+.caso-uso--activo {
+  background: color-mix(in srgb, var(--color-acento) 10%, var(--color-lienzo));
+}
+
+.caso-uso__icono {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  color: var(--color-acento);
+}
+
+.caso-uso__titulo {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+}

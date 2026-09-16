@@ -1,0 +1,306 @@
+.panel-resultados {
+  flex-shrink: 0;
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+.panel-resultados--vacio {
+  max-height: none;
+}
+
+.panel-resultados__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.7rem 1rem;
+  margin-bottom: 0.7rem;
+}
+
+.panel-resultados__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.panel-resultados__vacio {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__cultivos,
+.panel-resultados__miembros,
+.panel-resultados__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-resultados__cultivos {
+  margin-top: 0.4rem;
+}
+
+.panel-resultados__chip,
+.panel-resultados__miembro,
+.panel-resultados__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-lienzo);
+  padding: 0.12rem 0.45rem;
+  font-size: 0.75rem;
+}
+
+.panel-resultados__chip {
+  padding-left: 0.18rem;
+}
+
+.panel-resultados__chip:hover,
+.panel-resultados__miembro:hover {
+  border-color: var(--color-acento);
+}
+
+.panel-resultados__chip:disabled {
+  opacity: 0.7;
+}
+
+.panel-resultados__chip-cuenta {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.panel-resultados__estado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  max-width: 22rem;
+}
+
+.panel-resultados__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.panel-resultados__badge-icono {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+}
+
+.panel-resultados__badge--ok {
+  border-color: var(--color-acento);
+  color: var(--color-acento);
+}
+
+.panel-resultados__badge--aviso {
+  border-color: var(--color-aviso);
+  color: var(--color-aviso);
+}
+
+.panel-resultados__badge--bloqueo {
+  border-color: var(--color-peligro);
+  color: var(--color-peligro);
+}
+
+.panel-resultados__estado-ayuda {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  text-align: right;
+}
+
+.panel-resultados__avisos {
+  width: 100%;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__avisos summary {
+  cursor: pointer;
+  color: var(--color-aviso);
+  font-weight: 600;
+  text-align: right;
+}
+
+.panel-resultados__avisos ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.35rem 0 0;
+  padding-left: 1.05rem;
+}
+
+.panel-resultados__motores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.panel-resultados__motor {
+  display: flex;
+  flex: 1 1 16rem;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.45rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-lienzo);
+  padding: 0.55rem 0.65rem 0.65rem;
+}
+
+.panel-resultados__motor-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.panel-resultados__motor-icono {
+  display: flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-acento);
+}
+
+.panel-resultados__motor-icono svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.panel-resultados__motor--plagas .panel-resultados__motor-icono {
+  color: var(--color-plaga);
+}
+
+.panel-resultados__motor--oxigeno .panel-resultados__motor-icono {
+  color: var(--color-riego);
+}
+
+.panel-resultados__motor-nombre {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.panel-resultados__motor-ayuda {
+  margin: 0.1rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+
+.panel-resultados__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.panel-resultados__grupo-titulo {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.panel-resultados__volumen {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.4rem, 1fr));
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-resultados__metricas--simples {
+  grid-template-columns: 1fr;
+}
+
+.panel-resultados__metrica {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-panel);
+  padding: 0.35rem 0.45rem;
+}
+
+.panel-resultados__metrica--nula {
+  border-style: dashed;
+}
+
+.panel-resultados__metrica-etiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__metrica-simbolo {
+  font-weight: 700;
+  color: var(--color-acento);
+}
+
+.panel-resultados__metrica-valor {
+  margin: 0.12rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel-resultados__metricas--simples .panel-resultados__metrica-valor {
+  font-size: 1.15rem;
+}
+
+.panel-resultados__metrica-valor--nulo {
+  color: var(--color-aviso);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.panel-resultados__plagas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.panel-resultados__lista-texto,
+.panel-resultados__lista-etiqueta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-resultados__lista-texto strong {
+  color: var(--color-texto);
+  font-weight: 600;
+}
+
+.panel-resultados__fallo {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-peligro);
+}

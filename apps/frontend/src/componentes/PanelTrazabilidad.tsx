@@ -82,7 +82,6 @@ export default function PanelTrazabilidad() {
   return (
     <aside className="panel-trazabilidad" aria-label="Trazabilidad e información del cultivo">
       <header className="panel-trazabilidad__cabecera">
-        <p className="panel-trazabilidad__kicker">Cultivo</p>
         {definicion && ficha ? (
           <div className="panel-trazabilidad__titulo-fila">
             <GlifoCultivo tipoCultivo={definicion.id} color={definicion.color} tamano="ficha" />
@@ -93,9 +92,12 @@ export default function PanelTrazabilidad() {
             </div>
           </div>
         ) : (
-          <p className="panel-trazabilidad__vacio">
-            Selecciona un cultivo del catálogo o de un orificio.
-          </p>
+          <>
+            <h2 className="panel-trazabilidad__nombre">Ficha del cultivo</h2>
+            <p className="panel-trazabilidad__vacio">
+              Elige una planta del catálogo o toca un orificio del tubo.
+            </p>
+          </>
         )}
       </header>
 

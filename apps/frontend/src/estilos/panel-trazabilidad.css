@@ -1,0 +1,122 @@
+.panel-trazabilidad {
+  display: flex;
+  width: min(26rem, 42%);
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-borde);
+  background: var(--color-panel);
+  padding: var(--espacio);
+}
+
+.panel-trazabilidad__nombre {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.panel-trazabilidad__titulo-fila {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.panel-trazabilidad__cientifico {
+  margin: 0.15rem 0 0;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.panel-trazabilidad__meta,
+.panel-trazabilidad__vacio {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.panel-trazabilidad__resumen {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.panel-trazabilidad__enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.panel-trazabilidad__enlace:hover {
+  text-decoration: underline;
+}
+
+.panel-trazabilidad__enlace-icono {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.ficha-herbazest {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-lienzo);
+  padding: 0.55rem 0.65rem 0.7rem;
+}
+
+.ficha-herbazest__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ficha-herbazest__subtitulo {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.ficha-herbazest__grupo {
+  margin: 0.3rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ficha-herbazest__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ficha-herbazest__fila-texto {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.ficha-herbazest__pista,
+.tabla-consolidado__pista {
+  height: 0.28rem;
+  overflow: hidden;
+  border-radius: var(--radio-s);
+  background: var(--color-progreso-pista);
+}
+
+.ficha-herbazest__relleno,
+.tabla-consolidado__relleno {
+  height: 100%;
+  background: var(--color-acento);
+}

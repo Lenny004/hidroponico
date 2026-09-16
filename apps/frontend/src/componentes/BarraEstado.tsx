@@ -14,10 +14,10 @@ export default function BarraEstado() {
 
   return (
     <footer className="barra-estado">
-      <span>{mensajeEstado}</span>
-      <span>
-        {nodos.length} nodos · {aristas.length} aristas · grafo de construcción · {etiquetaBd}
-      </span>
+      <p className="barra-estado__mensaje">{mensajeEstado}</p>
+      <p className="barra-estado__meta">
+        {nodos.length} cultivos · {aristas.length} conexiones · {etiquetaBd}
+      </p>
     </footer>
   );
 }

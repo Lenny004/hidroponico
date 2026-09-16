@@ -4,10 +4,10 @@ export type TemaInterfaz = "claro" | "oscuro";
 
 export const CLAVE_TEMA = "hidroponico-tema";
 
-/** Color de fondo del lienzo 3D; debe coincidir con `--color-lienzo` en `index.css`. */
+/** Color de fondo del lienzo 3D; debe coincidir con `--color-lienzo` en `estilos/tokens.css`. */
 export const COLOR_LIENZO: Record<TemaInterfaz, string> = {
-  oscuro: "#1c1a14",
-  claro: "#f3efe6",
+  oscuro: "#16140f",
+  claro: "#efe8d8",
 };
 
 function leerTemaGuardado(): TemaInterfaz | null {

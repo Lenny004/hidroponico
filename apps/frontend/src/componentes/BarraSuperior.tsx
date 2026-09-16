@@ -20,12 +20,12 @@ function BotonPlay({
     <button
       type="button"
       disabled={deshabilitado}
-      title={deshabilitado ? "Ejecutando…" : etiqueta}
+      title={deshabilitado ? "Calculando…" : etiqueta}
       onClick={onClick}
       className={destacado ? "boton-play boton-play--destacado" : "boton-play"}
-      aria-label={etiqueta}
     >
-      <Icono className="boton-play__icono" strokeWidth={2.25} />
+      <Icono className="boton-play__icono" strokeWidth={2} />
+      {etiqueta}
     </button>
   );
 }
@@ -45,21 +45,27 @@ export default function BarraSuperior() {
   return (
     <header className="barra-superior">
       <div className="barra-superior__marca">
-        <p className="barra-superior__titulo">Hidropónico</p>
-        <p className="barra-superior__subtitulo">TREE.JS</p>
+        <h1 className="barra-superior__titulo">Hidropónico</h1>
+        <p className="barra-superior__subtitulo">Tubos NFT</p>
       </div>
-      <input
-        value={busquedaCatalogo}
-        onChange={(evento) => setBusquedaCatalogo(evento.target.value)}
-        placeholder="Buscar cultivo"
-        className="barra-superior__campo"
-      />
-      <input
-        value={filtroLienzo}
-        onChange={(evento) => setFiltroLienzo(evento.target.value)}
-        placeholder="Filtrar lienzo"
-        className="barra-superior__campo"
-      />
+      <label className="barra-superior__busqueda">
+        <span className="barra-superior__etiqueta">Catálogo</span>
+        <input
+          value={busquedaCatalogo}
+          onChange={(evento) => setBusquedaCatalogo(evento.target.value)}
+          placeholder="lechuga, pulgón…"
+          className="barra-superior__campo"
+        />
+      </label>
+      <label className="barra-superior__busqueda">
+        <span className="barra-superior__etiqueta">En el tubo</span>
+        <input
+          value={filtroLienzo}
+          onChange={(evento) => setFiltroLienzo(evento.target.value)}
+          placeholder="filtrar por nombre"
+          className="barra-superior__campo"
+        />
+      </label>
       <div className="barra-superior__acciones">
         <button
           type="button"
@@ -70,48 +76,34 @@ export default function BarraSuperior() {
           aria-checked={tema === "oscuro"}
           onClick={alternarTema}
         >
-          <IconoTema className="boton-tema__icono" strokeWidth={2.25} />
+          <IconoTema className="boton-tema__icono" strokeWidth={2} />
         </button>
         <div className="barra-superior__plays">
-          <div className="barra-superior__play">
-            <BotonPlay
-              etiqueta="Minerales"
-              icono={FlaskConical}
-              deshabilitado={ejecutandoPipeline}
-              onClick={() => void ejecutarPipeline("minerales")}
-            />
-            <span className="barra-superior__play-etiqueta">Minerales</span>
-          </div>
-          <div className="barra-superior__play">
-            <BotonPlay
-              etiqueta="Oxígeno"
-              icono={Droplets}
-              deshabilitado={ejecutandoPipeline}
-              onClick={() => void ejecutarPipeline("oxigeno")}
-            />
-            <span className="barra-superior__play-etiqueta">Oxígeno</span>
-          </div>
-          <div className="barra-superior__play">
-            <BotonPlay
-              etiqueta="Pipeline"
-              icono={Play}
-              destacado
-              deshabilitado={ejecutandoPipeline}
-              onClick={() => void ejecutarPipeline()}
-            />
-            <span className="barra-superior__play-etiqueta barra-superior__play-etiqueta--acento">
-              Pipeline
-            </span>
-          </div>
-          <div className="barra-superior__play">
-            <BotonPlay
-              etiqueta="Plagas"
-              icono={Bug}
-              deshabilitado={ejecutandoPipeline}
-              onClick={() => void ejecutarPipeline("plagas")}
-            />
-            <span className="barra-superior__play-etiqueta">Plagas</span>
-          </div>
+          <BotonPlay
+            etiqueta="Minerales"
+            icono={FlaskConical}
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline("minerales")}
+          />
+          <BotonPlay
+            etiqueta="Oxígeno"
+            icono={Droplets}
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline("oxigeno")}
+          />
+          <BotonPlay
+            etiqueta="Calcular"
+            icono={Play}
+            destacado
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline()}
+          />
+          <BotonPlay
+            etiqueta="Plagas"
+            icono={Bug}
+            deshabilitado={ejecutandoPipeline}
+            onClick={() => void ejecutarPipeline("plagas")}
+          />
         </div>
       </div>
     </header>

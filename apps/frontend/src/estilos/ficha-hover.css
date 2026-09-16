@@ -1,0 +1,113 @@
+.ancla-hover {
+  display: flex;
+  min-width: 0;
+}
+
+.ancla-hover .tarjeta-cultivo {
+  width: 100%;
+}
+
+.ancla-hover__globo {
+  position: fixed;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.ficha-hover {
+  width: 16.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-panel);
+  box-shadow: var(--sombra);
+}
+
+.ficha-hover__cabecera {
+  margin: 0;
+  border-bottom: 1px solid var(--color-borde);
+  padding: 0.4rem 0.7rem;
+  font-family: var(--fuente-titulo);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ficha-hover__radar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  gap: 0.3rem 0.45rem;
+  padding: 0.65rem 0.75rem 0.45rem;
+}
+
+.ficha-hover__punto {
+  min-width: 0;
+}
+
+.ficha-hover__punto--mg {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.ficha-hover__punto--k {
+  grid-column: 3;
+  grid-row: 1;
+  text-align: right;
+}
+
+.ficha-hover__punto--mn {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.ficha-hover__punto--fe {
+  grid-column: 3;
+  grid-row: 3;
+  text-align: right;
+}
+
+.ficha-hover__centro {
+  display: flex;
+  grid-column: 2;
+  grid-row: 2;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.ficha-hover__simbolo {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-acento);
+}
+
+.ficha-hover__valor,
+.ficha-hover__masa,
+.ficha-hover__litros,
+.ficha-hover__reposicion,
+.ficha-hover__pie,
+.ficha-hover__consumo {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.ficha-hover__litros {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.ficha-hover__reposicion {
+  color: var(--color-riego);
+}
+
+.ficha-hover__consumo {
+  border-top: 1px solid var(--color-borde);
+  padding: 0.4rem 0.75rem 0.12rem;
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.ficha-hover__pie {
+  padding: 0.12rem 0.75rem 0.55rem;
+}

@@ -157,9 +157,9 @@ export default function PanelResultados() {
     return (
       <section className="panel-resultados panel-resultados--vacio" aria-label="Resumen del tubo">
         <div>
-          <p className="panel-resultados__kicker">Resumen del tubo</p>
+          <h2 className="panel-resultados__titulo">Resumen del tubo</h2>
           <p className="panel-resultados__vacio">
-            Pulsa Pipeline o un motor para calcular el grupo.
+            Pulsa Calcular, o un motor suelto, para ver el grupo.
           </p>
         </div>
       </section>
@@ -174,7 +174,7 @@ export default function PanelResultados() {
     <section className="panel-resultados" aria-label="Resumen del tubo">
       <header className="panel-resultados__cabecera">
         <div className="panel-resultados__intro">
-          <p className="panel-resultados__kicker">Resumen del tubo</p>
+          <h2 className="panel-resultados__titulo">Resumen del tubo</h2>
           {cultivos.length > 0 ? (
             <ul className="panel-resultados__cultivos">
               {cultivos.map(([tipo, cantidad]) => {

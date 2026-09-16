@@ -46,7 +46,6 @@ export default function PanelConsolidado() {
 
   return (
     <section className="panel-consolidado" aria-label="Consolidado diario">
-      <p className="panel-consolidado__kicker">Consolidado al día</p>
       <h2 className="panel-consolidado__titulo">
         {caso?.titulo ?? "Cosecha y referencia humana"}
       </h2>

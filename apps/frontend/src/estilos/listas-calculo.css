@@ -1,0 +1,240 @@
+.catalogo-plantado,
+.proyeccion,
+.patricia {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.catalogo-plantado__titulo,
+.proyeccion__titulo,
+.patricia__titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.catalogo-plantado__vacio,
+.proyeccion__ayuda,
+.proyeccion__aviso,
+.patricia__ayuda,
+.patricia__vacio {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.proyeccion__aviso {
+  color: var(--color-aviso);
+}
+
+.catalogo-plantado__lista,
+.proyeccion__lista,
+.patricia__lista,
+.patricia__hijos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalogo-plantado__fila,
+.patricia__fila {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+}
+
+.catalogo-plantado__fila > .ancla-hover,
+.patricia__fila > .ancla-hover {
+  flex: 1;
+}
+
+.ancla-hover .catalogo-plantado__item,
+.ancla-hover .patricia__item {
+  width: 100%;
+}
+
+.catalogo-plantado__item,
+.patricia__item,
+.patricia__interno {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-lienzo);
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+}
+
+.patricia__interno {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+}
+
+.catalogo-plantado__item:hover,
+.patricia__item:hover,
+.patricia__interno:hover,
+.catalogo-plantado__item--activo,
+.patricia__item--activo,
+.patricia__interno--activo {
+  border-color: var(--color-acento);
+}
+
+.catalogo-plantado__item--activo,
+.patricia__item--activo,
+.patricia__interno--activo {
+  background: var(--color-panel);
+}
+
+.catalogo-plantado__cuerpo,
+.patricia__cuerpo {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.catalogo-plantado__nombre,
+.patricia__nombre,
+.proyeccion__horizonte,
+.proyeccion__total,
+.consumo-nodo__titulo {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.catalogo-plantado__meta,
+.patricia__meta {
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.catalogo-plantado__quitar,
+.patricia__quitar {
+  display: flex;
+  width: 1.85rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--color-peligro) 40%, var(--color-borde));
+  border-radius: var(--radio);
+  color: var(--color-peligro);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.catalogo-plantado__quitar:hover,
+.patricia__quitar:hover {
+  border-color: var(--color-peligro);
+  background: color-mix(in srgb, var(--color-peligro) 12%, transparent);
+}
+
+.proyeccion__fila,
+.consumo-nodo {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-lienzo);
+  padding: 0.45rem 0.65rem;
+}
+
+.proyeccion__fila {
+  border-left-width: 3px;
+}
+
+.proyeccion__fila--dia {
+  border-left-color: var(--color-riego);
+}
+
+.proyeccion__fila--semana {
+  border-left-color: var(--color-aviso);
+}
+
+.proyeccion__fila--mes {
+  border-left-color: var(--color-plaga);
+}
+
+.proyeccion__horizonte,
+.proyeccion__total {
+  margin: 0;
+}
+
+.proyeccion__valores {
+  margin: 0.1rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.proyeccion__total--reposicion {
+  color: var(--color-riego);
+}
+
+.proyeccion__minerales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.proyeccion__mineral {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.consumo-nodo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.consumo-nodo__titulo {
+  margin: 0;
+}
+
+.consumo-nodo__ayuda,
+.consumo-nodo__dia,
+.consumo-nodo__minerales,
+.consumo-nodo__etapas {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.consumo-nodo__minerales,
+.consumo-nodo__etapas {
+  padding-left: 1.05rem;
+}
+
+.consumo-nodo__etapa--actual {
+  color: var(--color-texto);
+  font-weight: 600;
+}
+
+.patricia__rama-cabecera {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+
+.patricia__plegar {
+  width: 1.5rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  color: var(--color-muted);
+}
+
+.patricia__hijos {
+  margin-top: 0.3rem;
+}
