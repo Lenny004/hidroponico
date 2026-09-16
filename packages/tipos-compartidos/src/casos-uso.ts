@@ -25,7 +25,7 @@ export const CATALOGO_CASOS_USO: readonly DefinicionCasoUso[] = [
   {
     id: "sanidad",
     titulo: "Sanidad vegetal",
-    ayuda: "Plagas del tubo, síntomas y solucion_plagas. Lente de diagnóstico, no un motor extra.",
+    ayuda: "Plagas del tubo, síntomas y tratamiento. Lente de diagnóstico, no un motor extra.",
     motor: "plagas",
   },
   {

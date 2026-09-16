@@ -107,8 +107,8 @@ export default function PanelConsolidado() {
               <thead>
                 <tr>
                   <th>Nutriente</th>
-                  <th>Media</th>
-                  <th>Ponderado</th>
+                  <th title="Cada planta vale igual">Media</th>
+                  <th title="Pesa por gramos cosechados al día">Ponderado</th>
                   <th>Total / día</th>
                 </tr>
               </thead>
