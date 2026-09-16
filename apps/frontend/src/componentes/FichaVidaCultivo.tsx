@@ -1,7 +1,6 @@
 import {
   ETAPAS_VIDA,
   ETIQUETAS_ETAPA_VIDA,
-  ETIQUETAS_FAMILIA,
   fechaInicioHoy,
   obtenerCultivoPorId,
   resumenTrazabilidad,
@@ -29,11 +28,8 @@ export default function FichaVidaCultivo({
   return (
     <section className="ficha-vida">
       <fieldset className="grupo-campos">
-        <legend className="grupo-campos__titulo">Trazabilidad de vida</legend>
-        <p className="ficha-vida__ayuda">
-          {ETIQUETAS_FAMILIA[definicion.familia]} · {vida.proceso.sistema} · cosecha típica{" "}
-          {vida.proceso.dias_cosecha} d
-        </p>
+        <legend className="grupo-campos__titulo">Ciclo</legend>
+        <p className="ficha-vida__ayuda">{vida.proceso.sistema}</p>
         {vida.dias != null ? (
           <p className="ficha-vida__dato">
             Día {vida.dias} de {vida.proceso.dias_cosecha}
@@ -54,7 +50,7 @@ export default function FichaVidaCultivo({
           </div>
         ) : null}
         <label className="campo">
-          <span>etapa_vida</span>
+          <span>Etapa</span>
           <select
             value={etapaSelect}
             onChange={(evento) => onCambiarEtapa(evento.target.value || null)}
@@ -74,7 +70,7 @@ export default function FichaVidaCultivo({
           </select>
         </label>
         <label className="campo">
-          <span>iniciado_en</span>
+          <span>Fecha de alta</span>
           <div className="campo__fila">
             <input
               type="date"
@@ -91,7 +87,9 @@ export default function FichaVidaCultivo({
             </button>
           </div>
         </label>
-        <ol className="ficha-vida__etapas">
+        <details className="ficha-vida__calendario">
+          <summary>Calendario del ciclo</summary>
+          <ol className="ficha-vida__etapas">
           {vida.proceso.etapas.map((etapa) => {
             const activa = vida.etapa === etapa.id;
             return (
@@ -107,13 +105,13 @@ export default function FichaVidaCultivo({
               </li>
             );
           })}
-        </ol>
+          </ol>
+        </details>
       </fieldset>
 
-      <fieldset className="grupo-campos">
-        <legend className="grupo-campos__titulo">Proceso</legend>
+      {vida.proceso.resumen ? (
         <p className="ficha-vida__resumen">{vida.proceso.resumen}</p>
-      </fieldset>
+      ) : null}
     </section>
   );
 }

@@ -5,7 +5,6 @@ import {
   obtenerPlagaPorIdONombre,
 } from "@hidroponico/tipos-compartidos";
 import type { CSSProperties } from "react";
-import { Bug, Droplets, Timer } from "lucide-react";
 import AnclaHoverCultivo from "./AnclaHoverCultivo";
 import GlifoCultivo from "../iconos/GlifoCultivo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
@@ -41,9 +40,7 @@ export default function PanelCultivo() {
     <aside className="panel-cultivo">
       <div>
         <p className="panel-cultivo__titulo">Cultivo</p>
-        <p className="panel-cultivo__ayuda">
-          Arrastra un cultivo a un orificio o usa Agregar / Quitar
-        </p>
+        <p className="panel-cultivo__ayuda">Arrastra o pulsa para plantar</p>
       </div>
       <div className="panel-cultivo__rejilla">
         {cultivos.map((cultivo) => (
@@ -77,33 +74,6 @@ export default function PanelCultivo() {
                 <span className="tarjeta-cultivo__nombre">{cultivo.nombre}</span>
                 <span className="tarjeta-cultivo__familia">
                   {ETIQUETAS_FAMILIA[cultivo.familia]}
-                </span>
-                <span className="tarjeta-cultivo__chips">
-                  <span
-                    className="tarjeta-cultivo__chip"
-                    title={`${cultivo.proceso.dias_cosecha} días a cosecha`}
-                  >
-                    <Timer className="tarjeta-cultivo__chip-icono" aria-hidden />
-                    {cultivo.proceso.dias_cosecha} d
-                  </span>
-                  <span
-                    className="tarjeta-cultivo__chip"
-                    title={`Reposición típica: ${cultivo.reposicion_dia_L} L/día. La reserva del tanque recircula.`}
-                  >
-                    <Droplets className="tarjeta-cultivo__chip-icono" aria-hidden />
-                    {cultivo.reposicion_dia_L} L/d
-                  </span>
-                  <span
-                    className={
-                      cultivo.plagas_tipicas.length > 0
-                        ? "tarjeta-cultivo__chip tarjeta-cultivo__chip--plaga"
-                        : "tarjeta-cultivo__chip"
-                    }
-                    title={`${cultivo.plagas_tipicas.length} plagas típicas`}
-                  >
-                    <Bug className="tarjeta-cultivo__chip-icono" aria-hidden />
-                    {cultivo.plagas_tipicas.length}
-                  </span>
                 </span>
               </button>
             </AnclaHoverCultivo>

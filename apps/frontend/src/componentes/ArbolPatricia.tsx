@@ -3,7 +3,6 @@ import {
   arbolPatriciaDeNodos,
   comprimirVistaPorTipo,
   fichaHoverDesdeNodo,
-  formatearMedida,
   hojasDeVista,
   obtenerCultivoPorId,
   vistaArbolPatricia,
@@ -52,12 +51,6 @@ function RamaPatricia({
     const hoja = vista.valor;
     const seleccionado = hoja.id === idSeleccionado;
     const nodo = nodos.find((item) => item.id === hoja.id);
-    const reserva =
-      hoja.litros == null ? "— L reserva" : `${formatearMedida(hoja.litros, "L")} reserva`;
-    const reposicion =
-      hoja.reposicionDiaL == null
-        ? "— L/día"
-        : `${formatearMedida(hoja.reposicionDiaL, "L")}/día`;
     return (
       <li className="patricia__fila">
         <AnclaHoverCultivo ficha={nodo ? fichaHoverDesdeNodo(nodo.data.cultivo) : null}>
@@ -74,9 +67,6 @@ function RamaPatricia({
             <GlifoCultivo tipoCultivo={hoja.tipoCultivo} color={hoja.color} tamano="lista" />
             <span className="patricia__cuerpo">
               <span className="patricia__nombre">{hoja.nombre}</span>
-              <span className="patricia__meta">
-                {reserva} · {reposicion}
-              </span>
             </span>
           </button>
         </AnclaHoverCultivo>
@@ -157,10 +147,6 @@ export default function ArbolPatricia() {
   return (
     <section className="patricia">
       <p className="patricia__titulo">Grafo Patricia</p>
-      <p className="patricia__ayuda">
-        Árbol binario del grafo. Arrastra un cultivo y se indexa. Click en la hoja para
-        renderizarlo en el tubo.
-      </p>
       {vista == null ? (
         <p className="patricia__vacio">Ningún cultivo en los tubos.</p>
       ) : (

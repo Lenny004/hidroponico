@@ -129,7 +129,7 @@ export function consolidarAporteDiarioHumano(
       clave,
       mediaAritmeticaPct: mediaAritmetica(valores),
       ponderadoPct: mediaPonderada(
-        validas.map((planta, indice) => ({
+        validas.map((_, indice) => ({
           valor: valores[indice],
           peso: pesos[indice],
         })),

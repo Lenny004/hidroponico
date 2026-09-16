@@ -43,18 +43,17 @@ export default function CampoNumerico({
   };
 
   return (
-    <label className="campo">
+    <label className="campo" title={claveTecnica}>
       <span className="campo__cabecera">
         <span>
           {etiqueta}{" "}
           <span className="campo__unidad">({unidadNodo})</span>
         </span>
-        <span className="campo__clave">{claveTecnica}</span>
       </span>
       <input
         value={texto}
         inputMode="decimal"
-        placeholder="Vacío = null"
+        placeholder="Vacío = sin dato"
         onChange={(evento) => {
           const siguiente = evento.target.value;
           setTexto(siguiente);
@@ -66,8 +65,8 @@ export default function CampoNumerico({
       {totalGrupo !== undefined ? (
         <span className={totalGrupo == null ? "campo__grupo campo__grupo--nulo" : "campo__grupo"}>
           {totalGrupo == null
-            ? "Grupo conectado: null"
-            : `Grupo conectado: ${formatearMedida(totalGrupo, unidadAgregado)}`}
+            ? "Grupo: sin dato"
+            : `Grupo: ${formatearMedida(totalGrupo, unidadAgregado)}`}
         </span>
       ) : null}
     </label>

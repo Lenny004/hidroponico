@@ -26,14 +26,19 @@ export default function PanelPipeline() {
       </button>
       {abierto ? (
         <div className="panel-pipeline__cuerpo">
-          <p className="panel-pipeline__ayuda">
-            Resultados de los motores (minerales, oxígeno, insumos, plagas) y proyección
-            de agua. Un `null` avisa y no detiene el resto.
-          </p>
           <PanelResultados />
-          <ProyeccionInsumos />
-          <CatalogoPlantado />
-          <ArbolPatricia />
+          <details className="seccion-plegable">
+            <summary>Proyección de insumos</summary>
+            <ProyeccionInsumos />
+          </details>
+          <details className="seccion-plegable">
+            <summary>Plantados</summary>
+            <CatalogoPlantado />
+          </details>
+          <details className="seccion-plegable">
+            <summary>Grafo Patricia</summary>
+            <ArbolPatricia />
+          </details>
         </div>
       ) : null}
     </aside>

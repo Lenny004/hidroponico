@@ -14,10 +14,6 @@ export default function ProyeccionInsumos() {
   return (
     <section className="proyeccion">
       <p className="proyeccion__titulo">Proyección de insumos</p>
-      <p className="proyeccion__ayuda">
-        Reserva del tanque (recircula) y agua a reponer por transpiración. Masa
-        elemental (mg = mg/L × L), no sales.
-      </p>
       <p className="proyeccion__total">
         Reserva: {formatearParInsumos(dia.reservaL, dia.masaTanqueMg)}
       </p>

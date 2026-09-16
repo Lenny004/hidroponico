@@ -29,9 +29,6 @@ export default function PanelCasosUso() {
   return (
     <section className="panel-casos" aria-label="Casos de uso">
       <p className="panel-casos__kicker">Casos de uso</p>
-      <p className="panel-casos__ayuda">
-        Elige el lente: sanidad, extensión en El Salvador, tanque o cosecha humana.
-      </p>
       <div className="panel-casos__rejilla">
         {CATALOGO_CASOS_USO.map((caso) => {
           const Icono = ICONOS[caso.id];

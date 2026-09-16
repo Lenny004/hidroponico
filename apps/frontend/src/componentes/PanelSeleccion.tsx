@@ -37,25 +37,13 @@ export default function PanelSeleccion() {
       <p className="panel-detalle__titulo">Ficha editable</p>
       {!nodo || !cultivo || !nombre ? (
         <p className="panel-detalle__vacio">
-          Haz click en un cultivo de los tubos o de la lista para ver y editar su ficha.
+          Selecciona un cultivo de los tubos para editar su ficha.
         </p>
       ) : (
         <form
           className="panel-detalle__formulario"
           onSubmit={(evento) => evento.preventDefault()}
         >
-          <div>
-            <p className="panel-detalle__nombre">{nombre}</p>
-            <p className="panel-detalle__id">{nodo.id}</p>
-            <button
-              type="button"
-              className="boton-peligro"
-              onClick={() => quitarNodo(nodo.id)}
-            >
-              − Quitar cultivo
-            </button>
-          </div>
-
           <label className="campo">
             <span>Tipo de cultivo</span>
             <select
@@ -80,12 +68,6 @@ export default function PanelSeleccion() {
               actualizarTrazabilidad(nodo.id, "iniciado_en", fecha)
             }
           />
-
-          <p className="panel-detalle__nota">
-            Minerales y O₂ en mg/L (ppm). Reserva del tanque en litros (recircula; no
-            es el gasto diario). El grupo dosifica mg = concentración × litros de
-            reserva. Vacío = null.
-          </p>
 
           {GRUPOS_VARIABLES.map((grupo) => (
             <fieldset key={grupo.titulo} className="grupo-campos">
@@ -120,11 +102,11 @@ export default function PanelSeleccion() {
           />
 
           <label className="campo">
-            <span>solucion_plagas</span>
+            <span>Tratamiento</span>
             <textarea
               rows={2}
               value={cultivo.solucion_plagas ?? ""}
-              placeholder="Vacío = null"
+              placeholder="Vacío = sin dato"
               onChange={(evento) =>
                 actualizarTextoNodo(nodo.id, "solucion_plagas", evento.target.value)
               }
@@ -133,17 +115,25 @@ export default function PanelSeleccion() {
           </label>
 
           <label className="campo">
-            <span>comentarios</span>
+            <span>Notas</span>
             <textarea
-              rows={3}
+              rows={2}
               value={cultivo.comentarios ?? ""}
-              placeholder="Vacío = null"
+              placeholder="Vacío = sin dato"
               onChange={(evento) =>
                 actualizarTextoNodo(nodo.id, "comentarios", evento.target.value)
               }
               className="campo__control campo__control--area"
             />
           </label>
+
+          <button
+            type="button"
+            className="boton-peligro"
+            onClick={() => quitarNodo(nodo.id)}
+          >
+            − Quitar cultivo
+          </button>
         </form>
       )}
     </aside>
@@ -228,7 +218,7 @@ function CampoPlagas({
       ) : null}
       <div className="chip-lista">
         {actuales.length === 0 ? (
-          <span className="campo-plagas__vacio">Ninguna (null)</span>
+          <span className="campo-plagas__vacio">Ninguna</span>
         ) : (
           actuales.map((plaga) => (
             <button
@@ -248,22 +238,22 @@ function CampoPlagas({
         if (!ficha) {
           return (
             <p key={nombre} className="campo-plagas__sin-ficha">
-              {nombre}: sin ficha de catálogo (queda como texto libre).
+              {nombre}: sin ficha de catálogo.
             </p>
           );
         }
         return (
-          <article key={ficha.id} className="ficha-plaga">
-            <p className="ficha-plaga__nombre">{ficha.nombre}</p>
+          <details key={ficha.id} className="ficha-plaga">
+            <summary className="ficha-plaga__nombre">{ficha.nombre}</summary>
             <p className="ficha-plaga__texto">{ficha.descripcion}</p>
             <p className="ficha-plaga__texto">
               <span className="ficha-plaga__etiqueta">Síntomas:</span> {ficha.sintomas}
             </p>
             <p className="ficha-plaga__texto">
-              <span className="ficha-plaga__etiqueta">solucion_plagas:</span>{" "}
+              <span className="ficha-plaga__etiqueta">Tratamiento:</span>{" "}
               {ficha.solucion_plagas}
             </p>
-          </article>
+          </details>
         );
       })}
       <div className="campo__fila">
@@ -290,11 +280,14 @@ function CampoPlagas({
       </div>
       {plagasGrupo !== undefined || solucionGrupo !== undefined ? (
         <p className="campo-plagas__grupo">
-          Grupo: {plagasGrupo == null ? "plagas null" : plagasGrupo.join(", ") || "plagas null"}
+          Grupo:{" "}
+          {plagasGrupo == null
+            ? "plagas sin dato"
+            : plagasGrupo.join(", ") || "ninguna"}
           {" · "}
           {solucionGrupo == null
-            ? "solucion_plagas null"
-            : solucionGrupo.join(", ") || "solucion_plagas null"}
+            ? "tratamiento sin dato"
+            : solucionGrupo.join(", ") || "sin tratamiento"}
         </p>
       ) : null}
     </fieldset>

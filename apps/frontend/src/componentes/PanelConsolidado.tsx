@@ -50,11 +50,9 @@ export default function PanelConsolidado() {
       <h2 className="panel-consolidado__titulo">
         {caso?.titulo ?? "Cosecha y referencia humana"}
       </h2>
-      <p className="panel-consolidado__ayuda">
-        {casoUso === "nutricion"
-          ? "Media aritmética: cada planta vale igual. Ponderado: pesa por gramos cosechados al día, frente al valor diario (VD) de un adulto."
-          : caso?.ayuda}
-      </p>
+      {caso && casoUso !== "nutricion" ? (
+        <p className="panel-consolidado__ayuda">{caso.ayuda}</p>
+      ) : null}
 
       {casoUso === "agroservicio" ? (
         <Agroservicio tipos={cultivos.map((item) => item.tipoCultivo)} />
@@ -71,31 +69,26 @@ export default function PanelConsolidado() {
         <p className="panel-consolidado__dato">
           Reposición {insumos.reposicionL == null ? "—" : formatearMedida(insumos.reposicionL, "L")}
           /día · reserva{" "}
-          {insumos.reservaL == null ? "—" : formatearMedida(insumos.reservaL, "L")} · masa de
-          recambio{" "}
-          {consumo.masaDiaMg == null ? "—" : formatearMedida(consumo.masaDiaMg, "mg")}
+          {insumos.reservaL == null ? "—" : formatearMedida(insumos.reservaL, "L")}
         </p>
       ) : null}
 
       {casoUso === "oxigeno" ? (
         <p className="panel-consolidado__dato">
-          El tanque usa el mínimo de O₂ del grupo. Revisa el panel de cálculos para el valor
-          agregado.
+          El tanque usa el mínimo de O₂ del grupo. El detalle está en Cálculos.
         </p>
       ) : null}
 
       {casoUso === "minerales" ? (
         <p className="panel-consolidado__dato">
-          Masa elemental del día (reposición):{" "}
-          {consumo.masaDiaMg == null ? "—" : formatearMedida(consumo.masaDiaMg, "mg")}. El detalle
-          por Mg, K, Mn y Fe está en el menú hamburguesa.
+          Masa del día (reposición):{" "}
+          {consumo.masaDiaMg == null ? "—" : formatearMedida(consumo.masaDiaMg, "mg")}.
         </p>
       ) : null}
 
-      {nodos.length === 0 ? (
+      {casoUso !== "nutricion" ? null : nodos.length === 0 ? (
         <p className="panel-consolidado__vacio">
-          Planta cultivos en los tubos para ver cuánto cubre la cosecha de un día respecto a lo
-          que un humano necesita.
+          Planta cultivos para ver cuánto cubre la cosecha de un día.
         </p>
       ) : (
         <>

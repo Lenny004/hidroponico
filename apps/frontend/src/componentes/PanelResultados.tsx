@@ -159,8 +159,7 @@ export default function PanelResultados() {
         <div>
           <p className="panel-resultados__kicker">Resumen del tubo</p>
           <p className="panel-resultados__vacio">
-            Pulsa <strong>Pipeline</strong> o un motor en la barra superior para ver minerales,
-            oxígeno, solución y plagas del grupo.
+            Pulsa Pipeline o un motor para calcular el grupo.
           </p>
         </div>
       </section>
@@ -176,13 +175,6 @@ export default function PanelResultados() {
       <header className="panel-resultados__cabecera">
         <div className="panel-resultados__intro">
           <p className="panel-resultados__kicker">Resumen del tubo</p>
-          <p className="panel-resultados__titulo">
-            {cultivos.length === 0
-              ? "Sin cultivos en el cálculo"
-              : `Resultado para ${listarNombres(
-                  cultivos.map(([tipo]) => obtenerCultivoPorId(tipo)?.nombre ?? tipo),
-                )}`}
-          </p>
           {cultivos.length > 0 ? (
             <ul className="panel-resultados__cultivos">
               {cultivos.map(([tipo, cantidad]) => {
@@ -208,7 +200,9 @@ export default function PanelResultados() {
                 );
               })}
             </ul>
-          ) : null}
+          ) : (
+            <p className="panel-resultados__titulo">Sin cultivos en el cálculo</p>
+          )}
         </div>
         <div className="panel-resultados__estado">
           <p
@@ -242,9 +236,7 @@ export default function PanelResultados() {
                 ))}
               </ul>
             </details>
-          ) : (
-            <p className="panel-resultados__estado-ayuda">Todos los cultivos del grupo tienen dato.</p>
-          )}
+          ) : null}
         </div>
       </header>
 
@@ -284,9 +276,8 @@ function TarjetaMotor({
         <span className="panel-resultados__motor-icono" aria-hidden>
           <Icono strokeWidth={2.25} />
         </span>
-        <div>
+        <div title={meta.ayuda}>
           <p className="panel-resultados__motor-nombre">{meta.titulo}</p>
-          <p className="panel-resultados__motor-ayuda">{meta.ayuda}</p>
         </div>
       </header>
       {motor.grupos.map((grupo, indice) => (
