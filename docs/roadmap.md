@@ -43,3 +43,7 @@ Cantidad total de solución nutritiva para hidratar el sistema.
 ## Fase 6 — Persistencia real
 
 **Hecha:** GET/PUT `/grafo`, Prisma en caliente, sync automática con debounce. Sin botón Publicar. Si PostgreSQL no está, el canvas sigue en local.
+
+## Post-Fase 6 — Capas de planificación
+
+No reabre las fases 0–6 ni añade motores. Hidráulica (depósito vs `cantidad_sol`, caudal NFT), recetas por etapa, banda de O₂, sanidad cruzada, CSV y onboarding. Detalle y lo que queda fuera: [ampliacion-post-fase-6.md](ampliacion-post-fase-6.md).

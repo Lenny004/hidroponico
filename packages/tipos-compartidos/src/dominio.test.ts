@@ -48,14 +48,26 @@ import {
   diasRestantesCosecha,
 } from "./consumo-temporal";
 import {
+  CONVERSION_SALES_ABIERTA,
   FICHAS_NUTRICIONALES,
   aporteDiaPlanta,
+  avisoBandaOxigeno,
+  avisoMasaElemental,
+  bandaOxigeno,
+  caudalNftDeReserva,
   consolidarAporteDiarioHumano,
+  contrastarReservaConDeposito,
+  cruzarSanidad,
+  csvPlanificacion,
   mediaAritmetica,
   mediaPonderada,
   obtenerFichaNutricional,
+  plantillaParaEtapa,
   porcentajeValorDiario,
   porcentajesPorcionCatalogo,
+  recetaDifiereDeEtapa,
+  volumenDeposito,
+  type DepositoInstalacion,
 } from "./index";
 import { parsearCasoUso } from "./casos-uso";
 
@@ -103,10 +115,8 @@ describe("idsComponenteConexa", () => {
 describe("crearNodoDesdePlantilla", () => {
   it("copia mg/L y litros de la plantilla, no null", () => {
     const nodo = crearNodoDesdePlantilla("lechuga", "n1");
-    const plantilla = obtenerCultivoPorId("lechuga")?.plantilla;
     expect(nodo?.tipoCultivo).toBe("lechuga");
     expect(CLAVES_VARIABLES_CULTIVO).toHaveLength(6);
-    expect(nodo?.variables).toEqual(plantilla);
     expect(nodo?.variables.mineral_potasio).toBe(235);
     expect(nodo?.variables.cantidad_sol).toBe(4);
     expect(nodo?.variables.oxigeno).toBe(6);
@@ -129,12 +139,14 @@ describe("crearNodoDesdePlantilla", () => {
     }
   });
 
-  it("usa receta de fruto distinta a la de hoja", () => {
+  it("usa receta de fruto distinta a la de hoja y sube K en floración", () => {
     const lechuga = crearNodoDesdePlantilla("lechuga", "n1");
     const tomate = crearNodoDesdePlantilla("tomate", "n2");
     expect(lechuga?.variables.mineral_potasio).toBe(235);
-    expect(tomate?.variables.mineral_potasio).toBe(350);
+    expect(tomate?.variables.mineral_potasio).toBe(250);
     expect(tomate?.variables.cantidad_sol).toBe(8);
+    expect(plantillaParaEtapa("tomate", "floracion")?.mineral_potasio).toBe(350);
+    expect(plantillaParaEtapa("lechuga", "cosecha")?.mineral_potasio).toBe(235);
   });
 
   it("no comparte la referencia de la plantilla del catálogo", () => {
@@ -677,6 +689,7 @@ describe("referencia diaria y consolidado humano", () => {
     expect(mixto.omitidos).toBe(1);
     expect(mixto.gramosDia).toBe(5);
     expect(parsearCasoUso("agroservicio")).toBe("agroservicio");
+    expect(parsearCasoUso("hidraulica")).toBe("hidraulica");
     expect(parsearCasoUso("no")).toBeNull();
   });
 });
@@ -685,7 +698,103 @@ describe("catálogo de plagas", () => {
   it("resuelve por id o nombre y ignora desconocidas", () => {
     expect(obtenerPlagaPorIdONombre("Pulgón")?.id).toBe("pulgon");
     expect(obtenerPlagaPorIdONombre("mosca_blanca")?.nombre).toBe("Mosca blanca");
+    expect(obtenerPlagaPorIdONombre("pulgon")?.causa.length).toBeGreaterThan(0);
     expect(obtenerPlagaPorIdONombre("alien")).toBeNull();
+  });
+});
+
+describe("depósito e hidráulica", () => {
+  const cubeta: DepositoInstalacion = {
+    forma: "rectangular",
+    largo_cm: 50,
+    ancho_cm: 40,
+    diametro_cm: null,
+    alto_liquido_cm: 30,
+    desplazamiento_L: 4,
+    recirculaciones_h: 1.5,
+    margen_caudal: 0.2,
+  };
+
+  it("calcula bruto, neto y peso sin sustituir cantidad_sol", () => {
+    const volumen = volumenDeposito(cubeta);
+    expect(volumen.brutoL).toBeCloseTo(60);
+    expect(volumen.netoL).toBeCloseTo(56);
+    expect(volumen.pesoKg).toBeCloseTo(56);
+  });
+
+  it("avisa si la reserva química no cabe", () => {
+    const contraste = contrastarReservaConDeposito(80, 56);
+    expect(contraste.estado).toBe("excede");
+    expect(contrastarReservaConDeposito(null, 56).estado).toBe("reserva_incompleta");
+    expect(contrastarReservaConDeposito(20, null).estado).toBe("sin_deposito");
+  });
+
+  it("estima caudal NFT a partir de la reserva", () => {
+    const caudal = caudalNftDeReserva(40, cubeta);
+    expect(caudal.entregado_Lph).toBeCloseTo(60);
+    expect(caudal.etiqueta_Lph).toBeCloseTo(72);
+  });
+
+  it("el cilindro usa π r² h / 1000", () => {
+    const volumen = volumenDeposito({
+      ...cubeta,
+      forma: "cilindro",
+      diametro_cm: 40,
+      alto_liquido_cm: 50,
+      desplazamiento_L: 0,
+    });
+    expect(volumen.brutoL).toBeCloseTo((Math.PI * 20 * 20 * 50) / 1000);
+  });
+});
+
+describe("receta por etapa y banda de O₂", () => {
+  it("no pisa la receta de hoja y marca diferencia en fruto", () => {
+    const tomate = crearNodoDesdePlantilla("tomate", "n1")!;
+    expect(recetaDifiereDeEtapa(tomate.variables, "tomate", "floracion")).toBe(true);
+    expect(recetaDifiereDeEtapa(tomate.variables, "tomate", "germinacion")).toBe(false);
+    expect(bandaOxigeno(6)).toBe("ok");
+    expect(bandaOxigeno(4)).toBe("bajo");
+    expect(bandaOxigeno(null)).toBe("sin_dato");
+    expect(avisoBandaOxigeno(9)?.length).toBeGreaterThan(0);
+  });
+});
+
+describe("sanidad cruzada y CSV", () => {
+  it("cruza típicas, marcadas y deficiencias sin tratar null como 0", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    lechuga.plagas = ["pulgon"];
+    lechuga.variables.mineral_hierro = 0.2;
+    const cruce = cruzarSanidad([lechuga]);
+    expect(cruce.detectadas.some((item) => item.plaga.id === "pulgon")).toBe(true);
+    expect(cruce.tipicasSinMarcar.some((item) => item.plaga.id === "mildiu")).toBe(true);
+    expect(cruce.deficiencias.some((item) => item.ficha.id === "mineral_hierro")).toBe(true);
+    lechuga.variables.mineral_potasio = null;
+    const sinFalsoCero = cruzarSanidad([lechuga]);
+    expect(sinFalsoCero.deficiencias.some((item) => item.ficha.id === "mineral_potasio")).toBe(
+      false,
+    );
+  });
+
+  it("exporta CSV en L y mg/L y no abre la puerta de sales", () => {
+    expect(CONVERSION_SALES_ABIERTA).toBe(false);
+    expect(avisoMasaElemental()).toMatch(/sales/);
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const csv = csvPlanificacion({
+      nodos: [lechuga],
+      deposito: {
+        forma: "rectangular",
+        largo_cm: 50,
+        ancho_cm: 40,
+        diametro_cm: null,
+        alto_liquido_cm: 30,
+        desplazamiento_L: 0,
+        recirculaciones_h: 1.5,
+        margen_caudal: 0.2,
+      },
+    });
+    expect(csv).toMatch(/reserva_L/);
+    expect(csv).toMatch(/Lechuga/);
+    expect(csv).not.toMatch(/MgSO/);
   });
 });
 

@@ -1,10 +1,12 @@
-import { copiarVariablesDePlantilla, obtenerCultivoPorId } from "./catalogo-cultivos";
+import { obtenerCultivoPorId } from "./catalogo-cultivos";
 import { fechaInicioHoy } from "./etapas-vida";
 import type { NodoCultivo } from "./nodo-cultivo";
+import { plantillaParaEtapa } from "./receta-etapa";
 
 /**
- * Factory de nodos a partir de la plantilla del catálogo.
- * Copia mg/L (minerales y O₂) y litros de reserva `cantidad_sol`. El usuario puede vaciar un campo a `null`.
+ * Factory de nodos a partir de la receta de germinación del catálogo.
+ * Hoja: Hoagland. Fruto: receta vegetativa (Jensen se aplica en floración).
+ * Copia mg/L y litros de reserva `cantidad_sol`. El usuario puede vaciar un campo a `null`.
  * Inicia la trazabilidad con la fecha local de alta. `etapa_vida` queda `null`
  * para que avance sola según los días (germinación el día 0).
  * @param tipoCultivo - Id de la lista blanca (`lechuga`, `tomate`, …).
@@ -16,7 +18,7 @@ export function crearNodoDesdePlantilla(
   id: string,
 ): NodoCultivo | null {
   const definicion = obtenerCultivoPorId(tipoCultivo);
-  const variables = copiarVariablesDePlantilla(tipoCultivo);
+  const variables = plantillaParaEtapa(tipoCultivo, "germinacion");
   if (!definicion || !variables) {
     return null;
   }

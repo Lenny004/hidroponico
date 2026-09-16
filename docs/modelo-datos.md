@@ -27,7 +27,9 @@ Al menos 10 tipos, cada uno con ícono/color:
 9. Menta
 10. Rúcula
 
-`CultivoNodeFactory` copia la receta del `tipoCultivo` (mg/L y litros). Hoja: Hoagland 1950. Fruto: UA-CEA / Jensen. Cambiar el tipo reaplica esa plantilla.
+`CultivoNodeFactory` copia la receta del `tipoCultivo` (mg/L y litros). Hoja: Hoagland 1950 en todas las etapas. Fruto: receta vegetativa al plantar; UA-CEA / Jensen en floración y cosecha (el usuario puede aplicarla). Cambiar el tipo reaplica la receta de la etapa actual.
+
+El depósito (forma, dimensiones, desplazamiento) no es un campo del nodo. Vive en el cliente; ver [ampliacion-post-fase-6.md](ampliacion-post-fase-6.md).
 
 ## Íconos (uso libre)
 

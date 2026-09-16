@@ -1,6 +1,7 @@
 import BarraEstado from "./componentes/BarraEstado";
 import BarraSuperior from "./componentes/BarraSuperior";
 import CanvasGrafo from "./componentes/CanvasGrafo";
+import OnboardingCultivo from "./componentes/OnboardingCultivo";
 import PanelCasosUso from "./componentes/PanelCasosUso";
 import PanelConsolidado from "./componentes/PanelConsolidado";
 import PanelCultivo from "./componentes/PanelCultivo";
@@ -18,6 +19,7 @@ export default function App() {
       <div className="app__cuerpo">
         <PanelCultivo />
         <div className="app__principal">
+          <OnboardingCultivo />
           <div className="app__escenario">
             <CanvasGrafo />
             <PanelTrazabilidad />

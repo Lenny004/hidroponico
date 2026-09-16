@@ -4,17 +4,22 @@ import {
   ETIQUETAS_NUTRIENTE,
   SIMBOLOS_NUTRIENTE,
   UNIDAD_NUTRIENTE,
+  caudalNftDeReserva,
   consolidarAporteDiarioHumano,
   consumoTemporalGrupo,
+  contrastarReservaConDeposito,
+  cruzarSanidad,
+  formatearHolgura,
   formatearMedida,
   obtenerCasoUso,
   obtenerCultivoPorId,
-  obtenerPlagaPorIdONombre,
   proyectarInsumos,
+  volumenDeposito,
   type ClaveNutriente,
 } from "@hidroponico/tipos-compartidos";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import { usarInterfaz } from "../store/usarInterfaz";
+import FormularioDeposito from "./FormularioDeposito";
 
 function textoPct(valor: number | null | undefined): string {
   if (valor == null) {
@@ -37,12 +42,13 @@ const CLAVES_TABLA: ClaveNutriente[] = CLAVES_NUTRIENTE.filter(
 export default function PanelConsolidado() {
   const casoUso = usarInterfaz((estado) => estado.casoUso);
   const nodos = usarGrafoConstruccion((estado) => estado.nodos);
-  const resultado = usarGrafoConstruccion((estado) => estado.resultadoPipeline);
+  const deposito = usarGrafoConstruccion((estado) => estado.deposito);
   const cultivos = nodos.map((nodo) => nodo.data.cultivo);
   const consolidado = consolidarAporteDiarioHumano(cultivos);
   const caso = obtenerCasoUso(casoUso);
   const consumo = consumoTemporalGrupo(cultivos);
   const insumos = proyectarInsumos(cultivos, 1);
+  const sanidad = cruzarSanidad(cultivos);
 
   return (
     <section className="panel-consolidado" aria-label="Consolidado diario">
@@ -57,10 +63,12 @@ export default function PanelConsolidado() {
         <Agroservicio tipos={cultivos.map((item) => item.tipoCultivo)} />
       ) : null}
 
-      {casoUso === "sanidad" ? (
-        <Sanidad
-          plagasNodo={cultivos.flatMap((item) => item.plagas ?? [])}
-          plagasPipeline={resultado?.motores.find((motor) => motor.nombre === "plagas")}
+      {casoUso === "sanidad" ? <Sanidad cruce={sanidad} /> : null}
+
+      {casoUso === "hidraulica" ? (
+        <Hidraulica
+          reservaL={insumos.reservaL}
+          deposito={deposito}
         />
       ) : null}
 
@@ -74,7 +82,8 @@ export default function PanelConsolidado() {
 
       {casoUso === "oxigeno" ? (
         <p className="panel-consolidado__dato">
-          El tanque usa el mínimo de O₂ del grupo. El detalle está en Cálculos.
+          El tanque usa el mínimo de O₂ del grupo (banda típica NFT 5–8 mg/L). El detalle está en
+          Cálculos.
         </p>
       ) : null}
 
@@ -184,18 +193,55 @@ function Agroservicio({ tipos }: { tipos: string[] }) {
   );
 }
 
-function Sanidad({
-  plagasNodo,
-  plagasPipeline,
+function Hidraulica({
+  reservaL,
+  deposito,
 }: {
-  plagasNodo: string[];
-  plagasPipeline:
-    | { grupos: Array<{ datos: { plagas?: string[] | null } }> }
-    | undefined;
+  reservaL: number | null;
+  deposito: Parameters<typeof volumenDeposito>[0];
 }) {
-  const delPipeline = plagasPipeline?.grupos.flatMap((grupo) => grupo.datos.plagas ?? []) ?? [];
-  const nombres = [...new Set([...plagasNodo, ...delPipeline])];
-  if (nombres.length === 0) {
+  const volumen = volumenDeposito(deposito);
+  const contraste = contrastarReservaConDeposito(reservaL, volumen.netoL);
+  const caudal = caudalNftDeReserva(reservaL, deposito);
+  return (
+    <div className="agroservicio">
+      <FormularioDeposito />
+      <p className="panel-consolidado__dato">
+        Neto {volumen.netoL == null ? "—" : formatearMedida(volumen.netoL, "L")} · reserva{" "}
+        {reservaL == null ? "—" : formatearMedida(reservaL, "L")}
+      </p>
+      <p
+        className={
+          contraste.estado === "excede"
+            ? "panel-consolidado__aviso"
+            : "panel-consolidado__ayuda"
+        }
+      >
+        {contraste.estado === "sin_deposito"
+          ? "Completa largo, ancho y altura de líquido (o diámetro) para el neto."
+          : contraste.estado === "reserva_incompleta"
+            ? "Faltan litros en el tubo; el contraste espera a que no haya null."
+            : contraste.estado === "excede"
+              ? `No cabe: ${formatearHolgura(contraste.holguraL)}.`
+              : `Cabe: ${formatearHolgura(contraste.holguraL)}.`}
+      </p>
+      <p className="panel-consolidado__dato">
+        Caudal NFT {caudal.recirculaciones_h}×/h:{" "}
+        {caudal.entregado_Lph == null ? "—" : formatearMedida(caudal.entregado_Lph, "L/h")}
+        {caudal.etiqueta_Lph == null
+          ? ""
+          : ` · etiqueta ~${formatearMedida(caudal.etiqueta_Lph, "L/h")}`}
+      </p>
+    </div>
+  );
+}
+
+function Sanidad({ cruce }: { cruce: ReturnType<typeof cruzarSanidad> }) {
+  if (
+    cruce.detectadas.length === 0 &&
+    cruce.tipicasSinMarcar.length === 0 &&
+    cruce.deficiencias.length === 0
+  ) {
     return (
       <p className="panel-consolidado__ayuda">
         Sin plagas registradas. Revisa pulgón y mosca blanca en hoja; oídio en fruto.
@@ -203,17 +249,43 @@ function Sanidad({
     );
   }
   return (
-    <ul className="agroservicio__lista">
-      {nombres.map((nombre) => {
-        const ficha = obtenerPlagaPorIdONombre(nombre);
-        return (
-          <li key={nombre}>
-            <strong>{ficha?.nombre ?? nombre}</strong>
-            {ficha ? ` — ${ficha.solucion_plagas}` : ""}
-          </li>
-        );
-      })}
-    </ul>
+    <div className="sanidad">
+      {cruce.detectadas.length > 0 ? (
+        <ul className="agroservicio__lista">
+          {cruce.detectadas.map((item) => (
+            <li key={item.plaga.id}>
+              <strong>{item.plaga.nombre}</strong>
+              {` — ${item.plaga.sintomas} Causa: ${item.plaga.causa} Acción: ${item.plaga.solucion_plagas}`}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {cruce.tipicasSinMarcar.length > 0 ? (
+        <>
+          <p className="panel-consolidado__dato">Típicas del tipo, aún no marcadas</p>
+          <ul className="agroservicio__lista">
+            {cruce.tipicasSinMarcar.map((item) => (
+              <li key={`${item.tipoCultivo}-${item.plaga.id}`}>
+                {item.nombreCultivo}: {item.plaga.nombre} — {item.plaga.sintomas}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+      {cruce.deficiencias.length > 0 ? (
+        <>
+          <p className="panel-consolidado__dato">Minerales por debajo de la receta de etapa</p>
+          <ul className="agroservicio__lista">
+            {cruce.deficiencias.map((item) => (
+              <li key={item.ficha.id}>
+                <strong>{item.ficha.nombre}</strong>
+                {` — ${item.ficha.sintomas} Causa: ${item.ficha.causa} Acción: ${item.ficha.accion}`}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 /**
  * Modos de trabajo de la franja inferior. No son motores nuevos:
- * cambian qué se enfatiza (plagas, extensión SV, minerales, O₂, nutrición humana, insumos).
+ * cambian qué se enfatiza (plagas, extensión SV, minerales, O₂, nutrición, insumos, hidráulica).
  */
 export const CASOS_USO = [
   "sanidad",
@@ -9,6 +9,7 @@ export const CASOS_USO = [
   "oxigeno",
   "nutricion",
   "insumos",
+  "hidraulica",
 ] as const;
 
 export type IdCasoUso = (typeof CASOS_USO)[number];
@@ -56,6 +57,12 @@ export const CATALOGO_CASOS_USO: readonly DefinicionCasoUso[] = [
     id: "insumos",
     titulo: "Insumos",
     ayuda: "Reserva NFT y reposición de agua por transpiración (L/día).",
+    motor: "insumos",
+  },
+  {
+    id: "hidraulica",
+    titulo: "Hidráulica",
+    ayuda: "Depósito bruto/neto frente a la reserva y caudal NFT (1–2 renovaciones/h). No es un motor.",
     motor: "insumos",
   },
 ];

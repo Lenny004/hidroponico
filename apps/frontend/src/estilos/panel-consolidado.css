@@ -29,6 +29,12 @@
   font-size: 0.8125rem;
 }
 
+.panel-consolidado__aviso {
+  margin: 0.12rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-aviso);
+}
+
 .panel-consolidado__tabla-envoltorio {
   overflow: auto;
 }

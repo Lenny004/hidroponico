@@ -1,11 +1,16 @@
 import {
   ETAPAS_VIDA,
   ETIQUETAS_ETAPA_VIDA,
+  ETIQUETAS_VARIABLES,
+  SIMBOLOS_MINERAL,
   fechaInicioHoy,
+  mineralesDeEtapa,
   obtenerCultivoPorId,
+  recetaDifiereDeEtapa,
   resumenTrazabilidad,
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
+import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
 export default function FichaVidaCultivo({
   cultivo,
@@ -16,6 +21,7 @@ export default function FichaVidaCultivo({
   onCambiarEtapa: (etapa: string | null) => void;
   onCambiarInicio: (fecha: string | null) => void;
 }) {
+  const aplicarReceta = usarGrafoConstruccion((estado) => estado.aplicarRecetaEtapa);
   const definicion = obtenerCultivoPorId(cultivo.tipoCultivo);
   const vida = resumenTrazabilidad(cultivo);
   if (!definicion || !vida.proceso) {
@@ -24,6 +30,8 @@ export default function FichaVidaCultivo({
 
   const pct = vida.progreso == null ? null : Math.round(vida.progreso * 100);
   const etapaSelect = cultivo.etapa_vida ?? "";
+  const receta = mineralesDeEtapa(cultivo.tipoCultivo, vida.etapa);
+  const mostrarReceta = receta && recetaDifiereDeEtapa(cultivo.variables, cultivo.tipoCultivo, vida.etapa);
 
   return (
     <section className="ficha-vida">
@@ -69,6 +77,26 @@ export default function FichaVidaCultivo({
             ))}
           </select>
         </label>
+        {mostrarReceta && receta ? (
+          <p className="ficha-vida__receta">
+            Esta etapa sugiere{" "}
+            {(Object.entries(receta) as Array<[string, number | null | undefined]>)
+              .filter((entrada): entrada is [string, number] => entrada[1] != null)
+              .map(
+                ([clave, valor]) =>
+                  `${SIMBOLOS_MINERAL[clave as keyof typeof SIMBOLOS_MINERAL] ?? ETIQUETAS_VARIABLES[clave as keyof typeof ETIQUETAS_VARIABLES]} ${valor}`,
+              )
+              .join(" · ")}{" "}
+            mg/L.
+            <button
+              type="button"
+              className="boton-secundario boton-secundario--compacto"
+              onClick={() => aplicarReceta(cultivo.id)}
+            >
+              Aplicar receta
+            </button>
+          </p>
+        ) : null}
         <label className="campo">
           <span>Fecha de alta</span>
           <div className="campo__fila">

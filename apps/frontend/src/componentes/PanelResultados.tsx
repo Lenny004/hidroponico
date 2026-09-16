@@ -3,6 +3,8 @@ import {
   ETIQUETAS_VARIABLES,
   SIMBOLOS_MINERAL,
   UNIDAD_AGREGADO,
+  avisoBandaOxigeno,
+  bandaOxigeno,
   formatearMedida,
   obtenerCultivoPorId,
   obtenerPlagaPorIdONombre,
@@ -354,6 +356,7 @@ function GrupoMotor({
       {volumen != null ? (
         <p className="panel-resultados__volumen">Tanque: {formatearMedida(volumen, "L")}</p>
       ) : null}
+      {motor === "oxigeno" ? <AvisoOxigeno totales={totales} /> : null}
       {clavesMinerales.length > 0 ? (
         <ul className="panel-resultados__metricas">
           {clavesMinerales.map((clave) => (
@@ -397,6 +400,18 @@ function GrupoMotor({
       ) : null}
     </div>
   );
+}
+
+function AvisoOxigeno({ totales }: { totales: Record<string, number | null> }) {
+  const valor = totales.oxigeno ?? null;
+  const aviso = avisoBandaOxigeno(valor);
+  const banda = bandaOxigeno(valor);
+  if (!aviso) {
+    return banda === "ok" ? (
+      <p className="panel-resultados__o2 panel-resultados__o2--ok">O₂ dentro de 5–8 mg/L (NFT).</p>
+    ) : null;
+  }
+  return <p className="panel-resultados__o2 panel-resultados__o2--aviso">{aviso}</p>;
 }
 
 function Metrica({

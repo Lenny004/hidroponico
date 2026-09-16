@@ -37,7 +37,7 @@ El boceto decía ml; en hidroponía **no se dosifican minerales en ml por planta
 - Oxígeno: **mg/L** disueltos (típico NFT 5–8; plantilla 6). El tanque tiene un solo DO; si los nodos discrepan, el grupo usa el **mínimo**.
 - `cantidad_sol`: litros de reserva NFT por planta (hoja ~4 L, hierba ~3 L, fruto ~8 L). El grupo **suma litros**. No es el agua que se gasta al día: el NFT recircula. La reposición diaria (transpiración típica) es un dato de catálogo (`reposicion_dia_L`), no una variable del boceto.
 
-No se convierte aún a gramos de sales (MgSO₄, etc.). Si llega una receta de fertilizante propio, se sustituye el paso de masa elemental.
+No se convierte aún a gramos de sales (MgSO₄, etc.). Si llega una receta de fertilizante propio, se sustituye el paso de masa elemental. Hasta entonces **no** hay solver tipo HydroBuddy (A+B, EC, calidad de agua). Ver [ampliacion-post-fase-6.md](ampliacion-post-fase-6.md).
 
 Referencias: Hoagland & Arnon, *The water-culture method…*, Calif. Agr. Expt. Sta. Circ. 347, 1950. Jensen / UA-CEA tomato (Ohio State CFAES), mg/L. Reposición: orden de magnitud de transpiración NFT (hoja ~0,4–0,6 L/planta·día; hierba ~0,3–0,4; tomate/pepino ~2; fresa ~0,6).
 
@@ -52,3 +52,7 @@ Vitaminas, kcal y % del valor diario **no** se añaden a `NodoCultivo`. Viven en
 El enlace a [HerbaZest](https://www.herbazest.com/es) es consulta botánica externa. No se copia su texto; el resumen de la UI es propio.
 
 Agroservicio SV es un lente de extensión (clima tropical, sombra NFT, CENTA/MAG). No es un dictamen oficial ni un motor del pipeline.
+
+## 7. Depósito físico e hidráulica (no son variables del boceto)
+
+La geometría del tanque (bruto/neto) y el caudal NFT son datos de **instalación**, no campos de `NodoCultivo`. Contrastan Σ `cantidad_sol`; no la sustituyen ni inventan litros a partir de minerales. Recirculaciones típicas NFT: 1–2 por hora. El caso de uso `hidraulica` solo cambia el lente del consolidado.

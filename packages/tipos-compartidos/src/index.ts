@@ -167,6 +167,64 @@ export {
   type IdCasoUso,
 } from "./casos-uso";
 
+export {
+  DEPOSITO_VACIO,
+  FORMAS_DEPOSITO,
+  KG_POR_LITRO,
+  MARGEN_CAUDAL_DEFAULT,
+  RECIRCULACIONES_NFT_DEFAULT,
+  RECIRCULACIONES_NFT_MAX,
+  RECIRCULACIONES_NFT_MIN,
+  caudalNftDeReserva,
+  contrastarReservaConDeposito,
+  parsearDepositoInstalacion,
+  parsearFormaDeposito,
+  volumenBrutoDeposito,
+  volumenDeposito,
+  type CaudalNft,
+  type ContrasteReserva,
+  type DepositoInstalacion,
+  type EstadoReservaVsNeto,
+  type FormaDeposito,
+  type VolumenDeposito,
+} from "./deposito";
+
+export {
+  OXIGENO_NFT_MAX_MG_L,
+  OXIGENO_NFT_MIN_MG_L,
+  OXIGENO_NFT_PLANTILLA_MG_L,
+  avisoBandaOxigeno,
+  bandaOxigeno,
+  type BandaOxigeno,
+} from "./banda-oxigeno";
+
+export {
+  mineralesDeEtapa,
+  plantillaParaEtapa,
+  recetaDifiereDeEtapa,
+} from "./receta-etapa";
+
+export {
+  CATALOGO_DEFICIENCIAS,
+  obtenerDeficiencia,
+  type DefinicionDeficiencia,
+} from "./catalogo-deficiencias";
+
+export {
+  UMBRAL_DEFICIENCIA_RECETA,
+  cruzarSanidad,
+  type CruceSanidad,
+  type DeficienciaDetectada,
+  type PlagaDetectada,
+  type PlagaTipicaSinMarcar,
+} from "./cruzar-sanidad";
+
+export { csvPlanificacion, formatearHolgura, nombreArchivoCsv } from "./exportar-csv";
+
+export { PASOS_ONBOARDING, type IdPasoOnboarding } from "./pasos-onboarding";
+
+export { CONVERSION_SALES_ABIERTA, avisoMasaElemental } from "./puerta-sales";
+
 export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES, UNIDAD_AGREGADO, UNIDAD_NODO, formatearMedida } from "./etiquetas-variables";
 export {
   esBorradorNumerico,

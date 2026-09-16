@@ -22,6 +22,16 @@
   line-height: 1.55;
 }
 
+.ficha-vida__receta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
 .ficha-vida__calendario > summary {
   cursor: pointer;
   font-size: 0.75rem;

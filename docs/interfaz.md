@@ -10,8 +10,8 @@ Referencia visual: boceto de tablero (catálogo + diseño 3D + ficha HerbaZest +
 | **Panel izquierdo** | `PanelCultivo`: catálogo para arrastrar a un orificio. |
 | **Diseño 3D** | Mitad izquierda del centro: tubos NFT, Agregar / Quitar / Resetear, zoom (− / +) y ancla para que la cámara no se mueva. |
 | **Trazabilidad** | Mitad derecha del centro: al seleccionar un cultivo se carga su ficha (minerales del tanque, vitaminas % VD, minerales de energía) con enlace a [HerbaZest](https://www.herbazest.com/es). Debajo, la ficha editable del nodo. |
-| **Cálculos (hamburguesa)** | Columna derecha plegable: resultados del pipeline, proyección de insumos, plantados y árbol Patricia. |
-| **Casos de uso** | Franja inferior izquierda: sanidad vegetal, Agroservicio SV (CENTA/MAG), minerales, oxígeno, nutrición humana e insumos. Cambian el lente del consolidado; no son motores nuevos. |
+| **Cálculos (hamburguesa)** | Columna derecha plegable: resultados del pipeline, proyección de insumos (con depósito y caudal), plantados, árbol Patricia y export CSV. |
+| **Casos de uso** | Franja inferior izquierda: sanidad vegetal, Agroservicio SV, minerales, oxígeno, nutrición humana, insumos e hidráulica. Cambian el lente del consolidado; no son motores nuevos. |
 | **Consolidado al día** | Franja inferior derecha: media aritmética y ponderado (por gramos cosechados) frente al valor diario de un adulto (FDA). |
 | **Barra de estado** | Mensajes, nodos/aristas y estado de la BD. |
 
@@ -21,7 +21,9 @@ Referencia visual: boceto de tablero (catálogo + diseño 3D + ficha HerbaZest +
 - Click en un cultivo del tubo (o del catálogo al plantarlo) carga trazabilidad + perfil nutricional.
 - Conectar nodos con el modelo de cadena NFT; el grafo permanece acíclico.
 - Play o recálculo automático → resultados en el menú hamburguesa.
-- Elegir un caso de uso cambia el consolidado (plagas, extensión SV, tanque o cosecha humana).
+- Elegir un caso de uso cambia el consolidado (plagas, extensión SV, tanque, cosecha humana o hidráulica).
+- Primer arranque: onboarding de cinco pasos (catálogo → orificio → ficha → play → consolidado).
+- Receta de fruto: botón para aplicar K/Fe de la etapa (vegetativo vs floración) sin pisar litros ni O₂.
 
 ## Botones play (Fase 3–4)
 

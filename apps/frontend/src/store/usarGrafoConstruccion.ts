@@ -10,14 +10,19 @@ import {
 import { create } from "zustand";
 import {
   aristaCreariaCiclo,
-  copiarVariablesDePlantilla,
   crearNodoDesdePlantilla,
+  DEPOSITO_VACIO,
   idsComponenteConexa,
+  mineralesDeEtapa,
   normalizarPlagas,
   obtenerCultivoPorId,
+  parsearDepositoInstalacion,
   parsearEtapaVida,
   parsearFechaInicio,
+  plantillaParaEtapa,
+  resumenTrazabilidad,
   type ClaveVariableCultivo,
+  type DepositoInstalacion,
   type GrafoPersistido,
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
@@ -75,6 +80,9 @@ type EstadoGrafoConstruccion = {
   setBusquedaCatalogo: (valor: string) => void;
   setFiltroLienzo: (valor: string) => void;
   setTipoCatalogoActivo: (tipoCultivo: string | null) => void;
+  deposito: DepositoInstalacion;
+  actualizarDeposito: (cambio: Partial<DepositoInstalacion>) => void;
+  aplicarRecetaEtapa: (id: string) => void;
 };
 
 function aristasDirigidas(aristas: Edge[]) {
@@ -133,6 +141,27 @@ function grupoDesde(nodos: NodoFlujo[], aristas: Edge[], id: string | null): str
   );
 }
 
+const CLAVE_DEPOSITO = "hidroponico.deposito";
+
+function leerDepositoInicial(): DepositoInstalacion {
+  if (typeof localStorage === "undefined") {
+    return { ...DEPOSITO_VACIO };
+  }
+  try {
+    const crudo = localStorage.getItem(CLAVE_DEPOSITO);
+    return parsearDepositoInstalacion(crudo ? JSON.parse(crudo) : null);
+  } catch {
+    return { ...DEPOSITO_VACIO };
+  }
+}
+
+function guardarDeposito(deposito: DepositoInstalacion): void {
+  if (typeof localStorage === "undefined") {
+    return;
+  }
+  localStorage.setItem(CLAVE_DEPOSITO, JSON.stringify(deposito));
+}
+
 export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) => ({
   nodos: [],
   aristas: [],
@@ -145,6 +174,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   resultadoPipeline: null,
   ejecutandoPipeline: false,
   estadoPersistencia: "local",
+  deposito: leerDepositoInicial(),
 
   onNodosChange: (cambios) => {
     set((estado) => {
@@ -311,7 +341,11 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
 
   actualizarTipoCultivo: (id, tipoCultivo) => {
     const definicion = obtenerCultivoPorId(tipoCultivo);
-    const variables = copiarVariablesDePlantilla(tipoCultivo);
+    const actual = get().nodos.find((nodo) => nodo.id === id);
+    const etapa = actual
+      ? resumenTrazabilidad(actual.data.cultivo).etapa
+      : "germinacion";
+    const variables = plantillaParaEtapa(tipoCultivo, etapa);
     if (!definicion || !variables) {
       set({ mensajeEstado: "Tipo de cultivo no reconocido." });
       return;
@@ -332,7 +366,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
             }
           : nodo,
       ),
-      mensajeEstado: `Tipo cambiado a ${definicion.nombre}. Se aplicó su receta (mg/L y litros).`,
+      mensajeEstado: `Tipo cambiado a ${definicion.nombre}. Se aplicó la receta de la etapa (mg/L y litros).`,
     }));
   },
 
@@ -466,6 +500,42 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   setBusquedaCatalogo: (valor) => set({ busquedaCatalogo: valor }),
   setFiltroLienzo: (valor) => set({ filtroLienzo: valor }),
   setTipoCatalogoActivo: (tipoCatalogoActivo) => set({ tipoCatalogoActivo }),
+
+  actualizarDeposito: (cambio) => {
+    const deposito = parsearDepositoInstalacion({ ...get().deposito, ...cambio });
+    guardarDeposito(deposito);
+    set({ deposito });
+  },
+
+  aplicarRecetaEtapa: (id) => {
+    const nodo = get().nodos.find((item) => item.id === id);
+    if (!nodo) {
+      return;
+    }
+    const etapa = resumenTrazabilidad(nodo.data.cultivo).etapa;
+    const minerales = mineralesDeEtapa(nodo.data.cultivo.tipoCultivo, etapa);
+    if (!minerales) {
+      set({ mensajeEstado: "No hay receta de etapa para este cultivo." });
+      return;
+    }
+    set((estado) => ({
+      nodos: estado.nodos.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              data: {
+                ...item.data,
+                cultivo: {
+                  ...item.data.cultivo,
+                  variables: { ...item.data.cultivo.variables, ...minerales },
+                },
+              },
+            }
+          : item,
+      ),
+      mensajeEstado: "Se aplicaron Mg, K, Mn y Fe de la etapa. Litros y O₂ no se tocaron.",
+    }));
+  },
 
   setEstadoPersistencia: (estadoPersistencia) => set({ estadoPersistencia }),
 

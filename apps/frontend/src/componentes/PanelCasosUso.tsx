@@ -10,6 +10,7 @@ import {
   HeartPulse,
   Landmark,
   Beaker,
+  Waves,
 } from "lucide-react";
 import { usarInterfaz } from "../store/usarInterfaz";
 
@@ -20,6 +21,7 @@ const ICONOS: Record<IdCasoUso, LucideIcon> = {
   oxigeno: Droplets,
   nutricion: HeartPulse,
   insumos: Beaker,
+  hidraulica: Waves,
 };
 
 export default function PanelCasosUso() {

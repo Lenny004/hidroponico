@@ -37,7 +37,7 @@ Las instalaciones hidropónicas combinan tanques compartidos, cultivos con recet
 | **Motores** | Cuatro estrategias registradas (minerales, oxígeno, plagas, insumos) ejecutadas en paralelo por el orquestador. |
 | **Persistencia** | Grafo de construcción en cliente; grafo persistido en PostgreSQL con sincronización automática. El lienzo opera de forma autónoma si la base de datos no está disponible. |
 
-**Capacidades de la interfaz:** catálogo a la izquierda, diseño 3D NFT junto a la ficha de trazabilidad (HerbaZest + % VD), menú hamburguesa de cálculos del pipeline, casos de uso (incluida extensión agropecuaria en El Salvador) y consolidado diario con media aritmética y ponderado frente a lo que un adulto necesita.
+**Capacidades de la interfaz:** catálogo a la izquierda, diseño 3D NFT junto a la ficha de trazabilidad (HerbaZest + % VD), menú hamburguesa de cálculos (proyección, depósito vs reserva, caudal NFT, CSV), casos de uso (incluida extensión agropecuaria en El Salvador e hidráulica) y consolidado diario con media aritmética y ponderado frente a lo que un adulto necesita.
 
 ## Cómo arrancar
 
@@ -178,7 +178,8 @@ Sin dependencias de React, Fastify ni Prisma — solo lógica de dominio pura.
 - [Reglas de negocio](docs/reglas-negocio.md)
 - [Roadmap](docs/roadmap.md)
 - [Interfaz](docs/interfaz.md)
-- [Asunciones abiertas](docs/asunciones.md)
+- [Asunciones](docs/asunciones.md)
+- [Ampliación post-Fase 6](docs/ampliacion-post-fase-6.md)
 - [Convenciones](docs/convenciones.md)
 
 ## Scripts
