@@ -304,3 +304,16 @@
   font-size: 0.75rem;
   color: var(--color-peligro);
 }
+
+.panel-resultados__o2 {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+}
+
+.panel-resultados__o2--aviso {
+  color: var(--color-aviso);
+}
+
+.panel-resultados__o2--ok {
+  color: var(--color-muted);
+}

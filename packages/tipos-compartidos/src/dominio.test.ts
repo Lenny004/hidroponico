@@ -467,8 +467,8 @@ describe("proyección de insumos", () => {
     const dia = proyectarInsumos([lechuga, tomate], 1);
     expect(dia.reservaL).toBe(12);
     expect(dia.reposicionL).toBeCloseTo(2.5);
-    expect(dia.masaTanqueMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4 + (60 + 350 + 0.55 + 2) * 8);
-    expect(dia.masaReposicionMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 0.5 + (60 + 350 + 0.55 + 2) * 2);
+    expect(dia.masaTanqueMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4 + (60 + 250 + 0.5 + 1.5) * 8);
+    expect(dia.masaReposicionMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 0.5 + (60 + 250 + 0.5 + 1.5) * 2);
     expect(dia.omitidos).toBe(0);
     expect(proyectarInsumos([lechuga, tomate], 7).reservaL).toBe(12);
     expect(proyectarInsumos([lechuga, tomate], 7).reposicionL).toBeCloseTo(17.5);
@@ -563,7 +563,7 @@ describe("árbol Patricia binario", () => {
     const arbol = arbolPatriciaDeNodos([tomate, lechuga]);
     expect(arbol.buscar(clavePatricia("lechuga", "n1"))?.nombre).toBe("Lechuga");
     expect(arbol.buscar(clavePatricia("tomate", "n2"))?.masaDiaMg).toBeCloseTo(
-      (60 + 350 + 0.55 + 2) * 8,
+      (60 + 250 + 0.5 + 1.5) * 8,
     );
   });
 
@@ -616,8 +616,8 @@ describe("consumo temporal y recambio", () => {
     const grupo = consumoTemporalGrupo([lechuga, tomate]);
     expect(grupo.litros).toBe(12);
     expect(grupo.reposicionDiaL).toBeCloseTo(2.5);
-    expect(grupo.masaTanqueMg).toBeCloseTo(masaTanque + (60 + 350 + 0.55 + 2) * 8);
-    expect(grupo.masaDiaMg).toBeCloseTo(masaReposicion + (60 + 350 + 0.55 + 2) * 2);
+    expect(grupo.masaTanqueMg).toBeCloseTo(masaTanque + (60 + 250 + 0.5 + 1.5) * 8);
+    expect(grupo.masaDiaMg).toBeCloseTo(masaReposicion + (60 + 250 + 0.5 + 1.5) * 2);
     expect(grupo.omitidos).toBe(0);
     expect(diasRestantesCosecha(40, 35)).toBe(0);
     expect(diasRestantesCosecha(null, 35)).toBeNull();
