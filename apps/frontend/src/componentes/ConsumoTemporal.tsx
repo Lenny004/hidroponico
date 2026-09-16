@@ -6,13 +6,14 @@ import {
   consumoTemporalNodo,
   formatearMedida,
   formatearParInsumos,
+  formatearReposicion,
   proyectarInsumos,
 } from "@hidroponico/tipos-compartidos";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 
 /**
- * Recambio del agua (limpieza de la reserva NFT) y consumo por tiempo del nodo
- * o del tubo al unirse. Masa elemental: mg = mg/L × L. No convierte a sales.
+ * Reserva del tanque NFT (recircula) y agua a reponer por transpiración.
+ * Masa elemental: mg = mg/L × L. No convierte a sales.
  */
 export default function ConsumoTemporal() {
   const nodos = usarGrafoConstruccion((estado) => estado.nodos);
@@ -25,23 +26,26 @@ export default function ConsumoTemporal() {
 
   return (
     <section className="proyeccion">
-      <p className="proyeccion__titulo">Recambio del agua</p>
+      <p className="proyeccion__titulo">Agua del tubo</p>
       <p className="proyeccion__ayuda">
-        Limpieza diaria de la reserva NFT para renovar minerales. Cada planta es un nodo
-        que suma al tubo al unirse.
+        El NFT recircula: la reserva se queda en el tanque. Lo que se gasta al día
+        es la reposición (transpiración). Las sales del recuadro diario son las del
+        agua que se añade, no un vaciado del depósito.
       </p>
       <p className="proyeccion__total">
-        Total del tubo: {formatearParInsumos(tubo.litros, tubo.masaDiaMg)}
-        {tubo.masaDiaMg != null ? "/día" : ""}
+        Reserva: {formatearParInsumos(tubo.litros, tubo.masaTanqueMg)}
       </p>
-      {tubo.idsNodos.length > 0 && tubo.minerales.some((item) => item.masaRecambioMg != null) ? (
+      <p className="proyeccion__total proyeccion__total--reposicion">
+        Reposición: {formatearReposicion(tubo.reposicionDiaL, tubo.masaReposicionMg)}
+      </p>
+      {tubo.idsNodos.length > 0 && tubo.minerales.some((item) => item.masaReposicionMg != null) ? (
         <p className="proyeccion__minerales">
           {tubo.minerales.map((item) => (
             <span key={item.clave} className="proyeccion__mineral">
               {SIMBOLOS_MINERAL[item.clave]}{" "}
-              {item.masaRecambioMg == null
+              {item.masaReposicionMg == null
                 ? "—"
-                : formatearMedida(item.masaRecambioMg, "mg")}
+                : `${formatearMedida(item.masaReposicionMg, "mg")}/día`}
             </span>
           ))}
         </p>
@@ -56,7 +60,16 @@ export default function ConsumoTemporal() {
             >
               <p className="proyeccion__horizonte">{horizonte.etiqueta}</p>
               <p className="proyeccion__valores">
-                {formatearParInsumos(dato.litros, dato.masaMg)}
+                Agua a reponer:{" "}
+                {dato.reposicionL == null
+                  ? "— L"
+                  : formatearMedida(dato.reposicionL, "L")}
+              </p>
+              <p className="proyeccion__valores">
+                Sales en esa agua:{" "}
+                {dato.masaReposicionMg == null
+                  ? "— mg"
+                  : formatearMedida(dato.masaReposicionMg, "mg")}
               </p>
             </li>
           );
@@ -76,7 +89,13 @@ export default function ConsumoTemporal() {
               : ""}
           </p>
           <p className="consumo-nodo__ayuda">
-            Medición del recambio (mg/L × L). El tiempo de cada etapa suma hacia la cosecha.
+            Reserva{" "}
+            {consumoNodo.litros == null ? "—" : formatearMedida(consumoNodo.litros, "L")}
+            {" · bebe "}
+            {consumoNodo.reposicionDiaL == null
+              ? "—"
+              : `${formatearMedida(consumoNodo.reposicionDiaL, "L")}/día`}
+            . Los mg del tanque no se tiran cada día.
           </p>
           <ul className="consumo-nodo__minerales">
             {consumoNodo.minerales.map((item) => (
@@ -85,23 +104,27 @@ export default function ConsumoTemporal() {
                 {item.concentracionMgL == null
                   ? "null"
                   : formatearMedida(item.concentracionMgL, "mg/L")}
-                {" · "}
+                {" · tanque "}
                 {item.masaRecambioMg == null
                   ? "null"
-                  : `${formatearMedida(item.masaRecambioMg, "mg")}/día`}
+                  : formatearMedida(item.masaRecambioMg, "mg")}
+                {" · reposición "}
+                {item.masaReposicionMg == null
+                  ? "null"
+                  : `${formatearMedida(item.masaReposicionMg, "mg")}/día`}
               </li>
             ))}
           </ul>
           <p className="consumo-nodo__dia">
-            Necesita al día:{" "}
-            {consumoNodo.masaDiaMg == null
+            Hasta cosecha:{" "}
+            {consumoNodo.dias_restantes == null
               ? "null"
-              : formatearMedida(consumoNodo.masaDiaMg, "mg")}
-            {consumoNodo.dias_restantes != null
-              ? ` · ${consumoNodo.dias_restantes} d hasta cosecha`
+              : `${consumoNodo.dias_restantes} d`}
+            {consumoNodo.reposicionHastaCosechaL != null
+              ? ` · ${formatearMedida(consumoNodo.reposicionHastaCosechaL, "L")} de agua`
               : ""}
             {consumoNodo.masaHastaCosechaMg != null
-              ? ` · ${formatearMedida(consumoNodo.masaHastaCosechaMg, "mg")} restantes`
+              ? ` · ${formatearMedida(consumoNodo.masaHastaCosechaMg, "mg")} en reposición`
               : ""}
           </p>
           {consumoNodo.etapas.length > 0 ? (
@@ -117,9 +140,9 @@ export default function ConsumoTemporal() {
                 >
                   {etapa.etiqueta} · {etapa.duracionDias} d (d {etapa.dias_desde}–
                   {etapa.dias_hasta}) ·{" "}
-                  {etapa.masaEtapaMg == null
+                  {etapa.reposicionEtapaL == null
                     ? "null"
-                    : formatearMedida(etapa.masaEtapaMg, "mg")}
+                    : formatearMedida(etapa.reposicionEtapaL, "L")}
                 </li>
               ))}
             </ol>

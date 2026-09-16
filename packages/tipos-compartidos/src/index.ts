@@ -10,6 +10,7 @@ export {
   CATALOGO_CULTIVOS,
   copiarVariablesDePlantilla,
   obtenerCultivoPorId,
+  reposicionDiaDe,
 } from "./catalogo-cultivos";
 
 export { crearNodoDesdePlantilla } from "./factory-nodo";
@@ -79,7 +80,10 @@ export {
   fichaPlantado,
   fichasPlantados,
   formatearParInsumos,
+  formatearReposicion,
+  masaMineralEnVolumen,
   masaMineralesNodo,
+  masaReposicionNodo,
   proyectarInsumos,
   type FichaPlantado,
   type IdHorizonteProyeccion,
@@ -121,6 +125,47 @@ export {
   type ConsumoTemporalGrupo,
   type ConsumoTemporalNodo,
 } from "./consumo-temporal";
+
+export {
+  CLAVES_NUTRIENTE,
+  ETIQUETAS_NUTRIENTE,
+  GRUPOS_NUTRIENTE,
+  REFERENCIA_DIARIA_HUMANA,
+  SIMBOLOS_NUTRIENTE,
+  UNIDAD_NUTRIENTE,
+  porcentajeValorDiario,
+  type ClaveNutriente,
+} from "./referencia-diaria-humana";
+
+export {
+  FICHAS_NUTRICIONALES,
+  aporteDiaPlanta,
+  cantidadNutrienteEnGramos,
+  fichaNutricionalDeCatalogo,
+  obtenerFichaNutricional,
+  type FichaNutricionalCultivo,
+  type NutrientesPor100g,
+} from "./ficha-nutricional";
+
+export {
+  consolidarAporteDiarioHumano,
+  mediaAritmetica,
+  mediaPonderada,
+  porcentajesPorcionCatalogo,
+  type AportePlantaDiario,
+  type ConsolidadoDiarioHumano,
+  type MetricaConsolidado,
+} from "./consolidado-diario";
+
+export {
+  AGROSERVICIO_EL_SALVADOR,
+  CASOS_USO,
+  CATALOGO_CASOS_USO,
+  obtenerCasoUso,
+  parsearCasoUso,
+  type DefinicionCasoUso,
+  type IdCasoUso,
+} from "./casos-uso";
 
 export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES, UNIDAD_AGREGADO, UNIDAD_NODO, formatearMedida } from "./etiquetas-variables";
 export {

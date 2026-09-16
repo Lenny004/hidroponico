@@ -1,6 +1,6 @@
-import { obtenerCultivoPorId } from "./catalogo-cultivos";
+import { obtenerCultivoPorId, reposicionDiaDe } from "./catalogo-cultivos";
 import { formatearMedida } from "./etiquetas-variables";
-import { CLAVES_MINERALES, type NodoCultivo } from "./nodo-cultivo";
+import { CLAVES_MINERALES, type ClaveMineral, type NodoCultivo } from "./nodo-cultivo";
 
 export const HORIZONTES_PROYECCION = [
   { id: "dia", etiqueta: "1 Día", dias: 1 },
@@ -16,26 +16,27 @@ export interface FichaPlantado {
   nombre: string;
   color: string;
   litros: number | null;
+  reposicionDiaL: number | null;
   masaMg: number | null;
   dias_cosecha: number | null;
 }
 
 export interface ProyeccionInsumos {
-  litros: number | null;
-  masaMg: number | null;
+  /** Litros de reserva en el tanque. Recircula; no se multiplica por días. */
+  reservaL: number | null;
+  /** Agua a reponer en el horizonte (transpiración × días). */
+  reposicionL: number | null;
+  /** Minerales disueltos en la reserva (mg = mg/L × L de tanque). */
+  masaTanqueMg: number | null;
+  /** Sales en el agua de reposición (mg/L × L repuestos). */
+  masaReposicionMg: number | null;
   omitidos: number;
 }
 
-/**
- * Masa elemental de los cuatro minerales de un nodo: Σ (mg/L × L).
- * Si falta `cantidad_sol` o cualquier concentración, queda `null`.
- * No convierte a gramos de sales.
- *
- * @param nodo - Cultivo plantado.
- * @returns Masa en mg, o `null` si falta un dato.
- */
-export function masaMineralesNodo(nodo: NodoCultivo): number | null {
-  const litros = nodo.variables.cantidad_sol;
+function masaConVolumen(
+  nodo: NodoCultivo,
+  litros: number | null,
+): number | null {
   if (litros == null) {
     return null;
   }
@@ -48,6 +49,48 @@ export function masaMineralesNodo(nodo: NodoCultivo): number | null {
     total += concentracion * litros;
   }
   return total;
+}
+
+/**
+ * Masa elemental de los cuatro minerales de un nodo: Σ (mg/L × L de reserva).
+ * Si falta `cantidad_sol` o cualquier concentración, queda `null`.
+ * No convierte a gramos de sales. No es el gasto diario de agua.
+ *
+ * @param nodo - Cultivo plantado.
+ * @returns Masa en mg, o `null` si falta un dato.
+ */
+export function masaMineralesNodo(nodo: NodoCultivo): number | null {
+  return masaConVolumen(nodo, nodo.variables.cantidad_sol ?? null);
+}
+
+/**
+ * Masa elemental en el agua de reposición de un día: Σ (mg/L × L/día).
+ * Tipo sin catálogo o concentración faltante → `null`.
+ *
+ * @param nodo - Cultivo plantado.
+ */
+export function masaReposicionNodo(nodo: NodoCultivo): number | null {
+  return masaConVolumen(nodo, reposicionDiaDe(nodo.tipoCultivo));
+}
+
+/**
+ * Masa de un mineral en un volumen concreto: mg/L × L.
+ * Falta concentración o litros → `null`.
+ *
+ * @param nodo - Cultivo plantado.
+ * @param clave - Mineral del boceto.
+ * @param litros - Reserva o reposición.
+ */
+export function masaMineralEnVolumen(
+  nodo: NodoCultivo,
+  clave: ClaveMineral,
+  litros: number | null,
+): number | null {
+  const concentracion = nodo.variables[clave] ?? null;
+  if (concentracion == null || litros == null) {
+    return null;
+  }
+  return concentracion * litros;
 }
 
 /**
@@ -64,6 +107,7 @@ export function fichaPlantado(nodo: NodoCultivo): FichaPlantado {
     nombre: definicion?.nombre ?? nodo.tipoCultivo,
     color: definicion?.color ?? "#93a4c3",
     litros: nodo.variables.cantidad_sol ?? null,
+    reposicionDiaL: definicion?.reposicion_dia_L ?? null,
     masaMg: masaMineralesNodo(nodo),
     dias_cosecha: definicion?.proceso.dias_cosecha ?? null,
   };
@@ -80,48 +124,82 @@ export function fichasPlantados(nodos: NodoCultivo[]): FichaPlantado[] {
     .sort((a, b) => a.nombre.localeCompare(b.nombre, "es") || a.id.localeCompare(b.id));
 }
 
+function sumarONull(valores: Array<number | null>): { total: number | null; vistos: number } {
+  let total = 0;
+  let vistos = 0;
+  for (const valor of valores) {
+    if (valor == null) {
+      continue;
+    }
+    total += valor;
+    vistos += 1;
+  }
+  return { total: vistos > 0 ? total : null, vistos };
+}
+
 /**
- * Suma litros y masa de los nodos con dato, y escala por días de recambio.
+ * Reserva del tanque (sin escalar) y agua a reponer en `dias`.
  * Un `null` no anula a los demás: se omite y se cuenta en `omitidos`.
  * Cero plantados → 0 L y 0 mg.
  *
  * @param nodos - Cultivos plantados (toda la instalación).
- * @param dias - Recambios de la reserva NFT (1, 7 o 30).
+ * @param dias - Días de reposición (1, 7 o 30). No vacía el tanque.
  */
 export function proyectarInsumos(nodos: NodoCultivo[], dias: number): ProyeccionInsumos {
-  let litros = 0;
-  let masaMg = 0;
-  let vistosLitros = 0;
-  let vistosMasa = 0;
+  if (nodos.length === 0) {
+    return {
+      reservaL: 0,
+      reposicionL: 0,
+      masaTanqueMg: 0,
+      masaReposicionMg: 0,
+      omitidos: 0,
+    };
+  }
+
+  const reservas: Array<number | null> = [];
+  const reposiciones: Array<number | null> = [];
+  const masasTanque: Array<number | null> = [];
+  const masasReposicion: Array<number | null> = [];
   let omitidos = 0;
 
   for (const nodo of nodos) {
     const reserva = nodo.variables.cantidad_sol ?? null;
-    const masa = masaMineralesNodo(nodo);
-    if (reserva == null || masa == null) {
+    const reposicion = reposicionDiaDe(nodo.tipoCultivo);
+    const masaTanque = masaMineralesNodo(nodo);
+    const masaReposicion = masaReposicionNodo(nodo);
+    reservas.push(reserva);
+    reposiciones.push(reposicion);
+    masasTanque.push(masaTanque);
+    masasReposicion.push(masaReposicion);
+    if (reserva == null || masaTanque == null || reposicion == null || masaReposicion == null) {
       omitidos += 1;
-    }
-    if (reserva != null) {
-      litros += reserva;
-      vistosLitros += 1;
-    }
-    if (masa != null) {
-      masaMg += masa;
-      vistosMasa += 1;
     }
   }
 
+  const sumaReserva = sumarONull(reservas);
+  const sumaReposicion = sumarONull(reposiciones);
+  const sumaMasaTanque = sumarONull(masasTanque);
+  const sumaMasaReposicion = sumarONull(masasReposicion);
+
   return {
-    litros: nodos.length === 0 || vistosLitros > 0 ? litros * dias : null,
-    masaMg: nodos.length === 0 || vistosMasa > 0 ? masaMg * dias : null,
+    reservaL: sumaReserva.vistos > 0 ? sumaReserva.total : null,
+    reposicionL:
+      sumaReposicion.vistos > 0 && sumaReposicion.total != null
+        ? sumaReposicion.total * dias
+        : null,
+    masaTanqueMg: sumaMasaTanque.vistos > 0 ? sumaMasaTanque.total : null,
+    masaReposicionMg:
+      sumaMasaReposicion.vistos > 0 && sumaMasaReposicion.total != null
+        ? sumaMasaReposicion.total * dias
+        : null,
     omitidos,
   };
 }
 
 /**
- * Texto compacto al estilo «4 L | 1140.4 mg». Vacío = «—».
+ * Texto compacto al estilo «4 L | 1140.4 mg» (reserva y minerales en tanque).
  *
- * @param litros - Reserva o proyección en litros.
+ * @param litros - Reserva en litros.
  * @param masaMg - Masa elemental en mg.
  */
 export function formatearParInsumos(
@@ -130,5 +208,22 @@ export function formatearParInsumos(
 ): string {
   const textoLitros = litros == null ? "— L" : formatearMedida(litros, "L");
   const textoMasa = masaMg == null ? "— mg" : formatearMedida(masaMg, "mg");
+  return `${textoLitros} | ${textoMasa}`;
+}
+
+/**
+ * Reposición diaria al estilo «0.5 L/día | 142.55 mg/día».
+ *
+ * @param litros - Litros a reponer en el día.
+ * @param masaMg - Sales en esa agua, o `null`.
+ */
+export function formatearReposicion(
+  litros: number | null,
+  masaMg: number | null,
+): string {
+  const textoLitros =
+    litros == null ? "— L/día" : `${formatearMedida(litros, "L")}/día`;
+  const textoMasa =
+    masaMg == null ? "— mg/día" : `${formatearMedida(masaMg, "mg")}/día`;
   return `${textoLitros} | ${textoMasa}`;
 }

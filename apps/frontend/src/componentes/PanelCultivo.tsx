@@ -5,7 +5,7 @@ import {
   obtenerPlagaPorIdONombre,
 } from "@hidroponico/tipos-compartidos";
 import type { CSSProperties } from "react";
-import { Bug, Timer } from "lucide-react";
+import { Bug, Droplets, Timer } from "lucide-react";
 import AnclaHoverCultivo from "./AnclaHoverCultivo";
 import GlifoCultivo from "../iconos/GlifoCultivo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
@@ -14,6 +14,7 @@ export default function PanelCultivo() {
   const busqueda = usarGrafoConstruccion((estado) => estado.busquedaCatalogo);
   const tipoActivo = usarGrafoConstruccion((estado) => estado.tipoCatalogoActivo);
   const agregarNodo = usarGrafoConstruccion((estado) => estado.agregarNodo);
+  const setTipoCatalogoActivo = usarGrafoConstruccion((estado) => estado.setTipoCatalogoActivo);
   const cultivos = CATALOGO_CULTIVOS.filter((cultivo) => {
     const q = busqueda.trim().toLowerCase();
     if (!q) {
@@ -32,6 +33,7 @@ export default function PanelCultivo() {
   });
 
   const colocarCultivo = (tipoCultivo: string) => {
+    setTipoCatalogoActivo(tipoCultivo);
     agregarNodo(tipoCultivo);
   };
 
@@ -83,6 +85,13 @@ export default function PanelCultivo() {
                   >
                     <Timer className="tarjeta-cultivo__chip-icono" aria-hidden />
                     {cultivo.proceso.dias_cosecha} d
+                  </span>
+                  <span
+                    className="tarjeta-cultivo__chip"
+                    title={`Reposición típica: ${cultivo.reposicion_dia_L} L/día. La reserva del tanque recircula.`}
+                  >
+                    <Droplets className="tarjeta-cultivo__chip-icono" aria-hidden />
+                    {cultivo.reposicion_dia_L} L/d
                   </span>
                   <span
                     className={

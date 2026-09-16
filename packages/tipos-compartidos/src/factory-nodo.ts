@@ -4,7 +4,7 @@ import type { NodoCultivo } from "./nodo-cultivo";
 
 /**
  * Factory de nodos a partir de la plantilla del catálogo.
- * Copia mg/L (minerales y O₂) y litros de `cantidad_sol`. El usuario puede vaciar un campo a `null`.
+ * Copia mg/L (minerales y O₂) y litros de reserva `cantidad_sol`. El usuario puede vaciar un campo a `null`.
  * Inicia la trazabilidad con la fecha local de alta. `etapa_vida` queda `null`
  * para que avance sola según los días (germinación el día 0).
  * @param tipoCultivo - Id de la lista blanca (`lechuga`, `tomate`, …).

@@ -30,7 +30,7 @@ const ETIQUETAS_CLAVE_AVISO: Record<string, string> = {
   mineral_potasio: "Potasio",
   mineral_manganeso: "Manganeso",
   mineral_hierro: "Hierro",
-  cantidad_sol: "solución nutritiva",
+  cantidad_sol: "reserva del tanque",
   solucion_plagas: "tratamiento",
   oxigeno: "oxígeno",
 };
@@ -41,7 +41,7 @@ const MOTORES: Record<
 > = {
   minerales: {
     titulo: "Minerales",
-    ayuda: "Masa a preparar: mg = mg/L × litros",
+    ayuda: "Masa disuelta en la reserva: mg = mg/L × L",
     icono: FlaskConical,
   },
   oxigeno: {

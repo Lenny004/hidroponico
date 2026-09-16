@@ -1,23 +1,30 @@
-import { obtenerCultivoPorId } from "./catalogo-cultivos";
+import { obtenerCultivoPorId, reposicionDiaDe } from "./catalogo-cultivos";
 import {
   ETIQUETAS_ETAPA_VIDA,
   type EtapaVida,
   type EtapaProceso,
 } from "./etapas-vida";
 import { CLAVES_MINERALES, type ClaveMineral, type NodoCultivo } from "./nodo-cultivo";
-import { masaMineralesNodo } from "./proyeccion-insumos";
+import {
+  masaMineralEnVolumen,
+  masaMineralesNodo,
+  masaReposicionNodo,
+} from "./proyeccion-insumos";
 import { resumenTrazabilidad } from "./resumen-trazabilidad";
 
 /**
- * Recambio diario de la reserva NFT: se limpia el agua y se reponen los minerales
- * a la concentración del nodo (mg = mg/L × L). No es absorción de la planta ni sales.
+ * Horizonte de 1 día para la reposición de agua. El tanque NFT recircula;
+ * no se vacía cada día.
  */
 export const DIAS_RECAMBIO_DIARIO = 1;
 
 export interface ConsumoMineralNodo {
   clave: ClaveMineral;
   concentracionMgL: number | null;
+  /** Masa disuelta en la reserva del tanque. */
   masaRecambioMg: number | null;
+  /** Sales en el agua de reposición de un día. */
+  masaReposicionMg: number | null;
 }
 
 export interface ConsumoEtapaNodo {
@@ -26,6 +33,7 @@ export interface ConsumoEtapaNodo {
   dias_desde: number;
   dias_hasta: number;
   duracionDias: number;
+  reposicionEtapaL: number | null;
   masaEtapaMg: number | null;
   actual: boolean;
 }
@@ -36,29 +44,29 @@ export interface ConsumoTemporalNodo {
   nombre: string;
   color: string;
   litros: number | null;
+  reposicionDiaL: number | null;
   dias: number | null;
   dias_cosecha: number | null;
   dias_restantes: number | null;
   etapa: EtapaVida | null;
   minerales: ConsumoMineralNodo[];
+  masaTanqueMg: number | null;
+  masaReposicionMg: number | null;
   masaDiaMg: number | null;
   masaHastaCosechaMg: number | null;
+  reposicionHastaCosechaL: number | null;
   etapas: ConsumoEtapaNodo[];
 }
 
 export interface ConsumoTemporalGrupo {
   idsNodos: string[];
   litros: number | null;
+  reposicionDiaL: number | null;
+  masaTanqueMg: number | null;
+  masaReposicionMg: number | null;
   masaDiaMg: number | null;
   minerales: ConsumoMineralNodo[];
   omitidos: number;
-}
-
-function masaDe(concentracion: number | null | undefined, litros: number | null): number | null {
-  if (concentracion == null || litros == null) {
-    return null;
-  }
-  return concentracion * litros;
 }
 
 function duracionEtapa(etapa: EtapaProceso): number {
@@ -67,7 +75,7 @@ function duracionEtapa(etapa: EtapaProceso): number {
 
 /**
  * Días que faltan para la cosecha típica. Sin fecha o sin ciclo → `null`.
- * Si ya se pasó, queda 0 (el recambio diario sigue mientras el cultivo esté plantado).
+ * Si ya se pasó, queda 0 (la reposición sigue mientras el cultivo esté plantado).
  *
  * @param dias - Días de vida, o `null`.
  * @param dias_cosecha - Ciclo del catálogo, o `null`.
@@ -83,7 +91,7 @@ export function diasRestantesCosecha(
 }
 
 /**
- * Masa de un mineral en un recambio de la reserva del nodo: mg/L × L.
+ * Masa de un mineral en la reserva del nodo: mg/L × L de tanque.
  * Falta concentración o litros → `null`.
  *
  * @param nodo - Cultivo plantado.
@@ -93,12 +101,12 @@ export function masaMineralRecambio(
   nodo: NodoCultivo,
   clave: ClaveMineral,
 ): number | null {
-  return masaDe(nodo.variables[clave] ?? null, nodo.variables.cantidad_sol ?? null);
+  return masaMineralEnVolumen(nodo, clave, nodo.variables.cantidad_sol ?? null);
 }
 
 /**
- * Consumo por tiempo de un nodo: medición (mg/L × L), duración de cada etapa y
- * recambio diario hasta la cosecha típica. Un `null` local no se convierte en 0.
+ * Consumo por tiempo de un nodo: reserva del tanque, reposición diaria y
+ * sales en el agua añadida. Un `null` local no se convierte en 0.
  *
  * @param nodo - Cultivo del grafo.
  * @param ahora - Reloj inyectable para pruebas.
@@ -110,13 +118,16 @@ export function consumoTemporalNodo(
   const definicion = obtenerCultivoPorId(nodo.tipoCultivo);
   const vida = resumenTrazabilidad(nodo, ahora);
   const litros = nodo.variables.cantidad_sol ?? null;
-  const masaDiaMg = masaMineralesNodo(nodo);
+  const reposicionDiaL = reposicionDiaDe(nodo.tipoCultivo);
+  const masaTanqueMg = masaMineralesNodo(nodo);
+  const masaReposicionMg = masaReposicionNodo(nodo);
   const dias_cosecha = definicion?.proceso.dias_cosecha ?? null;
   const restantes = diasRestantesCosecha(vida.dias, dias_cosecha);
   const minerales = CLAVES_MINERALES.map((clave) => ({
     clave,
     concentracionMgL: nodo.variables[clave] ?? null,
     masaRecambioMg: masaMineralRecambio(nodo, clave),
+    masaReposicionMg: masaMineralEnVolumen(nodo, clave, reposicionDiaL),
   }));
 
   const etapas: ConsumoEtapaNodo[] = (vida.proceso?.etapas ?? []).map((etapa) => {
@@ -127,7 +138,10 @@ export function consumoTemporalNodo(
       dias_desde: etapa.dias_desde,
       dias_hasta: etapa.dias_hasta,
       duracionDias,
-      masaEtapaMg: masaDiaMg == null ? null : masaDiaMg * duracionDias,
+      reposicionEtapaL:
+        reposicionDiaL == null ? null : reposicionDiaL * duracionDias,
+      masaEtapaMg:
+        masaReposicionMg == null ? null : masaReposicionMg * duracionDias,
       actual: vida.etapa === etapa.id,
     };
   });
@@ -138,14 +152,21 @@ export function consumoTemporalNodo(
     nombre: definicion?.nombre ?? nodo.tipoCultivo,
     color: definicion?.color ?? "#93a4c3",
     litros,
+    reposicionDiaL,
     dias: vida.dias,
     dias_cosecha,
     dias_restantes: restantes,
     etapa: vida.etapa,
     minerales,
-    masaDiaMg,
+    masaTanqueMg,
+    masaReposicionMg,
+    masaDiaMg: masaReposicionMg,
     masaHastaCosechaMg:
-      masaDiaMg == null || restantes == null ? null : masaDiaMg * restantes,
+      masaReposicionMg == null || restantes == null
+        ? null
+        : masaReposicionMg * restantes,
+    reposicionHastaCosechaL:
+      reposicionDiaL == null || restantes == null ? null : reposicionDiaL * restantes,
     etapas,
   };
 }
@@ -164,7 +185,7 @@ function sumarONull(valores: Array<number | null>): { total: number | null; vist
 }
 
 /**
- * Total del tubo (o del grupo al unirse): cada planta aporta su recambio diario.
+ * Total del tubo (o del grupo al unirse): reserva + reposición de cada planta.
  * Un nodo incompleto se omite y se cuenta en `omitidos`; no anula a los demás.
  *
  * @param nodos - Cultivos que se acaban de unir al grafo.
@@ -175,11 +196,15 @@ export function consumoTemporalGrupo(nodos: NodoCultivo[]): ConsumoTemporalGrupo
     return {
       idsNodos,
       litros: 0,
+      reposicionDiaL: 0,
+      masaTanqueMg: 0,
+      masaReposicionMg: 0,
       masaDiaMg: 0,
       minerales: CLAVES_MINERALES.map((clave) => ({
         clave,
         concentracionMgL: null,
         masaRecambioMg: 0,
+        masaReposicionMg: 0,
       })),
       omitidos: 0,
     };
@@ -187,8 +212,16 @@ export function consumoTemporalGrupo(nodos: NodoCultivo[]): ConsumoTemporalGrupo
 
   let omitidos = 0;
   const litrosNodo: Array<number | null> = [];
-  const masaNodo: Array<number | null> = [];
-  const masasPorMineral: Record<ClaveMineral, Array<number | null>> = {
+  const reposicionNodo: Array<number | null> = [];
+  const masaTanqueNodo: Array<number | null> = [];
+  const masaReposicionGrupo: Array<number | null> = [];
+  const masasTanquePorMineral: Record<ClaveMineral, Array<number | null>> = {
+    mineral_magnesio: [],
+    mineral_potasio: [],
+    mineral_manganeso: [],
+    mineral_hierro: [],
+  };
+  const masasReposicionPorMineral: Record<ClaveMineral, Array<number | null>> = {
     mineral_magnesio: [],
     mineral_potasio: [],
     mineral_manganeso: [],
@@ -197,30 +230,44 @@ export function consumoTemporalGrupo(nodos: NodoCultivo[]): ConsumoTemporalGrupo
 
   for (const nodo of nodos) {
     const litros = nodo.variables.cantidad_sol ?? null;
-    const masa = masaMineralesNodo(nodo);
+    const reposicion = reposicionDiaDe(nodo.tipoCultivo);
+    const masaTanque = masaMineralesNodo(nodo);
+    const masaReposicion = masaReposicionNodo(nodo);
     litrosNodo.push(litros);
-    masaNodo.push(masa);
-    if (litros == null || masa == null) {
+    reposicionNodo.push(reposicion);
+    masaTanqueNodo.push(masaTanque);
+    masaReposicionGrupo.push(masaReposicion);
+    if (litros == null || masaTanque == null || reposicion == null || masaReposicion == null) {
       omitidos += 1;
     }
     for (const clave of CLAVES_MINERALES) {
-      masasPorMineral[clave].push(masaMineralRecambio(nodo, clave));
+      masasTanquePorMineral[clave].push(masaMineralRecambio(nodo, clave));
+      masasReposicionPorMineral[clave].push(
+        masaMineralEnVolumen(nodo, clave, reposicion),
+      );
     }
   }
 
   const sumaLitros = sumarONull(litrosNodo);
-  const sumaMasa = sumarONull(masaNodo);
+  const sumaReposicion = sumarONull(reposicionNodo);
+  const sumaMasaTanque = sumarONull(masaTanqueNodo);
+  const sumaMasaReposicion = sumarONull(masaReposicionGrupo);
 
   return {
     idsNodos,
     litros: sumaLitros.vistos > 0 ? sumaLitros.total : null,
-    masaDiaMg: sumaMasa.vistos > 0 ? sumaMasa.total : null,
+    reposicionDiaL: sumaReposicion.vistos > 0 ? sumaReposicion.total : null,
+    masaTanqueMg: sumaMasaTanque.vistos > 0 ? sumaMasaTanque.total : null,
+    masaReposicionMg: sumaMasaReposicion.vistos > 0 ? sumaMasaReposicion.total : null,
+    masaDiaMg: sumaMasaReposicion.vistos > 0 ? sumaMasaReposicion.total : null,
     minerales: CLAVES_MINERALES.map((clave) => {
-      const suma = sumarONull(masasPorMineral[clave]);
+      const tanque = sumarONull(masasTanquePorMineral[clave]);
+      const reposicion = sumarONull(masasReposicionPorMineral[clave]);
       return {
         clave,
         concentracionMgL: null,
-        masaRecambioMg: suma.vistos > 0 ? suma.total : null,
+        masaRecambioMg: tanque.vistos > 0 ? tanque.total : null,
+        masaReposicionMg: reposicion.vistos > 0 ? reposicion.total : null,
       };
     }),
     omitidos,

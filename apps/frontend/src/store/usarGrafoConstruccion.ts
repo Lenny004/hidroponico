@@ -74,6 +74,7 @@ type EstadoGrafoConstruccion = {
   setEstadoPersistencia: (estado: EstadoPersistencia) => void;
   setBusquedaCatalogo: (valor: string) => void;
   setFiltroLienzo: (valor: string) => void;
+  setTipoCatalogoActivo: (tipoCultivo: string | null) => void;
 };
 
 function aristasDirigidas(aristas: Edge[]) {
@@ -464,6 +465,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
 
   setBusquedaCatalogo: (valor) => set({ busquedaCatalogo: valor }),
   setFiltroLienzo: (valor) => set({ filtroLienzo: valor }),
+  setTipoCatalogoActivo: (tipoCatalogoActivo) => set({ tipoCatalogoActivo }),
 
   setEstadoPersistencia: (estadoPersistencia) => set({ estadoPersistencia }),
 

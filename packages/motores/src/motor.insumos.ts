@@ -5,8 +5,8 @@ import {
 import type { MotorHidroponico, ResultadoMotor } from "./motor-hidroponico";
 
 /**
- * Suma `cantidad_sol` (L) por grupo conectado: litros de solución a preparar.
- * No convierte minerales a sales. Un `null` invalida el grupo; no lanza ni detiene el pipeline.
+ * Suma `cantidad_sol` (L) por grupo conectado: litros de reserva a tener en el tanque.
+ * No es el gasto diario de agua. Un `null` invalida el grupo; no lanza ni detiene el pipeline.
  */
 export class MotorInsumos implements MotorHidroponico {
   readonly nombre = "insumos";

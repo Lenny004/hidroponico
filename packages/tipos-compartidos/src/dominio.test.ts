@@ -27,6 +27,7 @@ import { resumenTrazabilidad } from "./resumen-trazabilidad";
 import {
   fichasPlantados,
   formatearParInsumos,
+  formatearReposicion,
   masaMineralesNodo,
   proyectarInsumos,
 } from "./proyeccion-insumos";
@@ -46,6 +47,17 @@ import {
   consumoTemporalNodo,
   diasRestantesCosecha,
 } from "./consumo-temporal";
+import {
+  FICHAS_NUTRICIONALES,
+  aporteDiaPlanta,
+  consolidarAporteDiarioHumano,
+  mediaAritmetica,
+  mediaPonderada,
+  obtenerFichaNutricional,
+  porcentajeValorDiario,
+  porcentajesPorcionCatalogo,
+} from "./index";
+import { parsearCasoUso } from "./casos-uso";
 
 describe("aristaCreariaCiclo", () => {
   it("rechaza un bucle sobre el mismo nodo", () => {
@@ -110,6 +122,8 @@ describe("crearNodoDesdePlantilla", () => {
         expect(Number.isFinite(cultivo.plantilla[clave])).toBe(true);
       }
       expect(cultivo.proceso.dias_cosecha).toBeGreaterThan(0);
+      expect(cultivo.reposicion_dia_L).toBeGreaterThan(0);
+      expect(cultivo.reposicion_dia_L).toBeLessThan(cultivo.plantilla.cantidad_sol);
       expect(cultivo.proceso.etapas.length).toBeGreaterThan(0);
       expect(cultivo.plagas_tipicas.length).toBeGreaterThan(0);
     }
@@ -435,15 +449,18 @@ describe("proyección de insumos", () => {
     ).toBeNull();
   });
 
-  it("escala litros y masa a 1, 7 y 30 recambios", () => {
+  it("separa reserva del tanque y agua a reponer en 1, 7 y 30 días", () => {
     const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
     const tomate = crearNodoDesdePlantilla("tomate", "n2")!;
     const dia = proyectarInsumos([lechuga, tomate], 1);
-    expect(dia.litros).toBe(12);
-    expect(dia.masaMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4 + (60 + 350 + 0.55 + 2) * 8);
+    expect(dia.reservaL).toBe(12);
+    expect(dia.reposicionL).toBeCloseTo(2.5);
+    expect(dia.masaTanqueMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4 + (60 + 350 + 0.55 + 2) * 8);
+    expect(dia.masaReposicionMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 0.5 + (60 + 350 + 0.55 + 2) * 2);
     expect(dia.omitidos).toBe(0);
-    expect(proyectarInsumos([lechuga, tomate], 7).litros).toBe(84);
-    expect(proyectarInsumos([lechuga, tomate], 30).litros).toBe(360);
+    expect(proyectarInsumos([lechuga, tomate], 7).reservaL).toBe(12);
+    expect(proyectarInsumos([lechuga, tomate], 7).reposicionL).toBeCloseTo(17.5);
+    expect(proyectarInsumos([lechuga, tomate], 30).reposicionL).toBeCloseTo(75);
   });
 
   it("omite nodos incompletos y no anula el resto", () => {
@@ -454,9 +471,15 @@ describe("proyección de insumos", () => {
       variables: { cantidad_sol: null },
     };
     const dia = proyectarInsumos([lechuga, incompleto], 1);
-    expect(dia.litros).toBe(4);
+    expect(dia.reservaL).toBe(4);
     expect(dia.omitidos).toBe(1);
-    expect(proyectarInsumos([], 7)).toEqual({ litros: 0, masaMg: 0, omitidos: 0 });
+    expect(proyectarInsumos([], 7)).toEqual({
+      reservaL: 0,
+      reposicionL: 0,
+      masaTanqueMg: 0,
+      masaReposicionMg: 0,
+      omitidos: 0,
+    });
   });
 
   it("lista plantados y formatea el par L | mg", () => {
@@ -464,8 +487,10 @@ describe("proyección de insumos", () => {
     const fichas = fichasPlantados([lechuga]);
     expect(fichas[0]?.nombre).toBe("Lechuga");
     expect(fichas[0]?.litros).toBe(4);
+    expect(fichas[0]?.reposicionDiaL).toBe(0.5);
     expect(formatearParInsumos(39.2, 19200)).toBe("39.2 L | 19200 mg");
     expect(formatearParInsumos(null, null)).toBe("— L | — mg");
+    expect(formatearReposicion(0.5, 142.55)).toBe("0.5 L/día | 142.55 mg/día");
   });
 });
 
@@ -474,6 +499,7 @@ describe("ficha hover de cultivo", () => {
     const ficha = fichaHoverDesdeCatalogo("lechuga");
     expect(ficha?.nombre).toBe("Lechuga");
     expect(ficha?.litros).toBe(4);
+    expect(ficha?.reposicionDiaL).toBe(0.5);
     expect(ficha?.minerales.find((item) => item.clave === "mineral_potasio")?.concentracion).toBe(235);
     expect(ficha?.masaTotalMg).toBeCloseTo((48.6 + 235 + 0.5 + 1) * 4);
     expect(fichaHoverDesdeCatalogo("no-existe")).toBeNull();
@@ -551,25 +577,35 @@ describe("árbol Patricia binario", () => {
 });
 
 describe("consumo temporal y recambio", () => {
-  it("mide mg/L × L por etapa y suma al unirse", () => {
+  it("separa reserva del tanque y reposición diaria al unirse", () => {
     const ahora = new Date(2026, 8, 17);
     const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
     lechuga.iniciado_en = "2026-09-07";
     const consumo = consumoTemporalNodo(lechuga, ahora);
-    const masaDia = (48.6 + 235 + 0.5 + 1) * 4;
-    expect(consumo.masaDiaMg).toBeCloseTo(masaDia);
+    const masaTanque = (48.6 + 235 + 0.5 + 1) * 4;
+    const masaReposicion = (48.6 + 235 + 0.5 + 1) * 0.5;
+    expect(consumo.litros).toBe(4);
+    expect(consumo.reposicionDiaL).toBe(0.5);
+    expect(consumo.masaTanqueMg).toBeCloseTo(masaTanque);
+    expect(consumo.masaDiaMg).toBeCloseTo(masaReposicion);
     expect(consumo.dias).toBe(10);
     expect(consumo.dias_restantes).toBe(25);
-    expect(consumo.masaHastaCosechaMg).toBeCloseTo(masaDia * 25);
+    expect(consumo.reposicionHastaCosechaL).toBeCloseTo(12.5);
+    expect(consumo.masaHastaCosechaMg).toBeCloseTo(masaReposicion * 25);
     expect(consumo.etapas.reduce((acum, etapa) => acum + etapa.duracionDias, 0)).toBe(35);
     expect(consumo.minerales.find((item) => item.clave === "mineral_potasio")?.masaRecambioMg).toBe(
       235 * 4,
+    );
+    expect(consumo.minerales.find((item) => item.clave === "mineral_potasio")?.masaReposicionMg).toBe(
+      235 * 0.5,
     );
 
     const tomate = crearNodoDesdePlantilla("tomate", "n2")!;
     const grupo = consumoTemporalGrupo([lechuga, tomate]);
     expect(grupo.litros).toBe(12);
-    expect(grupo.masaDiaMg).toBeCloseTo(masaDia + (60 + 350 + 0.55 + 2) * 8);
+    expect(grupo.reposicionDiaL).toBeCloseTo(2.5);
+    expect(grupo.masaTanqueMg).toBeCloseTo(masaTanque + (60 + 350 + 0.55 + 2) * 8);
+    expect(grupo.masaDiaMg).toBeCloseTo(masaReposicion + (60 + 350 + 0.55 + 2) * 2);
     expect(grupo.omitidos).toBe(0);
     expect(diasRestantesCosecha(40, 35)).toBe(0);
     expect(diasRestantesCosecha(null, 35)).toBeNull();
@@ -586,6 +622,62 @@ describe("consumo temporal y recambio", () => {
     expect(grupo.litros).toBe(4);
     expect(grupo.omitidos).toBe(1);
     expect(consumoTemporalGrupo([]).masaDiaMg).toBe(0);
+  });
+});
+
+describe("referencia diaria y consolidado humano", () => {
+  it("convierte cantidad a % del valor diario y respeta null", () => {
+    expect(porcentajeValorDiario(90, "vitamina_c")).toBe(100);
+    expect(porcentajeValorDiario(null, "vitamina_c")).toBeNull();
+    expect(mediaAritmetica([10, 20, null])).toBe(15);
+    expect(mediaAritmetica([null, undefined])).toBeNull();
+    expect(mediaPonderada([
+      { valor: 10, peso: 1 },
+      { valor: 30, peso: 3 },
+    ])).toBe(25);
+    expect(mediaPonderada([{ valor: 10, peso: 0 }])).toBeNull();
+  });
+
+  it("tiene ficha USDA para los 10 cultivos y omite tipos desconocidos", () => {
+    expect(FICHAS_NUTRICIONALES).toHaveLength(10);
+    expect(obtenerFichaNutricional("lechuga")?.nombre_cientifico).toBe("Lactuca sativa");
+    expect(obtenerFichaNutricional("no-existe")).toBeNull();
+    const c100 = porcentajesPorcionCatalogo("lechuga")?.vitamina_k;
+    expect(c100).toBeGreaterThan(100);
+    expect(aporteDiaPlanta("lechuga", "vitamina_c")).toBeCloseTo(9.2 * 0.05);
+  });
+
+  it("media aritmética y ponderado difieren con pesos distintos", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const tomate = crearNodoDesdePlantilla("tomate", "n2")!;
+    const vacio = consolidarAporteDiarioHumano([]);
+    expect(vacio.gramosDia).toBe(0);
+    expect(vacio.metricas[0]?.mediaAritmeticaPct).toBeNull();
+
+    const una = consolidarAporteDiarioHumano([lechuga]);
+    const vitC = una.metricas.find((item) => item.clave === "vitamina_c");
+    expect(una.gramosDia).toBe(5);
+    expect(vitC?.mediaAritmeticaPct).toBeCloseTo(vitC?.ponderadoPct ?? 0);
+
+    const mixto = consolidarAporteDiarioHumano([lechuga, tomate]);
+    const metrica = mixto.metricas.find((item) => item.clave === "vitamina_c");
+    expect(mixto.gramosDia).toBe(30);
+    expect(metrica?.mediaAritmeticaPct).not.toBeNull();
+    expect(metrica?.ponderadoPct).not.toBeNull();
+    expect(metrica?.mediaAritmeticaPct).not.toBeCloseTo(metrica?.ponderadoPct ?? 0);
+    expect(mixto.omitidos).toBe(0);
+  });
+
+  it("omite un tipo sin ficha y parsea casos de uso", () => {
+    const lechuga = crearNodoDesdePlantilla("lechuga", "n1")!;
+    const mixto = consolidarAporteDiarioHumano([
+      lechuga,
+      { id: "x", tipoCultivo: "desconocido" },
+    ]);
+    expect(mixto.omitidos).toBe(1);
+    expect(mixto.gramosDia).toBe(5);
+    expect(parsearCasoUso("agroservicio")).toBe("agroservicio");
+    expect(parsearCasoUso("no")).toBeNull();
   });
 });
 

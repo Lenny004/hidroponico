@@ -47,6 +47,9 @@ export default function CatalogoPlantado() {
                       <span className="catalogo-plantado__nombre">{ficha.nombre}</span>
                       <span className="catalogo-plantado__meta">
                         {formatearParInsumos(ficha.litros, ficha.masaMg)}
+                        {ficha.reposicionDiaL != null
+                          ? ` · ${ficha.reposicionDiaL} L/día`
+                          : ""}
                         {ficha.dias_cosecha != null ? ` · ${ficha.dias_cosecha} d` : ""}
                       </span>
                     </span>

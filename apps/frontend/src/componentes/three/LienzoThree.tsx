@@ -32,7 +32,7 @@ export default function LienzoThree({
         const destino = evento.target;
         if (
           destino instanceof Element &&
-          destino.closest(".barra-acciones-cultivo, button, input, select, textarea")
+          destino.closest(".barra-acciones-cultivo, .controles-lienzo, button, input, select, textarea")
         ) {
           return;
         }

@@ -1,4 +1,4 @@
-import { obtenerCultivoPorId } from "./catalogo-cultivos";
+import { obtenerCultivoPorId, reposicionDiaDe } from "./catalogo-cultivos";
 import type { NodoCultivo } from "./nodo-cultivo";
 import { masaMineralesNodo } from "./proyeccion-insumos";
 
@@ -352,6 +352,8 @@ export interface HojaCultivoPatricia {
   tipoCultivo: string;
   nombre: string;
   color: string;
+  litros: number | null;
+  reposicionDiaL: number | null;
   masaDiaMg: number | null;
 }
 
@@ -374,6 +376,8 @@ export function arbolPatriciaDeNodos(
           tipoCultivo: nodo.tipoCultivo,
           nombre: definicion?.nombre ?? nodo.tipoCultivo,
           color: definicion?.color ?? "#93a4c3",
+          litros: nodo.variables.cantidad_sol ?? null,
+          reposicionDiaL: reposicionDiaDe(nodo.tipoCultivo),
           masaDiaMg: masaMineralesNodo(nodo),
         },
       };

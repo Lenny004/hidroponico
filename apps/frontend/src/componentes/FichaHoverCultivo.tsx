@@ -27,11 +27,16 @@ export default function FichaHoverCultivo({ ficha }: { ficha: DatosFicha }) {
         ))}
         <div className="ficha-hover__centro">
           <GlifoCultivo tipoCultivo={ficha.tipoCultivo} color={ficha.color} tamano="ficha" />
-          <p className="ficha-hover__litros">{textoOVacio(ficha.litros, "L")}</p>
+          <p className="ficha-hover__litros">{textoOVacio(ficha.litros, "L")} reserva</p>
+          {ficha.reposicionDiaL != null ? (
+            <p className="ficha-hover__reposicion">
+              {textoOVacio(ficha.reposicionDiaL, "L")}/día
+            </p>
+          ) : null}
         </div>
       </div>
       <p className="ficha-hover__consumo">
-        Consumo de minerales: {textoOVacio(ficha.masaTotalMg, "mg")}
+        Minerales en el tanque: {textoOVacio(ficha.masaTotalMg, "mg")}
       </p>
       <p className="ficha-hover__pie">
         O₂ {textoOVacio(ficha.oxigeno, "mg/L")}

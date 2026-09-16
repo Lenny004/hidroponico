@@ -14,6 +14,8 @@ import type { IdPlagaCatalogo } from "./catalogo-plagas";
  * Concentración (mg/L) y litros de tanque que propone el catálogo.
  * Minerales de hoja: Hoagland & Arnon 1950. Fruto: receta UA-CEA / Jensen (Ohio State).
  * Oxígeno: 6 mg/L (rango típico NFT 5–8). Litros: reserva NFT por planta.
+ * `reposicion_dia_L` no es variable del nodo: estima el agua que se añade al día
+ * (transpiración), no el vaciado del tanque.
  */
 export type VariablesPlantilla = {
   [K in ClaveVariableCultivo]: number;
@@ -27,6 +29,8 @@ export interface DefinicionCultivo {
   familia: FamiliaCultivo;
   proceso: ProcesoCultivo;
   plagas_tipicas: readonly IdPlagaCatalogo[];
+  /** Litros/día a reponer (transpiración típica NFT). El tanque recircula. */
+  reposicion_dia_L: number;
 }
 
 function plantillaNutritiva(valores: {
@@ -96,6 +100,7 @@ export const CATALOGO_CULTIVOS = [
       "Siembra en cubo, transplante al canal NFT y corte de cabeza o hojas. Evitar sombra entre plantas.",
     ),
     plagas_tipicas: ["pulgon", "mildiu", "mosca_del_suelo"],
+    reposicion_dia_L: 0.5,
   },
   {
     id: "tomate",
@@ -109,6 +114,7 @@ export const CATALOGO_CULTIVOS = [
       "Tutorado, desbrote y polinización en floración. Receta de fruto (más K y Fe) hasta cosecha continua.",
     ),
     plagas_tipicas: ["mosca_blanca", "arana_roja", "minador", "oidio"],
+    reposicion_dia_L: 2,
   },
   {
     id: "albahaca",
@@ -122,6 +128,7 @@ export const CATALOGO_CULTIVOS = [
       "Poda de brotes apicales para ramificar. Cosecha de hojas; no dejar florar si se busca aroma.",
     ),
     plagas_tipicas: ["pulgon", "trips"],
+    reposicion_dia_L: 0.35,
   },
   {
     id: "espinaca",
@@ -135,6 +142,7 @@ export const CATALOGO_CULTIVOS = [
       "Prefiere solución más fresca y sombra parcial. Cosecha de hojas o planta entera antes de espigar.",
     ),
     plagas_tipicas: ["pulgon", "mildiu"],
+    reposicion_dia_L: 0.5,
   },
   {
     id: "fresa",
@@ -148,6 +156,7 @@ export const CATALOGO_CULTIVOS = [
       "Estolones a canal o maceta NFT. Floración y cuaje; retirar frutos dañados para no atraer plagas.",
     ),
     plagas_tipicas: ["arana_roja", "trips", "oidio"],
+    reposicion_dia_L: 0.6,
   },
   {
     id: "apio",
@@ -161,6 +170,7 @@ export const CATALOGO_CULTIVOS = [
       "Ciclo largo de pencas. Mantener solución constante; cosecha de tallos externos o planta completa.",
     ),
     plagas_tipicas: ["pulgon", "minador"],
+    reposicion_dia_L: 0.8,
   },
   {
     id: "acelga",
@@ -174,6 +184,7 @@ export const CATALOGO_CULTIVOS = [
       "Cosecha escalonada de hojas externas. Tolera bien NFT; no dejar el canal seco entre riegos.",
     ),
     plagas_tipicas: ["pulgon", "mosca_blanca"],
+    reposicion_dia_L: 0.6,
   },
   {
     id: "pepino",
@@ -187,6 +198,7 @@ export const CATALOGO_CULTIVOS = [
       "Tutor vertical y raleo de frutos. Alta demanda de K en cuaje; vigilar oídio en hoja.",
     ),
     plagas_tipicas: ["mosca_blanca", "oidio", "arana_roja"],
+    reposicion_dia_L: 2,
   },
   {
     id: "menta",
@@ -200,6 +212,7 @@ export const CATALOGO_CULTIVOS = [
       "Crecimiento agresivo; recortar para densificar. Cosecha continua de tallos aromáticos.",
     ),
     plagas_tipicas: ["pulgon", "arana_roja"],
+    reposicion_dia_L: 0.35,
   },
   {
     id: "rucula",
@@ -213,6 +226,7 @@ export const CATALOGO_CULTIVOS = [
       "Ciclo corto. Cortar hojas jóvenes; si espiga, el sabor se vuelve picante y amargo.",
     ),
     plagas_tipicas: ["pulgon", "mosca_del_suelo"],
+    reposicion_dia_L: 0.4,
   },
 ] as const satisfies readonly DefinicionCultivo[];
 
@@ -240,4 +254,14 @@ export function copiarVariablesDePlantilla(tipoCultivo: string): VariablesCultiv
     copiadas[clave] = definicion.plantilla[clave];
   }
   return copiadas;
+}
+
+/**
+ * Agua a reponer al día (L) según el catálogo. No usa `cantidad_sol`.
+ * Tipo desconocido → `null`.
+ *
+ * @param tipoCultivo - Id de la lista blanca.
+ */
+export function reposicionDiaDe(tipoCultivo: string): number | null {
+  return obtenerCultivoPorId(tipoCultivo)?.reposicion_dia_L ?? null;
 }

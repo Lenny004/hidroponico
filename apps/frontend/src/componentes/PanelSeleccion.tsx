@@ -10,8 +10,6 @@ import {
   obtenerPlagaPorIdONombre,
 } from "@hidroponico/tipos-compartidos";
 import CampoNumerico from "./CampoNumerico";
-import ArbolPatricia from "./ArbolPatricia";
-import ConsumoTemporal from "./ConsumoTemporal";
 import FichaVidaCultivo from "./FichaVidaCultivo";
 import { resumenGrupoDeNodo } from "../api/resumen-grupo";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
@@ -35,10 +33,8 @@ export default function PanelSeleccion() {
     : null;
 
   return (
-    <aside className="panel-detalle">
-      <p className="panel-detalle__titulo">Detalle</p>
-      <ConsumoTemporal />
-      <ArbolPatricia />
+    <aside className="panel-detalle panel-detalle--incrustado">
+      <p className="panel-detalle__titulo">Ficha editable</p>
       {!nodo || !cultivo || !nombre ? (
         <p className="panel-detalle__vacio">
           Haz click en un cultivo de los tubos o de la lista para ver y editar su ficha.
@@ -86,8 +82,9 @@ export default function PanelSeleccion() {
           />
 
           <p className="panel-detalle__nota">
-            Minerales y O₂ en mg/L (ppm). Solución en litros. El grupo dosifica mg =
-            concentración × litros. Vacío = null.
+            Minerales y O₂ en mg/L (ppm). Reserva del tanque en litros (recircula; no
+            es el gasto diario). El grupo dosifica mg = concentración × litros de
+            reserva. Vacío = null.
           </p>
 
           {GRUPOS_VARIABLES.map((grupo) => (

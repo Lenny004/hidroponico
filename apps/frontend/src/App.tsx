@@ -1,9 +1,11 @@
 import BarraEstado from "./componentes/BarraEstado";
 import BarraSuperior from "./componentes/BarraSuperior";
 import CanvasGrafo from "./componentes/CanvasGrafo";
+import PanelCasosUso from "./componentes/PanelCasosUso";
+import PanelConsolidado from "./componentes/PanelConsolidado";
 import PanelCultivo from "./componentes/PanelCultivo";
-import PanelResultados from "./componentes/PanelResultados";
-import PanelSeleccion from "./componentes/PanelSeleccion";
+import PanelPipeline from "./componentes/PanelPipeline";
+import PanelTrazabilidad from "./componentes/PanelTrazabilidad";
 import { usarCalculoAutomatico } from "./hooks/usarCalculoAutomatico";
 import { usarSincronizacionGrafo } from "./hooks/usarSincronizacionGrafo";
 
@@ -15,10 +17,18 @@ export default function App() {
       <BarraSuperior />
       <div className="app__cuerpo">
         <PanelCultivo />
-        <CanvasGrafo />
-        <PanelSeleccion />
+        <div className="app__principal">
+          <div className="app__escenario">
+            <CanvasGrafo />
+            <PanelTrazabilidad />
+          </div>
+          <div className="app__inferior">
+            <PanelCasosUso />
+            <PanelConsolidado />
+          </div>
+        </div>
+        <PanelPipeline />
       </div>
-      <PanelResultados />
       <BarraEstado />
     </div>
   );

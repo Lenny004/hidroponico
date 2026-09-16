@@ -25,6 +25,7 @@ export interface FichaHoverCultivo {
   etiquetaFamilia: string | null;
   dias_cosecha: number | null;
   litros: number | null;
+  reposicionDiaL: number | null;
   oxigeno: number | null;
   masaTotalMg: number | null;
   minerales: DatoHoverMineral[];
@@ -74,6 +75,7 @@ function armarFicha(entrada: {
     etiquetaFamilia: definicion ? ETIQUETAS_FAMILIA[definicion.familia] : null,
     dias_cosecha: definicion?.proceso.dias_cosecha ?? null,
     litros: entrada.litros,
+    reposicionDiaL: definicion?.reposicion_dia_L ?? null,
     oxigeno: entrada.oxigeno,
     masaTotalMg,
     minerales,

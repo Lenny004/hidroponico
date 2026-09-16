@@ -1,5 +1,6 @@
 import {
   HORIZONTES_PROYECCION,
+  formatearMedida,
   formatearParInsumos,
   proyectarInsumos,
 } from "@hidroponico/tipos-compartidos";
@@ -14,7 +15,11 @@ export default function ProyeccionInsumos() {
     <section className="proyeccion">
       <p className="proyeccion__titulo">Proyección de insumos</p>
       <p className="proyeccion__ayuda">
-        Recambio diario de la reserva NFT. Masa elemental (mg = mg/L × L), no sales.
+        Reserva del tanque (recircula) y agua a reponer por transpiración. Masa
+        elemental (mg = mg/L × L), no sales.
+      </p>
+      <p className="proyeccion__total">
+        Reserva: {formatearParInsumos(dia.reservaL, dia.masaTanqueMg)}
       </p>
       <ul className="proyeccion__lista">
         {HORIZONTES_PROYECCION.map((horizonte) => {
@@ -26,7 +31,14 @@ export default function ProyeccionInsumos() {
             >
               <p className="proyeccion__horizonte">{horizonte.etiqueta}</p>
               <p className="proyeccion__valores">
-                {formatearParInsumos(dato.litros, dato.masaMg)}
+                Agua a reponer:{" "}
+                {dato.reposicionL == null
+                  ? "— L"
+                  : formatearMedida(dato.reposicionL, "L")}
+                {" · sales "}
+                {dato.masaReposicionMg == null
+                  ? "— mg"
+                  : formatearMedida(dato.masaReposicionMg, "mg")}
               </p>
             </li>
           );

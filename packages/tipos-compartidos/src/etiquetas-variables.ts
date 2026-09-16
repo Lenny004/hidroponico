@@ -6,7 +6,7 @@ export const ETIQUETAS_VARIABLES: Record<ClaveVariableCultivo, string> = {
   mineral_manganeso: "Manganeso",
   mineral_hierro: "Hierro",
   oxigeno: "Oxígeno disuelto",
-  cantidad_sol: "Solución nutritiva",
+  cantidad_sol: "Reserva del tanque",
 };
 
 /** Unidad del valor en el nodo (lo que se edita). */
@@ -48,7 +48,7 @@ export const GRUPOS_VARIABLES: {
     ],
   },
   {
-    titulo: "Solución y oxígeno",
+    titulo: "Reserva y oxígeno",
     claves: ["cantidad_sol", "oxigeno"],
   },
 ];

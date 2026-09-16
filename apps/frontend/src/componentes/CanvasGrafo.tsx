@@ -3,6 +3,7 @@ import LienzoThree from "./three/LienzoThree";
 import { resolverOrificioEnPantalla } from "./three/apuntador-orificio";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import BarraAccionesCultivo from "./BarraAccionesCultivo";
+import ControlesLienzo3d from "./ControlesLienzo3d";
 
 export default function CanvasGrafo() {
   const origenEventos = useRef<HTMLDivElement>(null);
@@ -40,6 +41,7 @@ export default function CanvasGrafo() {
       }}
     >
       <BarraAccionesCultivo />
+      <ControlesLienzo3d />
       <LienzoThree origenEventos={origenEventos} />
     </div>
   );

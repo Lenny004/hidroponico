@@ -52,8 +52,12 @@ function RamaPatricia({
     const hoja = vista.valor;
     const seleccionado = hoja.id === idSeleccionado;
     const nodo = nodos.find((item) => item.id === hoja.id);
-    const masa =
-      hoja.masaDiaMg == null ? "— mg/día" : `${formatearMedida(hoja.masaDiaMg, "mg")}/día`;
+    const reserva =
+      hoja.litros == null ? "— L reserva" : `${formatearMedida(hoja.litros, "L")} reserva`;
+    const reposicion =
+      hoja.reposicionDiaL == null
+        ? "— L/día"
+        : `${formatearMedida(hoja.reposicionDiaL, "L")}/día`;
     return (
       <li className="patricia__fila">
         <AnclaHoverCultivo ficha={nodo ? fichaHoverDesdeNodo(nodo.data.cultivo) : null}>
@@ -70,7 +74,9 @@ function RamaPatricia({
             <GlifoCultivo tipoCultivo={hoja.tipoCultivo} color={hoja.color} tamano="lista" />
             <span className="patricia__cuerpo">
               <span className="patricia__nombre">{hoja.nombre}</span>
-              <span className="patricia__meta">{masa}</span>
+              <span className="patricia__meta">
+                {reserva} · {reposicion}
+              </span>
             </span>
           </button>
         </AnclaHoverCultivo>

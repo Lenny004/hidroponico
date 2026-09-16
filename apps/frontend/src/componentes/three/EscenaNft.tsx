@@ -7,20 +7,38 @@ import {
   resumenTrazabilidad,
 } from "@hidroponico/tipos-compartidos";
 import { usarGrafoConstruccion } from "../../store/usarGrafoConstruccion";
+import { usarInterfaz } from "../../store/usarInterfaz";
 import { COLOR_LIENZO, usarTema } from "../../store/usarTema";
 import { crearApuntadorOrificios, registrarResolverOrificio } from "./apuntador-orificio";
 import ModuloNft from "./ModuloNft";
 import { indiceOrificioDePosicion } from "./orificios-nft";
 import type { CultivoEnOrificio } from "./tipos-orificio";
 
+function SincronizarZoom({ zoom }: { zoom: number }) {
+  const camera = useThree((estado) => estado.camera);
+  useEffect(() => {
+    camera.zoom = zoom;
+    camera.updateProjectionMatrix();
+  }, [camera, zoom]);
+  return null;
+}
+
 function CamaraYControles() {
+  const zoom = usarInterfaz((estado) => estado.zoom);
+  const anclado = usarInterfaz((estado) => estado.anclado);
+
   return (
     <>
-      <OrthographicCamera makeDefault position={[6.2, 6.4, 14]} zoom={32} near={0.1} far={120} />
+      <OrthographicCamera makeDefault position={[6.2, 6.4, 14]} zoom={zoom} near={0.1} far={120} />
+      <SincronizarZoom zoom={zoom} />
       <OrbitControls
         makeDefault
         target={[0, 3.2, 0]}
         enableDamping
+        enabled={!anclado}
+        enableRotate={!anclado}
+        enablePan={!anclado}
+        enableZoom={!anclado}
         minZoom={16}
         maxZoom={80}
       />
