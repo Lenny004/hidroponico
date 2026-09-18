@@ -42,7 +42,7 @@ function CamaraYControles() {
       <SincronizarZoom zoom={zoom} />
       <OrbitControls
         makeDefault
-        target={[0, 3.5, 0.35]}
+        target={[0, 3.0, 0.35]}
         enableDamping
         dampingFactor={0.08}
         enabled={!anclado}
@@ -87,8 +87,8 @@ function FondoYLuces() {
         intensity={claro ? 0.28 : 0.22}
         color={claro ? "#d7e4ff" : "#8aa0c4"}
       />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, 0.35]} receiveShadow>
-        <planeGeometry args={[8.4, 5.2]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, 0.2]} receiveShadow>
+        <planeGeometry args={[10, 8]} />
         <meshStandardMaterial color={claro ? "#d2c6ae" : "#2a261c"} roughness={0.95} />
       </mesh>
       <ContactShadows

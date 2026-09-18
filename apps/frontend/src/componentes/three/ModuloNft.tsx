@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Html, useCursor } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { MathUtils, type Group, type Mesh } from "three";
+import { DoubleSide, MathUtils, type Group, type Mesh } from "three";
 import { FichaHoverDeNodo } from "../FichaHoverCultivo";
 import {
   indiceOrificio,
@@ -11,71 +11,124 @@ import {
 import type { CultivoEnOrificio } from "./tipos-orificio";
 import { tramoTuberia, type TramoTuberia, type Vec3 } from "./tuberia";
 
-const COLOR_CANAL = "#efeae0";
-const COLOR_CANAL_CANTO = "#cfc8b8";
-const COLOR_BASTIDOR = "#6a7180";
-const COLOR_BASTIDOR_BASE = "#4d5460";
-const COLOR_RIEGO = "#2b2b2b";
-const COLOR_CODO = "#1f1f1f";
-const COLOR_RETORNO = "#3c434c";
-const COLOR_TANQUE = "#2c3b36";
-const COLOR_TANQUE_BORDE = "#3d524b";
-const COLOR_AGUA = "#3a8fb5";
+const COLOR_PVC = "#f4f0e6";
+const COLOR_PVC_CANTO = "#ddd6c8";
+const COLOR_BASTIDOR = "#efebe1";
+const COLOR_PIE = "#d4cfc3";
+const COLOR_RIEGO = "#1c1c1c";
+const COLOR_CODO = "#111111";
+const COLOR_CUBETA = "#2b2b2b";
+const COLOR_CUBETA_BORDE = "#3a3a3a";
 const COLOR_AGUA_FILM = "#4aa3c4";
-const COLOR_BOMBA = "#d9773a";
-const COLOR_BOMBA_OSCURO = "#9a4b16";
+const COLOR_BOMBA = "#1f1f1f";
 const COLOR_MACETA = "#2a2a2a";
 const COLOR_ARCILLA = "#6b5344";
 const COLOR_TALLO = "#3d7a38";
-const COLOR_ANILLO = "#b7b09d";
+const COLOR_ANILLO = "#c9c2b0";
 const COLOR_ANILLO_HOVER = "#7d9b5c";
 const COLOR_ANILLO_SELECCION = "#ffffff";
 const COLOR_ANILLO_GRUPO = "#d4a054";
 
 const LARGO_CANAL = 4.7;
-const ALTO_CANAL = 0.26;
-const ANCHO_CANAL = 0.72;
+const RADIO_TUBO = 0.27;
 const X_EXTREMO = LARGO_CANAL / 2;
-const X_PILAR = 2.18;
-const X_RISER = -2.52;
-const X_RETORNO = 2.52;
-const Z_TANQUE = 1.16;
-const Y_CANAL_SUP = POSICIONES_Y_TUBO[POSICIONES_Y_TUBO.length - 1];
-const Y_TAPA = ALTO_CANAL / 2;
+const X_A = 2.2;
+const Y_CIMA = 8.15;
+const Z_BASE = 1.7;
+const Z_CIMA = 0.2;
+const RADIO_PATA = 0.055;
+const RADIO_RIEGO = 0.042;
+const Y_MACETA = RADIO_TUBO + 0.05;
 
-const RADIO_RIEGO = 0.048;
-const RADIO_RETORNO = 0.055;
+function zFrente(y: number): number {
+  const t = Math.min(1, Math.max(0, y / Y_CIMA));
+  return Z_BASE * (1 - t) + Z_CIMA * t;
+}
 
-const TUBERIA_IMPULSION: TramoTuberia[] = [
-  tramoTuberia([-1.42, 0.78, 1.82], [-1.42, 0.78, 0], RADIO_RIEGO, COLOR_RIEGO),
-  tramoTuberia([-1.42, 0.78, 0], [X_RISER, 0.78, 0], RADIO_RIEGO, COLOR_RIEGO),
-  tramoTuberia([X_RISER, 0.72, 0], [X_RISER, Y_CANAL_SUP + 0.18, 0], RADIO_RIEGO, COLOR_RIEGO),
+function zAtras(y: number): number {
+  return -zFrente(y);
+}
+
+const PATAS_A: TramoTuberia[] = [
+  tramoTuberia([-X_A, 0.04, Z_BASE], [-X_A, Y_CIMA, Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia([X_A, 0.04, Z_BASE], [X_A, Y_CIMA, Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia([-X_A, 0.04, -Z_BASE], [-X_A, Y_CIMA, -Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia([X_A, 0.04, -Z_BASE], [X_A, Y_CIMA, -Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia([-X_A, Y_CIMA, Z_CIMA], [X_A, Y_CIMA, Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia([-X_A, Y_CIMA, -Z_CIMA], [X_A, Y_CIMA, -Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia([-X_A, Y_CIMA, Z_CIMA], [-X_A, Y_CIMA, -Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia([X_A, Y_CIMA, Z_CIMA], [X_A, Y_CIMA, -Z_CIMA], RADIO_PATA, COLOR_BASTIDOR),
+  tramoTuberia(
+    [-X_A, 3.2, zFrente(3.2)],
+    [-X_A, 3.2, zAtras(3.2)],
+    0.04,
+    COLOR_BASTIDOR,
+  ),
+  tramoTuberia([X_A, 3.2, zFrente(3.2)], [X_A, 3.2, zAtras(3.2)], 0.04, COLOR_BASTIDOR),
 ];
 
-const TUBERIA_RETORNO: TramoTuberia[] = [
-  tramoTuberia([X_RETORNO, 0.42, 0], [X_RETORNO, Y_CANAL_SUP + 0.06, 0], RADIO_RETORNO, COLOR_RETORNO),
-  tramoTuberia([X_RETORNO, 0.42, 0], [X_RETORNO, 0.42, Z_TANQUE], RADIO_RETORNO, COLOR_RETORNO),
-  tramoTuberia([X_RETORNO, 0.42, Z_TANQUE], [0.85, 0.42, Z_TANQUE], RADIO_RETORNO, COLOR_RETORNO),
-];
+const X_BUCLE = X_EXTREMO + 0.32;
+const X_CUBETA = -0.15;
+const Z_CUBETA = zFrente(POSICIONES_Y_TUBO[0]) + 1.05;
+const Y_BOMBA = 0.92;
 
-const LATERALES_CANAL: TramoTuberia[] = POSICIONES_Y_TUBO.flatMap((y) => [
-  tramoTuberia([X_RISER, y, 0], [-X_EXTREMO, y, 0], RADIO_RIEGO, COLOR_RIEGO),
-  tramoTuberia([X_EXTREMO, y, 0], [X_RETORNO, y, 0], RADIO_RETORNO, COLOR_RETORNO),
-]);
+function manguerasNft(): { tramos: TramoTuberia[]; codos: Vec3[] } {
+  const tramos: TramoTuberia[] = [];
+  const codos: Vec3[] = [];
+  const yInf = POSICIONES_Y_TUBO[0];
+  const zInf = zFrente(yInf);
 
-const CODOS: Vec3[] = [
-  [-1.42, 0.78, 1.82],
-  [-1.42, 0.78, 0],
-  [X_RISER, 0.78, 0],
-  [X_RISER, Y_CANAL_SUP + 0.18, 0],
-  [X_RETORNO, 0.42, 0],
-  [X_RETORNO, 0.42, Z_TANQUE],
-  [0.85, 0.42, Z_TANQUE],
-  ...POSICIONES_Y_TUBO.flatMap((y): Vec3[] => [
-    [X_RISER, y, 0],
-    [X_RETORNO, y, 0],
-  ]),
-];
+  tramos.push(
+    tramoTuberia([X_CUBETA - 0.55, Y_BOMBA, Z_CUBETA], [X_CUBETA - 0.55, Y_BOMBA, zInf], RADIO_RIEGO, COLOR_RIEGO),
+    tramoTuberia(
+      [X_CUBETA - 0.55, Y_BOMBA, zInf],
+      [-X_A, Y_BOMBA, zFrente(Y_BOMBA)],
+      RADIO_RIEGO,
+      COLOR_RIEGO,
+    ),
+  );
+  codos.push(
+    [X_CUBETA - 0.55, Y_BOMBA, Z_CUBETA],
+    [X_CUBETA - 0.55, Y_BOMBA, zInf],
+    [-X_A, Y_BOMBA, zFrente(Y_BOMBA)],
+  );
+
+  for (let i = 0; i < POSICIONES_Y_TUBO.length; i += 1) {
+    const y = POSICIONES_Y_TUBO[i];
+    const z = zFrente(y);
+    const alimentacion: Vec3 = [-X_A, y, z];
+    const entrada: Vec3 = [-X_EXTREMO, y, z];
+    const salida: Vec3 = [X_EXTREMO, y, z];
+    const bucle: Vec3 = [X_BUCLE, y, z];
+    tramos.push(tramoTuberia(alimentacion, entrada, RADIO_RIEGO, COLOR_RIEGO));
+    tramos.push(tramoTuberia(salida, bucle, RADIO_RIEGO, COLOR_RIEGO));
+    codos.push(alimentacion, entrada, salida, bucle);
+
+    if (i < POSICIONES_Y_TUBO.length - 1) {
+      const ySig = POSICIONES_Y_TUBO[i + 1];
+      const zSig = zFrente(ySig);
+      tramos.push(tramoTuberia(bucle, [X_BUCLE, ySig, zSig], RADIO_RIEGO, COLOR_RIEGO));
+    }
+  }
+
+  const ySup = POSICIONES_Y_TUBO[POSICIONES_Y_TUBO.length - 1];
+  tramos.push(
+    tramoTuberia([-X_A, Y_BOMBA, zFrente(Y_BOMBA)], [-X_A, ySup, zFrente(ySup)], RADIO_RIEGO, COLOR_RIEGO),
+  );
+  tramos.push(
+    tramoTuberia(
+      [X_BUCLE, yInf, zInf],
+      [X_CUBETA + 0.42, 0.55, Z_CUBETA],
+      RADIO_RIEGO,
+      COLOR_RIEGO,
+    ),
+  );
+  codos.push([X_CUBETA + 0.42, 0.55, Z_CUBETA]);
+
+  return { tramos, codos };
+}
+
+const MANGUERAS = manguerasNft();
 
 type PropsModuloNft = {
   cultivos: Map<number, CultivoEnOrificio>;
@@ -86,7 +139,7 @@ type PropsModuloNft = {
 };
 
 /**
- * Banco NFT: canaletas PVC, macetas de malla, tanque de recirculación y bomba.
+ * Pirámide NFT tipo A-frame: tubos PVC en la cara frontal, patas abiertas y cubeta.
  */
 export default function ModuloNft({
   cultivos,
@@ -97,13 +150,14 @@ export default function ModuloNft({
 }: PropsModuloNft) {
   return (
     <group>
-      <TanqueYBomba />
-      <Bastidor />
+      <BastidorA />
+      <CubetaYBomba />
       <RedHidraulica />
       {POSICIONES_Y_TUBO.map((y, tubo) => (
-        <CanalNft
+        <TuboPvc
           key={tubo}
           y={y}
+          z={zFrente(y)}
           indiceBase={indiceOrificio(tubo, 0)}
           cultivos={cultivos}
           orificioHover={orificioHover}
@@ -116,51 +170,28 @@ export default function ModuloNft({
   );
 }
 
-function Bastidor() {
-  const altura = Y_CANAL_SUP + 0.55;
-  const yCentro = altura / 2;
+function BastidorA() {
+  const pies: Vec3[] = [
+    [-X_A, 0.05, Z_BASE],
+    [X_A, 0.05, Z_BASE],
+    [-X_A, 0.05, -Z_BASE],
+    [X_A, 0.05, -Z_BASE],
+  ];
 
   return (
     <group>
-      <Pilar x={-X_PILAR} z={-0.46} altura={altura} yCentro={yCentro} />
-      <Pilar x={X_PILAR} z={-0.46} altura={altura} yCentro={yCentro} />
-      <Pilar x={-X_PILAR} z={0.46} altura={altura} yCentro={yCentro} />
-      <Pilar x={X_PILAR} z={0.46} altura={altura} yCentro={yCentro} />
-      <mesh position={[0, altura - 0.08, -0.46]}>
-        <boxGeometry args={[X_PILAR * 2 + 0.22, 0.1, 0.12]} />
-        <meshStandardMaterial color={COLOR_BASTIDOR} roughness={0.55} metalness={0.35} />
-      </mesh>
-      {POSICIONES_Y_TUBO.map((y) => (
-        <mesh key={y} position={[0, y - 0.28, -0.46]}>
-          <boxGeometry args={[X_PILAR * 2 + 0.12, 0.07, 0.1]} />
-          <meshStandardMaterial color={COLOR_BASTIDOR} roughness={0.55} metalness={0.35} />
+      {PATAS_A.map((tramo, indice) => (
+        <mesh key={indice} position={tramo.position} quaternion={tramo.quaternion}>
+          <cylinderGeometry args={[tramo.radio, tramo.radio, tramo.largo, 10]} />
+          <meshStandardMaterial color={tramo.color} roughness={0.48} metalness={0.12} />
         </mesh>
       ))}
-    </group>
-  );
-}
-
-function Pilar({
-  x,
-  z,
-  altura,
-  yCentro,
-}: {
-  x: number;
-  z: number;
-  altura: number;
-  yCentro: number;
-}) {
-  return (
-    <group position={[x, 0, z]}>
-      <mesh position={[0, yCentro, 0]}>
-        <boxGeometry args={[0.12, altura, 0.12]} />
-        <meshStandardMaterial color={COLOR_BASTIDOR} roughness={0.5} metalness={0.4} />
-      </mesh>
-      <mesh position={[0, 0.04, 0]}>
-        <boxGeometry args={[0.28, 0.08, 0.28]} />
-        <meshStandardMaterial color={COLOR_BASTIDOR_BASE} roughness={0.6} metalness={0.3} />
-      </mesh>
+      {pies.map((pie, indice) => (
+        <mesh key={`pie-${indice}`} position={pie}>
+          <cylinderGeometry args={[0.1, 0.12, 0.08, 12]} />
+          <meshStandardMaterial color={COLOR_PIE} roughness={0.7} />
+        </mesh>
+      ))}
     </group>
   );
 }
@@ -168,103 +199,68 @@ function Pilar({
 function RedHidraulica() {
   return (
     <group>
-      {[...TUBERIA_IMPULSION, ...TUBERIA_RETORNO, ...LATERALES_CANAL].map((tramo, indice) => (
-        <mesh
-          key={indice}
-          position={tramo.position}
-          quaternion={tramo.quaternion}
-        >
-          <cylinderGeometry args={[tramo.radio, tramo.radio, tramo.largo, 12]} />
-          <meshStandardMaterial color={tramo.color} roughness={0.42} />
+      {MANGUERAS.tramos.map((tramo, indice) => (
+        <mesh key={indice} position={tramo.position} quaternion={tramo.quaternion}>
+          <cylinderGeometry args={[tramo.radio, tramo.radio, tramo.largo, 10]} />
+          <meshStandardMaterial color={tramo.color} roughness={0.4} />
         </mesh>
       ))}
-      {CODOS.map((punto, indice) => (
+      {MANGUERAS.codos.map((punto, indice) => (
         <mesh key={`codo-${indice}`} position={punto}>
-          <sphereGeometry args={[RADIO_RIEGO + 0.018, 12, 10]} />
-          <meshStandardMaterial color={COLOR_CODO} roughness={0.4} />
+          <sphereGeometry args={[RADIO_RIEGO + 0.016, 10, 8]} />
+          <meshStandardMaterial color={COLOR_CODO} roughness={0.38} />
         </mesh>
       ))}
     </group>
   );
 }
 
-function TanqueYBomba() {
-  const largo = 2.05;
-  const ancho = 1.08;
-  const alto = 0.7;
-  const espesor = 0.07;
-  const yAgua = alto * 0.58;
+function CubetaYBomba() {
+  const radio = 0.5;
+  const alto = 0.95;
+  const yAgua = alto * 0.7;
 
   return (
-    <group position={[0, 0, Z_TANQUE]}>
-      <mesh position={[0, espesor / 2, 0]}>
-        <boxGeometry args={[largo, espesor, ancho]} />
-        <meshStandardMaterial color={COLOR_TANQUE} roughness={0.68} />
+    <group position={[X_CUBETA, 0, Z_CUBETA]}>
+      <mesh position={[0, alto / 2, 0]}>
+        <cylinderGeometry args={[radio, radio * 0.92, alto, 24, 1, true]} />
+        <meshStandardMaterial color={COLOR_CUBETA} roughness={0.72} side={DoubleSide} />
       </mesh>
-      <mesh position={[0, alto / 2, -(ancho / 2) + espesor / 2]}>
-        <boxGeometry args={[largo, alto, espesor]} />
-        <meshStandardMaterial color={COLOR_TANQUE} roughness={0.68} />
+      <mesh position={[0, 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[radio * 0.92, 24]} />
+        <meshStandardMaterial color={COLOR_CUBETA} roughness={0.72} />
       </mesh>
-      <mesh position={[0, alto / 2, ancho / 2 - espesor / 2]}>
-        <boxGeometry args={[largo, alto, espesor]} />
-        <meshStandardMaterial color={COLOR_TANQUE} roughness={0.68} />
+      <mesh position={[0, alto - 0.02, 0]}>
+        <cylinderGeometry args={[radio + 0.025, radio + 0.01, 0.06, 24]} />
+        <meshStandardMaterial color={COLOR_CUBETA_BORDE} roughness={0.58} />
       </mesh>
-      <mesh position={[-(largo / 2) + espesor / 2, alto / 2, 0]}>
-        <boxGeometry args={[espesor, alto, ancho]} />
-        <meshStandardMaterial color={COLOR_TANQUE} roughness={0.68} />
-      </mesh>
-      <mesh position={[largo / 2 - espesor / 2, alto / 2, 0]}>
-        <boxGeometry args={[espesor, alto, ancho]} />
-        <meshStandardMaterial color={COLOR_TANQUE} roughness={0.68} />
-      </mesh>
-      <mesh position={[0, alto - 0.02, -(ancho / 2) + espesor / 2]}>
-        <boxGeometry args={[largo + 0.06, 0.05, 0.1]} />
-        <meshStandardMaterial color={COLOR_TANQUE_BORDE} roughness={0.6} />
-      </mesh>
-      <mesh position={[0, alto - 0.02, ancho / 2 - espesor / 2]}>
-        <boxGeometry args={[largo + 0.06, 0.05, 0.1]} />
-        <meshStandardMaterial color={COLOR_TANQUE_BORDE} roughness={0.6} />
-      </mesh>
-      <mesh position={[0, yAgua / 2 + 0.04, 0]}>
-        <boxGeometry args={[largo - espesor * 2 - 0.04, yAgua, ancho - espesor * 2 - 0.04]} />
-        <meshStandardMaterial
-          color={COLOR_AGUA}
-          transparent
-          opacity={0.55}
-          roughness={0.12}
-          metalness={0.18}
-        />
-      </mesh>
-      <mesh position={[0, yAgua + 0.045, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[largo - espesor * 2 - 0.08, ancho - espesor * 2 - 0.08]} />
+      <mesh position={[0, yAgua, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[radio * 0.84, 24]} />
         <meshStandardMaterial
           color={COLOR_AGUA_FILM}
           transparent
-          opacity={0.7}
+          opacity={0.72}
           roughness={0.08}
-          metalness={0.22}
+          metalness={0.2}
         />
       </mesh>
-      <group position={[-1.42, 0, 0.66]}>
-        <mesh position={[0, 0.28, 0]}>
-          <cylinderGeometry args={[0.22, 0.26, 0.42, 16]} />
-          <meshStandardMaterial color={COLOR_BOMBA} roughness={0.45} />
+      <group position={[-0.58, 0, 0.08]}>
+        <mesh position={[0, 0.2, 0]}>
+          <boxGeometry args={[0.28, 0.2, 0.18]} />
+          <meshStandardMaterial color={COLOR_BOMBA} roughness={0.5} />
         </mesh>
-        <mesh position={[0, 0.52, 0]}>
-          <cylinderGeometry args={[0.12, 0.14, 0.16, 12]} />
-          <meshStandardMaterial color={COLOR_BOMBA_OSCURO} roughness={0.4} />
-        </mesh>
-        <mesh position={[0, 0.64, 0]}>
-          <cylinderGeometry args={[0.045, 0.045, 0.16, 10]} />
-          <meshStandardMaterial color={COLOR_RIEGO} roughness={0.42} />
+        <mesh position={[0, 0.36, 0]}>
+          <cylinderGeometry args={[0.045, 0.05, 0.14, 10]} />
+          <meshStandardMaterial color={COLOR_RIEGO} roughness={0.4} />
         </mesh>
       </group>
     </group>
   );
 }
 
-function CanalNft({
+function TuboPvc({
   y,
+  z,
   indiceBase,
   cultivos,
   orificioHover,
@@ -273,6 +269,7 @@ function CanalNft({
   onQuitar,
 }: {
   y: number;
+  z: number;
   indiceBase: number;
   cultivos: Map<number, CultivoEnOrificio>;
   orificioHover: number | null;
@@ -281,35 +278,26 @@ function CanalNft({
   onQuitar: (id: string) => void;
 }) {
   return (
-    <group position={[0, y, 0]}>
-      <mesh position={[0, -ALTO_CANAL / 2 + 0.035, 0]}>
-        <boxGeometry args={[LARGO_CANAL, 0.07, ANCHO_CANAL]} />
-        <meshStandardMaterial color={COLOR_CANAL} roughness={0.38} />
+    <group position={[0, y, z]}>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[RADIO_TUBO, RADIO_TUBO, LARGO_CANAL, 24]} />
+        <meshStandardMaterial color={COLOR_PVC} roughness={0.36} />
       </mesh>
-      <mesh position={[0, 0, -ANCHO_CANAL / 2 + 0.03]}>
-        <boxGeometry args={[LARGO_CANAL, ALTO_CANAL, 0.06]} />
-        <meshStandardMaterial color={COLOR_CANAL} roughness={0.38} />
+      <mesh position={[-X_EXTREMO, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[RADIO_TUBO + 0.025, RADIO_TUBO + 0.025, 0.14, 20]} />
+        <meshStandardMaterial color={COLOR_PVC_CANTO} roughness={0.4} />
       </mesh>
-      <mesh position={[0, 0, ANCHO_CANAL / 2 - 0.03]}>
-        <boxGeometry args={[LARGO_CANAL, ALTO_CANAL, 0.06]} />
-        <meshStandardMaterial color={COLOR_CANAL} roughness={0.38} />
+      <mesh position={[X_EXTREMO, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[RADIO_TUBO + 0.025, RADIO_TUBO + 0.025, 0.14, 20]} />
+        <meshStandardMaterial color={COLOR_PVC_CANTO} roughness={0.4} />
       </mesh>
-      <mesh position={[0, -ALTO_CANAL / 2 + 0.1, 0]}>
-        <boxGeometry args={[LARGO_CANAL - 0.14, 0.07, ANCHO_CANAL - 0.16]} />
-        <meshStandardMaterial
-          color={COLOR_AGUA_FILM}
-          transparent
-          opacity={0.5}
-          roughness={0.12}
-        />
+      <mesh position={[-X_EXTREMO - 0.02, 0, 0]}>
+        <sphereGeometry args={[RADIO_TUBO + 0.02, 12, 10]} />
+        <meshStandardMaterial color={COLOR_PVC_CANTO} roughness={0.4} />
       </mesh>
-      <mesh position={[-X_EXTREMO - 0.03, 0, 0]}>
-        <boxGeometry args={[0.08, ALTO_CANAL + 0.04, ANCHO_CANAL + 0.04]} />
-        <meshStandardMaterial color={COLOR_CANAL_CANTO} roughness={0.4} />
-      </mesh>
-      <mesh position={[X_EXTREMO + 0.03, 0, 0]}>
-        <boxGeometry args={[0.08, ALTO_CANAL + 0.04, ANCHO_CANAL + 0.04]} />
-        <meshStandardMaterial color={COLOR_CANAL_CANTO} roughness={0.4} />
+      <mesh position={[X_EXTREMO + 0.02, 0, 0]}>
+        <sphereGeometry args={[RADIO_TUBO + 0.02, 12, 10]} />
+        <meshStandardMaterial color={COLOR_PVC_CANTO} roughness={0.4} />
       </mesh>
       {POSICIONES_X_ORIFICIO.map((x, hueco) => {
         const indice = indiceBase + hueco;
@@ -357,7 +345,6 @@ function Orificio({
   const idAnterior = useRef<string | null>(null);
   const saliendo = useRef(false);
   useCursor(hover);
-  const yMaceta = Y_TAPA + 0.08;
 
   useEffect(() => {
     if (cultivo) {
@@ -432,19 +419,19 @@ function Orificio({
       }}
       onPointerDown={(evento) => evento.stopPropagation()}
     >
-      <mesh position={[0, yMaceta + 0.12, 0]}>
+      <mesh position={[0, Y_MACETA + 0.12, 0]}>
         <cylinderGeometry args={[0.34, 0.34, 0.72, 16]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      <mesh position={[0, yMaceta, 0]}>
+      <mesh position={[0, Y_MACETA, 0]}>
         <cylinderGeometry args={[0.17, 0.14, 0.22, 14]} />
         <meshStandardMaterial color={COLOR_MACETA} roughness={0.7} />
       </mesh>
-      <mesh position={[0, yMaceta + 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[0, Y_MACETA + 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.145, 18]} />
         <meshStandardMaterial color={COLOR_ARCILLA} roughness={0.9} />
       </mesh>
-      <mesh ref={anillo} position={[0, yMaceta + 0.115, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh ref={anillo} position={[0, Y_MACETA + 0.115, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.15, 0.19, 24]} />
         <meshStandardMaterial color={colorAnillo} roughness={0.45} />
       </mesh>
@@ -457,11 +444,11 @@ function Orificio({
               escala={1.4 + 0.45 * (plantaVisible.progreso ?? 0.45)}
               atenuado={plantaVisible.atenuado}
               desfase={x + indice * 0.17}
-              yBase={yMaceta + 0.1}
+              yBase={Y_MACETA + 0.1}
             />
           </group>
           {mostrarEtiqueta ? (
-            <Html position={[0, yMaceta + 0.72, 0]} center>
+            <Html position={[0, Y_MACETA + 0.72, 0]} center>
               <div
                 className={
                   plantaVisible.atenuado
@@ -488,7 +475,7 @@ function Orificio({
           ) : null}
           {mostrarFicha ? (
             <Html
-              position={[0.85, yMaceta + 0.4, 0.15]}
+              position={[0.85, Y_MACETA + 0.4, 0.15]}
               center
               transform={false}
               zIndexRange={[80, 0]}
