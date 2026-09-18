@@ -23,10 +23,10 @@ export default function LienzoThree({
         powerPreference: "high-performance",
       }}
       dpr={[1, 1.5]}
-      orthographic
-      camera={{ position: [6.2, 6.4, 14], zoom: 32, near: 0.1, far: 120 }}
-      onCreated={({ gl }) => {
+      camera={{ position: [8.4, 6.2, 12.2], fov: 36, near: 0.1, far: 200 }}
+      onCreated={({ gl, camera }) => {
         gl.setClearColor(COLOR_LIENZO[usarTema.getState().tema], 1);
+        camera.lookAt(0, 3.5, 0.35);
       }}
       onPointerMissed={(evento) => {
         const destino = evento.target;

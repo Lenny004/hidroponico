@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { OrbitControls, OrthographicCamera } from "@react-three/drei";
+import { ContactShadows, OrbitControls } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import {
   ETIQUETAS_ETAPA_VIDA,
@@ -7,7 +7,7 @@ import {
   resumenTrazabilidad,
 } from "@hidroponico/tipos-compartidos";
 import { usarGrafoConstruccion } from "../../store/usarGrafoConstruccion";
-import { usarInterfaz } from "../../store/usarInterfaz";
+import { usarInterfaz, ZOOM_INICIAL } from "../../store/usarInterfaz";
 import { COLOR_LIENZO, usarTema } from "../../store/usarTema";
 import { crearApuntadorOrificios, registrarResolverOrificio } from "./apuntador-orificio";
 import ModuloNft from "./ModuloNft";
@@ -16,10 +16,20 @@ import type { CultivoEnOrificio } from "./tipos-orificio";
 
 function SincronizarZoom({ zoom }: { zoom: number }) {
   const camera = useThree((estado) => estado.camera);
+  const size = useThree((estado) => estado.size);
+
   useEffect(() => {
-    camera.zoom = zoom;
+    if ("isOrthographicCamera" in camera && camera.isOrthographicCamera) {
+      camera.left = size.width / -2;
+      camera.right = size.width / 2;
+      camera.top = size.height / 2;
+      camera.bottom = size.height / -2;
+      camera.zoom = zoom;
+    } else {
+      camera.zoom = zoom / ZOOM_INICIAL;
+    }
     camera.updateProjectionMatrix();
-  }, [camera, zoom]);
+  }, [camera, size.height, size.width, zoom]);
   return null;
 }
 
@@ -29,18 +39,20 @@ function CamaraYControles() {
 
   return (
     <>
-      <OrthographicCamera makeDefault position={[6.2, 6.4, 14]} zoom={zoom} near={0.1} far={120} />
       <SincronizarZoom zoom={zoom} />
       <OrbitControls
         makeDefault
-        target={[0, 3.2, 0]}
+        target={[0, 3.5, 0.35]}
         enableDamping
+        dampingFactor={0.08}
         enabled={!anclado}
         enableRotate={!anclado}
         enablePan={!anclado}
         enableZoom={!anclado}
-        minZoom={16}
-        maxZoom={80}
+        minDistance={6}
+        maxDistance={28}
+        minPolarAngle={0.35}
+        maxPolarAngle={Math.PI / 2.15}
       />
     </>
   );
@@ -49,6 +61,7 @@ function CamaraYControles() {
 function FondoYLuces() {
   const tema = usarTema((estado) => estado.tema);
   const colorFondo = COLOR_LIENZO[tema];
+  const claro = tema === "claro";
   const { gl } = useThree();
 
   useEffect(() => {
@@ -58,12 +71,32 @@ function FondoYLuces() {
   return (
     <>
       <color attach="background" args={[colorFondo]} />
-      <ambientLight intensity={tema === "claro" ? 0.82 : 0.7} />
-      <directionalLight position={[-4, 11, 5]} intensity={tema === "claro" ? 1.15 : 1.12} />
+      <hemisphereLight
+        color={claro ? "#f3efe2" : "#4a4538"}
+        groundColor={claro ? "#b7a888" : "#1a1814"}
+        intensity={claro ? 0.7 : 0.45}
+      />
+      <ambientLight intensity={claro ? 0.42 : 0.32} />
       <directionalLight
-        position={[4, 1.5, 5]}
-        intensity={tema === "claro" ? 0.22 : 0.28}
-        color={tema === "claro" ? "#fff4d6" : "#e8d5a8"}
+        position={[7, 12, 6]}
+        intensity={claro ? 1.35 : 1.05}
+        color={claro ? "#fff6e4" : "#f0d9a8"}
+      />
+      <directionalLight
+        position={[-5, 3, 4]}
+        intensity={claro ? 0.28 : 0.22}
+        color={claro ? "#d7e4ff" : "#8aa0c4"}
+      />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, 0.35]} receiveShadow>
+        <planeGeometry args={[8.4, 5.2]} />
+        <meshStandardMaterial color={claro ? "#d2c6ae" : "#2a261c"} roughness={0.95} />
+      </mesh>
+      <ContactShadows
+        position={[0, -0.025, 0.35]}
+        opacity={claro ? 0.38 : 0.5}
+        scale={10}
+        blur={2.4}
+        far={6}
       />
     </>
   );
@@ -113,6 +146,7 @@ export default function EscenaNft() {
         id: nodo.id,
         nombre,
         color: nodo.data.color,
+        familia: definicion?.familia ?? "hoja",
         seleccionado: nodo.id === idSeleccionado,
         enGrupo: idsGrupo.includes(nodo.id),
         atenuado: !coincideFiltro,
