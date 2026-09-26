@@ -13,6 +13,8 @@ import {
   formatearMedida,
   obtenerCasoUso,
   obtenerCultivoPorId,
+  obtenerPlagaPorIdONombre,
+  ocupacionDeposito,
   proyectarInsumos,
   volumenDeposito,
   type ClaveNutriente,
@@ -63,7 +65,7 @@ export default function PanelConsolidado() {
         <Agroservicio tipos={cultivos.map((item) => item.tipoCultivo)} />
       ) : null}
 
-      {casoUso === "sanidad" ? <Sanidad cruce={sanidad} /> : null}
+      {casoUso === "sanidad" ? <Sanidad cruce={sanidad} nodos={cultivos} /> : null}
 
       {casoUso === "hidraulica" ? (
         <Hidraulica
@@ -202,6 +204,7 @@ function Hidraulica({
 }) {
   const volumen = volumenDeposito(deposito);
   const contraste = contrastarReservaConDeposito(reservaL, volumen.netoL);
+  const ocupacion = ocupacionDeposito(reservaL, volumen.netoL);
   const caudal = caudalNftDeReserva(reservaL, deposito);
   return (
     <div className="agroservicio">
@@ -209,6 +212,12 @@ function Hidraulica({
       <p className="panel-consolidado__dato">
         Neto {volumen.netoL == null ? "—" : formatearMedida(volumen.netoL, "L")} · reserva{" "}
         {reservaL == null ? "—" : formatearMedida(reservaL, "L")}
+      </p>
+      <p className="panel-consolidado__dato">
+        Ocupación {ocupacion.porcentaje == null ? "—" : `${ocupacion.porcentaje.toFixed(1)} %`}
+        {ocupacion.libreL == null
+          ? ""
+          : ` · ${formatearMedida(Math.max(0, ocupacion.libreL), "L")} libres`}
       </p>
       <p
         className={
@@ -236,34 +245,90 @@ function Hidraulica({
   );
 }
 
-function Sanidad({ cruce }: { cruce: ReturnType<typeof cruzarSanidad> }) {
-  if (
-    cruce.detectadas.length === 0 &&
-    cruce.tipicasSinMarcar.length === 0 &&
-    cruce.deficiencias.length === 0
-  ) {
-    return (
-      <p className="panel-consolidado__ayuda">
-        Sin plagas registradas. Revisa pulgón y mosca blanca en hoja; oídio en fruto.
-      </p>
-    );
-  }
+function Sanidad({
+  cruce,
+  nodos,
+}: {
+  cruce: ReturnType<typeof cruzarSanidad>;
+  nodos: Parameters<typeof cruzarSanidad>[0];
+}) {
+  const actualizarPlagas = usarGrafoConstruccion((estado) => estado.actualizarPlagas);
+  const actualizarTextoNodo = usarGrafoConstruccion((estado) => estado.actualizarTextoNodo);
+
+  const cargarEscenario = () => {
+    const objetivos = nodos.filter((nodo) => !nodo.plagas?.length);
+    const seleccionados = objetivos.length > 0 ? objetivos : nodos.slice(0, 2);
+    seleccionados.forEach((nodo) => {
+      const definicion = obtenerCultivoPorId(nodo.tipoCultivo);
+      const idPlaga = definicion?.plagas_tipicas[0] ?? "pulgon";
+      const plaga = obtenerPlagaPorIdONombre(idPlaga);
+      if (!plaga) {
+        return;
+      }
+      const actuales = nodo.plagas ?? [];
+      const yaRegistrada = actuales.some((item) => item.toLowerCase() === plaga.nombre.toLowerCase());
+      const siguientes = yaRegistrada ? actuales : [...actuales, plaga.nombre];
+      actualizarPlagas(nodo.id, siguientes);
+      if (!nodo.solucion_plagas) {
+        actualizarTextoNodo(nodo.id, "solucion_plagas", plaga.solucion_plagas);
+      }
+    });
+  };
+
+  const hayDatos =
+    cruce.detectadas.length > 0 ||
+    cruce.tipicasSinMarcar.length > 0 ||
+    cruce.deficiencias.length > 0;
+
   return (
     <div className="sanidad">
+      <div className="sanidad__cabecera">
+        <div>
+          <p className="panel-consolidado__dato">Simulador de sanidad NFT</p>
+          <p className="panel-consolidado__ayuda">
+            Carga un brote educativo usando la primera plaga típica de cada cultivo. El escenario
+            se guarda en las fichas y puede editarse desde el panel del cultivo.
+          </p>
+        </div>
+        <button type="button" className="boton-secundario" onClick={cargarEscenario} disabled={nodos.length === 0}>
+          {hayDatos ? "Añadir escenario" : "Simular brote"}
+        </button>
+      </div>
+      {nodos.length === 0 ? (
+        <p className="panel-consolidado__ayuda">Planta al menos un cultivo para iniciar la simulación.</p>
+      ) : null}
       {cruce.detectadas.length > 0 ? (
-        <ul className="agroservicio__lista">
+        <div className="sanidad__resumen">
+          <span>{cruce.detectadas.length} plaga(s) detectada(s)</span>
+          <span>
+            {new Set(cruce.detectadas.flatMap((item) => item.nodos)).size} planta(s) afectada(s)
+          </span>
+        </div>
+      ) : null}
+      {!hayDatos ? (
+        <p className="panel-consolidado__ayuda">
+          No hay incidencias cargadas. Pulsa “Simular brote” para probar el diagnóstico y las acciones.
+        </p>
+      ) : null}
+      {cruce.detectadas.length > 0 ? (
+        <div className="sanidad__tarjetas">
           {cruce.detectadas.map((item) => (
-            <li key={item.plaga.id}>
-              <strong>{item.plaga.nombre}</strong>
-              {` — ${item.plaga.sintomas} Causa: ${item.plaga.causa} Acción: ${item.plaga.solucion_plagas}`}
-            </li>
+            <article key={item.plaga.id} className="sanidad__tarjeta">
+              <div className="sanidad__tarjeta-titulo">
+                <strong>{item.plaga.nombre}</strong>
+                <span>{item.nodos.length} planta(s)</span>
+              </div>
+              <p><b>Síntomas:</b> {item.plaga.sintomas}</p>
+              <p><b>Causa probable:</b> {item.plaga.causa}</p>
+              <p><b>Acción:</b> {item.plaga.solucion_plagas}</p>
+            </article>
           ))}
-        </ul>
+        </div>
       ) : null}
       {cruce.tipicasSinMarcar.length > 0 ? (
         <>
           <p className="panel-consolidado__dato">Típicas del tipo, aún no marcadas</p>
-          <ul className="agroservicio__lista">
+          <ul className="sanidad__lista-riesgos">
             {cruce.tipicasSinMarcar.map((item) => (
               <li key={`${item.tipoCultivo}-${item.plaga.id}`}>
                 {item.nombreCultivo}: {item.plaga.nombre} — {item.plaga.sintomas}
@@ -275,7 +340,7 @@ function Sanidad({ cruce }: { cruce: ReturnType<typeof cruzarSanidad> }) {
       {cruce.deficiencias.length > 0 ? (
         <>
           <p className="panel-consolidado__dato">Minerales por debajo de la receta de etapa</p>
-          <ul className="agroservicio__lista">
+          <ul className="sanidad__lista-riesgos">
             {cruce.deficiencias.map((item) => (
               <li key={item.ficha.id}>
                 <strong>{item.ficha.nombre}</strong>

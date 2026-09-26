@@ -1,8 +1,8 @@
 :root,
 [data-tema="oscuro"] {
   color-scheme: dark;
-  --fuente-titulo: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --fuente-ui: "Segoe UI", system-ui, sans-serif;
+  --fuente-titulo: "Aptos Display", "Segoe UI Variable Display", "Trebuchet MS", sans-serif;
+  --fuente-ui: "Aptos", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
   --fuente-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
   --radio: 0.35rem;
   --radio-s: 0.22rem;

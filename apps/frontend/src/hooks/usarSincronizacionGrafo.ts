@@ -11,10 +11,36 @@ const ESPERA_MS = 500;
 export function usarSincronizacionGrafo(): void {
   const [listo, setListo] = useState(false);
   const saltarVacioInicial = useRef(true);
+  const colaGuardado = useRef<string | null>(null);
+  const guardadoEnCurso = useRef(false);
   const nodos = usarGrafoConstruccion((estado) => estado.nodos);
   const aristas = usarGrafoConstruccion((estado) => estado.aristas);
   const hidratarGrafo = usarGrafoConstruccion((estado) => estado.hidratarGrafo);
   const setEstadoPersistencia = usarGrafoConstruccion((estado) => estado.setEstadoPersistencia);
+
+  const guardarEnOrden = async () => {
+    if (guardadoEnCurso.current) {
+      return;
+    }
+    guardadoEnCurso.current = true;
+    try {
+      while (colaGuardado.current !== null) {
+        const instantaneaPendiente = colaGuardado.current;
+        colaGuardado.current = null;
+        const grafo = JSON.parse(instantaneaPendiente) as ReturnType<typeof serializarGrafoConstruccion>;
+        try {
+          await enviarGrafoPersistido(grafo);
+          if (colaGuardado.current === null) {
+            setEstadoPersistencia("sincronizado");
+          }
+        } catch {
+          setEstadoPersistencia("error");
+        }
+      }
+    } finally {
+      guardadoEnCurso.current = false;
+    }
+  };
 
   useEffect(() => {
     let cancelado = false;
@@ -69,10 +95,8 @@ export function usarSincronizacionGrafo(): void {
       }
     }
     const temporizador = window.setTimeout(() => {
-      const grafo = JSON.parse(instantanea) as ReturnType<typeof serializarGrafoConstruccion>;
-      void enviarGrafoPersistido(grafo)
-        .then(() => setEstadoPersistencia("sincronizado"))
-        .catch(() => setEstadoPersistencia("error"));
+      colaGuardado.current = instantanea;
+      void guardarEnOrden();
     }, ESPERA_MS);
     return () => window.clearTimeout(temporizador);
   }, [instantanea, listo, nodos.length, setEstadoPersistencia]);

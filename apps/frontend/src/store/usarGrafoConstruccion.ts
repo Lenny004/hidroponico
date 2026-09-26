@@ -47,6 +47,7 @@ type EstadoGrafoConstruccion = {
   aristas: Edge[];
   idSeleccionado: string | null;
   idsGrupo: string[];
+  idsRenderPatricia: string[] | null;
   busquedaCatalogo: string;
   filtroLienzo: string;
   tipoCatalogoActivo: string | null;
@@ -79,6 +80,7 @@ type EstadoGrafoConstruccion = {
   setEstadoPersistencia: (estado: EstadoPersistencia) => void;
   setBusquedaCatalogo: (valor: string) => void;
   setFiltroLienzo: (valor: string) => void;
+  setIdsRenderPatricia: (ids: string[] | null) => void;
   setTipoCatalogoActivo: (tipoCultivo: string | null) => void;
   deposito: DepositoInstalacion;
   actualizarDeposito: (cambio: Partial<DepositoInstalacion>) => void;
@@ -167,6 +169,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   aristas: [],
   idSeleccionado: null,
   idsGrupo: [],
+  idsRenderPatricia: null,
   busquedaCatalogo: "",
   filtroLienzo: "",
   tipoCatalogoActivo: null,
@@ -300,6 +303,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       const vecino = nodos[indice] ?? nodos[indice - 1] ?? null;
       const seleccionado =
         estado.idSeleccionado === id ? (vecino?.id ?? null) : estado.idSeleccionado;
+      const idsRenderPatricia = estado.idsRenderPatricia?.filter((item) => item !== id) ?? null;
       return {
         nodos: nodos.map((nodo) => ({
           ...nodo,
@@ -308,6 +312,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
         aristas,
         idSeleccionado: seleccionado,
         idsGrupo: grupoDesde(nodos, aristas, seleccionado),
+        idsRenderPatricia: idsRenderPatricia?.length ? idsRenderPatricia : null,
         mensajeEstado: "Cultivo retirado del orificio.",
       };
     });
@@ -324,6 +329,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       idSeleccionado: null,
       idsGrupo: [],
       resultadoPipeline: null,
+      idsRenderPatricia: null,
       mensajeEstado: "Tubos NFT vacíos.",
     });
   },
@@ -338,6 +344,8 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       })),
     }));
   },
+
+  setIdsRenderPatricia: (ids) => set({ idsRenderPatricia: ids }),
 
   actualizarTipoCultivo: (id, tipoCultivo) => {
     const definicion = obtenerCultivoPorId(tipoCultivo);
@@ -572,6 +580,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       aristas,
       idSeleccionado: null,
       idsGrupo: [],
+      idsRenderPatricia: null,
       mensajeEstado: `Grafo persistido cargado (${nodos.length} cultivos en los tubos).`,
     });
   },

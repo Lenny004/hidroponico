@@ -42,9 +42,11 @@ function RamaPatricia({
   const nodos = usarGrafoConstruccion((estado) => estado.nodos);
   const idSeleccionado = usarGrafoConstruccion((estado) => estado.idSeleccionado);
   const filtroLienzo = usarGrafoConstruccion((estado) => estado.filtroLienzo);
+  const idsRenderPatricia = usarGrafoConstruccion((estado) => estado.idsRenderPatricia);
   const seleccionar = usarGrafoConstruccion((estado) => estado.seleccionar);
   const quitarNodo = usarGrafoConstruccion((estado) => estado.quitarNodo);
   const setFiltroLienzo = usarGrafoConstruccion((estado) => estado.setFiltroLienzo);
+  const setIdsRenderPatricia = usarGrafoConstruccion((estado) => estado.setIdsRenderPatricia);
   const [abierta, setAbierta] = useState(true);
 
   if (vista.esHoja && vista.valor) {
@@ -61,6 +63,7 @@ function RamaPatricia({
             }
             onClick={() => {
               setFiltroLienzo("");
+              setIdsRenderPatricia(null);
               seleccionar(seleccionado ? null : hoja.id);
             }}
           >
@@ -88,6 +91,13 @@ function RamaPatricia({
   const tipoUnico = tipos.size === 1 ? [...tipos][0] : null;
   const filtroActivo = tipoUnico != null && filtroLienzo.trim().toLowerCase() === tipoUnico;
   const nombreRama = etiquetaRama(vista);
+  const idsRama = hojasDeVista(vista)
+    .map((hoja) => hoja.valor?.id)
+    .filter((id): id is string => id != null);
+  const ramaActiva =
+    idsRenderPatricia != null &&
+    idsRenderPatricia.length === idsRama.length &&
+    idsRama.every((id) => idsRenderPatricia.includes(id));
 
   return (
     <li className="patricia__rama">
@@ -107,14 +117,18 @@ function RamaPatricia({
           }
           title={
             tipoUnico
-              ? "Filtrar el tubo a esta rama"
-              : "Rama mixta: elige una hoja para renderizar"
+              ? "Enfocar el tubo en esta rama"
+              : "Enfocar todos los cultivos de esta rama"
           }
           onClick={() => {
-            if (!tipoUnico) {
+            if (filtroActivo || ramaActiva || idsRama.length === 0) {
+              setFiltroLienzo("");
+              setIdsRenderPatricia(null);
               return;
             }
-            setFiltroLienzo(filtroActivo ? "" : tipoUnico);
+            setFiltroLienzo("");
+            setIdsRenderPatricia(idsRama);
+            seleccionar(null);
           }}
         >
           <span className="patricia__nombre">{nombreRama}</span>

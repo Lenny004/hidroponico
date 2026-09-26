@@ -1,9 +1,10 @@
-import { useCallback, useRef, type DragEvent } from "react";
-import LienzoThree from "./three/LienzoThree";
+import { lazy, Suspense, useCallback, useRef, type DragEvent } from "react";
 import { resolverOrificioEnPantalla } from "./three/apuntador-orificio";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import BarraAccionesCultivo from "./BarraAccionesCultivo";
 import ControlesLienzo3d from "./ControlesLienzo3d";
+
+const LienzoThree = lazy(() => import("./three/LienzoThree"));
 
 export default function CanvasGrafo() {
   const origenEventos = useRef<HTMLDivElement>(null);
@@ -42,7 +43,9 @@ export default function CanvasGrafo() {
     >
       <BarraAccionesCultivo />
       <ControlesLienzo3d />
-      <LienzoThree origenEventos={origenEventos} />
+      <Suspense fallback={<div className="lienzo__cargando" role="status">Cargando vista 3D…</div>}>
+        <LienzoThree origenEventos={origenEventos} />
+      </Suspense>
     </div>
   );
 }

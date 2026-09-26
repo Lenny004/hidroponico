@@ -6,6 +6,8 @@ import {
   formatearHolgura,
   formatearMedida,
   formatearParInsumos,
+  fichasPlantados,
+  ocupacionDeposito,
   proyectarInsumos,
   volumenDeposito,
 } from "@hidroponico/tipos-compartidos";
@@ -19,7 +21,9 @@ export default function ProyeccionInsumos() {
   const dia = proyectarInsumos(cultivos, 1);
   const volumen = volumenDeposito(deposito);
   const contraste = contrastarReservaConDeposito(dia.reservaL, volumen.netoL);
+  const ocupacion = ocupacionDeposito(dia.reservaL, volumen.netoL);
   const caudal = caudalNftDeReserva(dia.reservaL, deposito);
+  const fichas = fichasPlantados(cultivos);
 
   return (
     <section className="proyeccion">
@@ -56,6 +60,27 @@ export default function ProyeccionInsumos() {
           {dia.omitidos} cultivo(s) sin dato completo; no entran en el total.
         </p>
       ) : null}
+      <details className="proyeccion__detalle">
+        <summary>Detalle por cultivo</summary>
+        {fichas.length === 0 ? (
+          <p className="proyeccion__ayuda">Aún no hay cultivos plantados.</p>
+        ) : (
+          <ul className="proyeccion__detalle-lista">
+            {fichas.map((ficha) => (
+              <li key={ficha.id} className="proyeccion__detalle-fila">
+                <span>{ficha.nombre}</span>
+                <span>
+                  {ficha.litros == null ? "— L" : formatearMedida(ficha.litros, "L")}
+                  {" · "}
+                  {ficha.reposicionDiaL == null
+                    ? "— L/día"
+                    : `${formatearMedida(ficha.reposicionDiaL, "L")}/día`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </details>
       <FormularioDeposito />
       <p className="proyeccion__valores">
         Bruto: {volumen.brutoL == null ? "—" : formatearMedida(volumen.brutoL, "L")}
@@ -75,6 +100,12 @@ export default function ProyeccionInsumos() {
             : contraste.estado === "excede"
               ? `La reserva no cabe: ${formatearHolgura(contraste.holguraL)}.`
               : `La reserva cabe: ${formatearHolgura(contraste.holguraL)}.`}
+      </p>
+      <p className="proyeccion__valores">
+        Ocupación del depósito: {ocupacion.porcentaje == null ? "—" : `${ocupacion.porcentaje.toFixed(1)} %`}
+        {ocupacion.libreL == null
+          ? ""
+          : ` · ${formatearMedida(Math.max(0, ocupacion.libreL), "L")} libres`}
       </p>
       <p className="proyeccion__valores">
         Caudal NFT:{" "}

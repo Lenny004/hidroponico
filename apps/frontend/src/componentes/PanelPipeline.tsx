@@ -6,6 +6,7 @@ import {
 import ArbolPatricia from "./ArbolPatricia";
 import CatalogoPlantado from "./CatalogoPlantado";
 import PanelResultados from "./PanelResultados";
+import PanelRegresion from "./PanelRegresion";
 import ProyeccionInsumos from "./ProyeccionInsumos";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import { usarInterfaz } from "../store/usarInterfaz";
@@ -55,6 +56,10 @@ export default function PanelPipeline() {
           <details className="seccion-plegable">
             <summary>Proyección de insumos</summary>
             <ProyeccionInsumos />
+          </details>
+          <details className="seccion-plegable">
+            <summary>Regresión lineal</summary>
+            <PanelRegresion />
           </details>
           <details className="seccion-plegable">
             <summary>Plantados</summary>

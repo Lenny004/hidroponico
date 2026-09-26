@@ -119,6 +119,7 @@ export default function EscenaNft() {
   const idsGrupo = usarGrafoConstruccion((estado) => estado.idsGrupo);
   const idSeleccionado = usarGrafoConstruccion((estado) => estado.idSeleccionado);
   const filtroLienzo = usarGrafoConstruccion((estado) => estado.filtroLienzo);
+  const idsRenderPatricia = usarGrafoConstruccion((estado) => estado.idsRenderPatricia);
   const seleccionar = usarGrafoConstruccion((estado) => estado.seleccionar);
   const quitarNodo = usarGrafoConstruccion((estado) => estado.quitarNodo);
   const [orificioHover, setOrificioHover] = useState<number | null>(null);
@@ -142,6 +143,7 @@ export default function EscenaNft() {
         nodo.data.cultivo.tipoCultivo.toLowerCase().includes(filtro) ||
         (etapaNombre?.toLowerCase().includes(filtro) ?? false) ||
         plagas.some((plaga) => plaga.toLowerCase().includes(filtro));
+      const coincidePatricia = idsRenderPatricia == null || idsRenderPatricia.includes(nodo.id);
       mapa.set(indice, {
         id: nodo.id,
         nombre,
@@ -149,12 +151,12 @@ export default function EscenaNft() {
         familia: definicion?.familia ?? "hoja",
         seleccionado: nodo.id === idSeleccionado,
         enGrupo: idsGrupo.includes(nodo.id),
-        atenuado: !coincideFiltro,
+        atenuado: !coincideFiltro || !coincidePatricia,
         progreso: trazabilidad.progreso,
       });
     }
     return mapa;
-  }, [filtroLienzo, idSeleccionado, idsGrupo, nodos]);
+  }, [filtroLienzo, idSeleccionado, idsGrupo, idsRenderPatricia, nodos]);
 
   useEffect(() => {
     const onTecla = (evento: KeyboardEvent) => {

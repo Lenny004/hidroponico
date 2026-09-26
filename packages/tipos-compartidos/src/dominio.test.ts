@@ -42,6 +42,7 @@ import {
   comprimirVistaPorTipo,
   hojasDeVista,
 } from "./arbol-patricia";
+import { calcularRegresionLineal, estimarRegresionLineal } from "./regresion-lineal";
 import {
   consumoTemporalGrupo,
   consumoTemporalNodo,
@@ -57,6 +58,7 @@ import {
   caudalNftDeReserva,
   consolidarAporteDiarioHumano,
   contrastarReservaConDeposito,
+  ocupacionDeposito,
   cruzarSanidad,
   csvPlanificacion,
   mediaAritmetica,
@@ -637,6 +639,58 @@ describe("consumo temporal y recambio", () => {
   });
 });
 
+describe("regresión lineal", () => {
+  it("calcula pendiente, intercepto y ajuste", () => {
+    const regresion = calcularRegresionLineal([
+      { x: 1, y: 3 },
+      { x: 2, y: 5 },
+      { x: 3, y: 7 },
+    ]);
+
+    expect(regresion?.pendiente).toBeCloseTo(2);
+    expect(regresion?.intercepto).toBeCloseTo(1);
+    expect(regresion?.rCuadrado).toBeCloseTo(1);
+    expect(estimarRegresionLineal(regresion!, 4)).toBeCloseTo(9);
+  });
+
+  it("rechaza observaciones insuficientes o sin variación en x", () => {
+    expect(calcularRegresionLineal([{ x: 1, y: 2 }])).toBeNull();
+    expect(
+      calcularRegresionLineal([
+        { x: 1, y: 2 },
+        { x: 1, y: 4 },
+      ]),
+    ).toBeNull();
+  });
+
+  it("conserva decimales y valores negativos", () => {
+    const regresion = calcularRegresionLineal([
+      { x: -2.5, y: 10.25 },
+      { x: 0, y: 5 },
+      { x: 3.5, y: -2 },
+    ]);
+
+    expect(regresion).not.toBeNull();
+    expect(regresion?.minimoX).toBe(-2.5);
+    expect(regresion?.maximoY).toBe(10.25);
+    expect(regresion?.puntos).toHaveLength(3);
+  });
+
+  it("rechaza valores no finitos y soporta escalas grandes", () => {
+    expect(calcularRegresionLineal([
+      { x: Number.NaN, y: 1 },
+      { x: 2, y: 3 },
+    ])).toBeNull();
+
+    const regresion = calcularRegresionLineal([
+      { x: 1_000_000, y: 2_000_000 },
+      { x: 2_000_000, y: 4_000_000 },
+    ]);
+    expect(regresion?.pendiente).toBeCloseTo(2);
+    expect(estimarRegresionLineal(regresion!, 3_000_000)).toBeCloseTo(6_000_000);
+  });
+});
+
 describe("referencia diaria y consolidado humano", () => {
   it("convierte cantidad a % del valor diario y respeta null", () => {
     expect(porcentajeValorDiario(90, "vitamina_c")).toBe(100);
@@ -727,6 +781,12 @@ describe("depósito e hidráulica", () => {
     expect(contraste.estado).toBe("excede");
     expect(contrastarReservaConDeposito(null, 56).estado).toBe("reserva_incompleta");
     expect(contrastarReservaConDeposito(20, null).estado).toBe("sin_deposito");
+  });
+
+  it("resume ocupación y litros libres del depósito", () => {
+    expect(ocupacionDeposito(20, 50)).toEqual({ porcentaje: 40, libreL: 30 });
+    expect(ocupacionDeposito(80, 50)).toEqual({ porcentaje: 100, libreL: -30 });
+    expect(ocupacionDeposito(null, 50).porcentaje).toBeNull();
   });
 
   it("estima caudal NFT a partir de la reserva", () => {

@@ -20,6 +20,17 @@
   z-index: 1;
 }
 
+.lienzo__cargando {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: var(--color-muted);
+  background: var(--color-lienzo);
+  font-size: 0.85rem;
+}
+
 .controles-lienzo {
   position: absolute;
   top: 0.7rem;

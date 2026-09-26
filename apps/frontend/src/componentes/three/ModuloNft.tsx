@@ -20,6 +20,7 @@ const COLOR_CODO = "#111111";
 const COLOR_CUBETA = "#2b2b2b";
 const COLOR_CUBETA_BORDE = "#3a3a3a";
 const COLOR_AGUA_FILM = "#4aa3c4";
+const COLOR_AGUA_FLUJO = "#8de7ff";
 const COLOR_BOMBA = "#1f1f1f";
 const COLOR_MACETA = "#2a2a2a";
 const COLOR_ARCILLA = "#6b5344";
@@ -299,6 +300,7 @@ function TuboPvc({
         <sphereGeometry args={[RADIO_TUBO + 0.02, 12, 10]} />
         <meshStandardMaterial color={COLOR_PVC_CANTO} roughness={0.4} />
       </mesh>
+      <FlujoAguaTubo />
       {POSICIONES_X_ORIFICIO.map((x, hueco) => {
         const indice = indiceBase + hueco;
         return (
@@ -314,6 +316,60 @@ function TuboPvc({
           />
         );
       })}
+    </group>
+  );
+}
+
+/**
+ * Película visible y pulsos de agua recorriendo el frente de cada canal.
+ * El tubo es opaco, por eso el flujo se dibuja sobre su cara visible.
+ */
+function FlujoAguaTubo() {
+  const pulsos = useRef<Array<Mesh | null>>([]);
+
+  useFrame(({ clock }) => {
+    const tiempo = clock.elapsedTime * 0.25;
+    pulsos.current.forEach((pulso, indice) => {
+      if (!pulso) {
+        return;
+      }
+      const progreso = (tiempo + indice * 0.29) % 1;
+      pulso.position.x = -X_EXTREMO + 0.28 + progreso * (LARGO_CANAL - 0.56);
+      pulso.scale.x = 0.82 + Math.sin((progreso * Math.PI) / 2) * 0.22;
+    });
+  });
+
+  return (
+    <group position={[0, -0.12, RADIO_TUBO + 0.012]}>
+      <mesh position={[0, 0, -0.004]}>
+        <boxGeometry args={[LARGO_CANAL - 0.18, 0.035, 0.025]} />
+        <meshStandardMaterial
+          color={COLOR_AGUA_FILM}
+          transparent
+          opacity={0.8}
+          roughness={0.08}
+          metalness={0.15}
+        />
+      </mesh>
+      {[0, 1, 2].map((indice) => (
+        <mesh
+          key={indice}
+          ref={(m) => {
+            pulsos.current[indice] = m;
+          }}
+          scale={[1, 1, 1]}
+        >
+          <sphereGeometry args={[0.11, 12, 8]} />
+          <meshStandardMaterial
+            color={COLOR_AGUA_FLUJO}
+            emissive={COLOR_AGUA_FLUJO}
+            emissiveIntensity={0.65}
+            transparent
+            opacity={0.92}
+            roughness={0.12}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }

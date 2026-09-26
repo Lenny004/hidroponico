@@ -86,3 +86,79 @@
   margin: 0;
   font-size: 0.75rem;
 }
+
+.sanidad {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.sanidad__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.sanidad__cabecera .panel-consolidado__dato,
+.sanidad__cabecera .panel-consolidado__ayuda {
+  margin-top: 0;
+}
+
+.sanidad__resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sanidad__resumen span {
+  border: 1px solid color-mix(in srgb, var(--color-plaga) 55%, var(--color-borde));
+  border-radius: var(--radio-s);
+  background: color-mix(in srgb, var(--color-plaga) 10%, transparent);
+  padding: 0.3rem 0.45rem;
+  color: var(--color-plaga);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.sanidad__tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.45rem;
+}
+
+.sanidad__tarjeta {
+  border: 1px solid color-mix(in srgb, var(--color-plaga) 38%, var(--color-borde));
+  border-left: 3px solid var(--color-plaga);
+  border-radius: var(--radio);
+  background: var(--color-lienzo-60);
+  padding: 0.5rem;
+}
+
+.sanidad__tarjeta-titulo {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.sanidad__tarjeta-titulo span,
+.sanidad__tarjeta p,
+.sanidad__lista-riesgos {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+}
+
+.sanidad__tarjeta p {
+  margin: 0.35rem 0 0;
+  line-height: 1.4;
+}
+
+.sanidad__tarjeta b {
+  color: var(--color-texto);
+}
+
+.sanidad__lista-riesgos {
+  margin: 0;
+  padding-left: 1.05rem;
+}

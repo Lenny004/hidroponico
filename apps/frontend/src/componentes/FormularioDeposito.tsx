@@ -91,6 +91,15 @@ export default function FormularioDeposito() {
           });
         }}
       />
+      <CampoOpcional
+        etiqueta="Margen de caudal"
+        unidad="%"
+        valor={deposito.margen_caudal * 100}
+        placeholder="20"
+        onConfirmar={(valor) =>
+          actualizar({ margen_caudal: valor == null ? 0.2 : Math.min(100, Math.max(0, valor)) / 100 })
+        }
+      />
     </fieldset>
   );
 }

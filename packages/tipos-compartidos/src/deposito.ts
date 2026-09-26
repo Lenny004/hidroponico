@@ -61,6 +61,11 @@ export interface ContrasteReserva {
   estado: EstadoReservaVsNeto;
 }
 
+export interface OcupacionDeposito {
+  porcentaje: number | null;
+  libreL: number | null;
+}
+
 export interface CaudalNft {
   recirculaciones_h: number;
   entregado_Lph: number | null;
@@ -140,6 +145,23 @@ export function contrastarReservaConDeposito(
     netoL,
     holguraL,
     estado: holguraL < 0 ? "excede" : "cabe",
+  };
+}
+
+/**
+ * Resume cuánto del volumen neto ocupa la reserva química calculada.
+ * El porcentaje se limita a 100 para que pueda usarse directamente en una barra.
+ */
+export function ocupacionDeposito(
+  reservaL: number | null,
+  netoL: number | null,
+): OcupacionDeposito {
+  if (reservaL == null || netoL == null || !Number.isFinite(reservaL) || netoL <= 0) {
+    return { porcentaje: null, libreL: null };
+  }
+  return {
+    porcentaje: Math.min(100, Math.max(0, (reservaL / netoL) * 100)),
+    libreL: netoL - reservaL,
   };
 }
 

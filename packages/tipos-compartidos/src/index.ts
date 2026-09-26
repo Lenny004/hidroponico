@@ -177,6 +177,7 @@ export {
   RECIRCULACIONES_NFT_MIN,
   caudalNftDeReserva,
   contrastarReservaConDeposito,
+  ocupacionDeposito,
   parsearDepositoInstalacion,
   parsearFormaDeposito,
   volumenBrutoDeposito,
@@ -186,6 +187,7 @@ export {
   type DepositoInstalacion,
   type EstadoReservaVsNeto,
   type FormaDeposito,
+  type OcupacionDeposito,
   type VolumenDeposito,
 } from "./deposito";
 
@@ -224,6 +226,13 @@ export { csvPlanificacion, formatearHolgura, nombreArchivoCsv } from "./exportar
 export { PASOS_ONBOARDING, type IdPasoOnboarding } from "./pasos-onboarding";
 
 export { CONVERSION_SALES_ABIERTA, avisoMasaElemental } from "./puerta-sales";
+
+export {
+  calcularRegresionLineal,
+  estimarRegresionLineal,
+  type PuntoRegresion,
+  type ResultadoRegresionLineal,
+} from "./regresion-lineal";
 
 export { ETIQUETAS_VARIABLES, GRUPOS_VARIABLES, UNIDAD_AGREGADO, UNIDAD_NODO, formatearMedida } from "./etiquetas-variables";
 export {

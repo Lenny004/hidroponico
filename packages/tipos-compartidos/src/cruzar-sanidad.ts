@@ -53,7 +53,12 @@ function idsPlagaNodo(nodo: Pick<NodoCultivo, "plagas">): Set<string> {
  * por debajo del 70 % de la receta de etapa. Un `null` no se trata como 0.
  */
 export function cruzarSanidad(
-  nodos: Array<Pick<NodoCultivo, "id" | "tipoCultivo" | "plagas" | "variables" | "etapa_vida" | "iniciado_en">>,
+  nodos: Array<
+    Pick<
+      NodoCultivo,
+      "id" | "tipoCultivo" | "plagas" | "solucion_plagas" | "variables" | "etapa_vida" | "iniciado_en"
+    >
+  >,
 ): CruceSanidad {
   const detectadasMap = new Map<string, PlagaDetectada>();
   const tipicas: PlagaTipicaSinMarcar[] = [];
