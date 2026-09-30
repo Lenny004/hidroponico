@@ -191,7 +191,7 @@ function CampoPlagas({
 
   return (
     <fieldset className="grupo-campos">
-      <legend className="grupo-campos__titulo">Plagas</legend>
+      <legend className="grupo-campos__titulo">Plagas y enfermedades</legend>
       {tipicas.length > 0 ? (
         <div className="campo-plagas__bloque">
           <p className="campo-plagas__ayuda">Frecuentes en este cultivo</p>
@@ -238,13 +238,13 @@ function CampoPlagas({
         if (!ficha) {
           return (
             <p key={nombre} className="campo-plagas__sin-ficha">
-              {nombre}: sin ficha de catálogo.
+              {nombre}: sin ficha de plagas o enfermedades.
             </p>
           );
         }
         return (
           <details key={ficha.id} className="ficha-plaga">
-            <summary className="ficha-plaga__nombre">{ficha.nombre}</summary>
+            <summary className="ficha-plaga__nombre">{ficha.nombre} · {ficha.tipo}</summary>
             <p className="ficha-plaga__texto">{ficha.descripcion}</p>
             <p className="ficha-plaga__texto">
               <span className="ficha-plaga__etiqueta">Síntomas:</span> {ficha.sintomas}

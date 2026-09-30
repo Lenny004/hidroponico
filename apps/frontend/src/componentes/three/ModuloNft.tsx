@@ -27,7 +27,7 @@ const COLOR_ARCILLA = "#6b5344";
 const COLOR_TALLO = "#3d7a38";
 const COLOR_ANILLO = "#c9c2b0";
 const COLOR_ANILLO_HOVER = "#7d9b5c";
-const COLOR_ANILLO_SELECCION = "#ffffff";
+const COLOR_ANILLO_SELECCION = "#27d17f";
 const COLOR_ANILLO_GRUPO = "#d4a054";
 
 const LARGO_CANAL = 4.7;
@@ -400,7 +400,8 @@ function Orificio({
   const pulsoAnillo = useRef(0);
   const idAnterior = useRef<string | null>(null);
   const saliendo = useRef(false);
-  useCursor(hover);
+  // El cursor de mano solo aparece sobre un cultivo real: comunica que se puede seleccionar.
+  useCursor(hover && cultivo != null, "pointer", "default");
 
   useEffect(() => {
     if (cultivo) {
@@ -475,8 +476,9 @@ function Orificio({
       }}
       onPointerDown={(evento) => evento.stopPropagation()}
     >
-      <mesh position={[0, Y_MACETA + 0.12, 0]}>
-        <cylinderGeometry args={[0.34, 0.34, 0.72, 16]} />
+      {/* Zona amplia: permite seleccionar la planta aunque se pulse una hoja alta. */}
+      <mesh position={[0, Y_MACETA + 0.48, 0]}>
+        <cylinderGeometry args={[0.55, 0.55, 1.45, 16]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       <mesh position={[0, Y_MACETA, 0]}>
@@ -489,7 +491,12 @@ function Orificio({
       </mesh>
       <mesh ref={anillo} position={[0, Y_MACETA + 0.115, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.15, 0.19, 24]} />
-        <meshStandardMaterial color={colorAnillo} roughness={0.45} />
+        <meshStandardMaterial
+          color={colorAnillo}
+          emissive={cultivo?.seleccionado ? COLOR_ANILLO_SELECCION : "#000000"}
+          emissiveIntensity={cultivo?.seleccionado ? 0.7 : 0}
+          roughness={0.45}
+        />
       </mesh>
       {plantaVisible ? (
         <>
@@ -507,12 +514,26 @@ function Orificio({
             <Html position={[0, Y_MACETA + 0.72, 0]} center>
               <div
                 className={
-                  plantaVisible.atenuado
+                  cultivo?.seleccionado
+                    ? "orificio-etiqueta orificio-etiqueta--seleccionada"
+                    : plantaVisible.atenuado
                     ? "orificio-etiqueta orificio-etiqueta--filtrada"
                     : "orificio-etiqueta"
                 }
               >
-                <span>{plantaVisible.nombre}</span>
+                <button
+                  type="button"
+                  className="orificio-etiqueta__seleccionar"
+                  title={`Seleccionar ${plantaVisible.nombre}`}
+                  onPointerDown={(evento) => evento.stopPropagation()}
+                  onClick={(evento) => {
+                    evento.stopPropagation();
+                    onOrificio(indice);
+                  }}
+                >
+                  {cultivo?.seleccionado ? "✓ Seleccionado: " : "Seleccionar: "}
+                  {plantaVisible.nombre}
+                </button>
                 <button
                   type="button"
                   className="orificio-quitar"

@@ -52,6 +52,7 @@ type EstadoGrafoConstruccion = {
   filtroLienzo: string;
   tipoCatalogoActivo: string | null;
   mensajeEstado: string;
+  setMensajeEstado: (mensaje: string) => void;
   onNodosChange: (cambios: NodeChange<NodoFlujo>[]) => void;
   onAristasChange: (cambios: EdgeChange<Edge>[]) => void;
   conectar: (conexion: Connection) => boolean;
@@ -174,6 +175,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
   filtroLienzo: "",
   tipoCatalogoActivo: null,
   mensajeEstado: "Arrastra un cultivo a un orificio de los tubos NFT.",
+  setMensajeEstado: (mensajeEstado) => set({ mensajeEstado }),
   resultadoPipeline: null,
   ejecutandoPipeline: false,
   estadoPersistencia: "local",

@@ -24,6 +24,14 @@ export const ICONOS_CULTIVO: Record<IdCultivoCatalogo, LucideIcon> = {
   pepino: Bean,
   menta: Hop,
   rucula: Vegan,
+  "col-rizada": LeafyGreen,
+  "bok-choy": Salad,
+  cilantro: Leaf,
+  perejil: Sprout,
+  cebollin: Wheat,
+  oregano: Hop,
+  pimiento: Cherry,
+  berenjena: Bean,
 };
 
 export function iconoDeCultivo(tipoCultivo: string): LucideIcon {

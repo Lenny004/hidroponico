@@ -1,5 +1,6 @@
-import { lazy, Suspense, useCallback, useRef, type DragEvent } from "react";
+import { lazy, Suspense, useCallback, useRef, type DragEvent, type MouseEvent } from "react";
 import { resolverOrificioEnPantalla } from "./three/apuntador-orificio";
+import { indiceOrificioDePosicion } from "./three/orificios-nft";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import BarraAccionesCultivo from "./BarraAccionesCultivo";
 import ControlesLienzo3d from "./ControlesLienzo3d";
@@ -29,12 +30,34 @@ export default function CanvasGrafo() {
     [agregarNodo],
   );
 
+  const seleccionarDesdeLienzo = useCallback(
+    (evento: MouseEvent<HTMLDivElement>) => {
+      const destino = evento.target;
+      if (
+        destino instanceof Element &&
+        destino.closest(".barra-acciones-cultivo, .controles-lienzo, button, input, select, textarea")
+      ) {
+        return;
+      }
+      const orificio = resolverOrificioEnPantalla(evento.clientX, evento.clientY);
+      if (orificio == null) {
+        return;
+      }
+      const nodo = usarGrafoConstruccion
+        .getState()
+        .nodos.find((item) => indiceOrificioDePosicion(item.position.x) === orificio);
+      seleccionar(nodo?.id ?? null);
+    },
+    [seleccionar],
+  );
+
   return (
     <div
       className="lienzo"
       ref={origenEventos}
       onDragOver={onDragOver}
       onDrop={onDrop}
+      onClick={seleccionarDesdeLienzo}
       onPointerDown={(evento) => {
         if (evento.target === origenEventos.current) {
           seleccionar(null);

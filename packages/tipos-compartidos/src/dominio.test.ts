@@ -5,6 +5,7 @@ import { crearNodoDesdePlantilla } from "./factory-nodo";
 import {
   CATALOGO_CULTIVOS,
   copiarVariablesDePlantilla,
+  guiaDeCultivo,
   obtenerCultivoPorId,
 } from "./catalogo-cultivos";
 import { CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
@@ -127,8 +128,8 @@ describe("crearNodoDesdePlantilla", () => {
     expect(nodo?.iniciado_en).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
-  it("cubre los 10 cultivos con las 6 variables en número finito", () => {
-    expect(CATALOGO_CULTIVOS).toHaveLength(10);
+  it("cubre el catálogo ampliado con las 6 variables en número finito", () => {
+    expect(CATALOGO_CULTIVOS.length).toBeGreaterThanOrEqual(18);
     for (const cultivo of CATALOGO_CULTIVOS) {
       for (const clave of CLAVES_VARIABLES_CULTIVO) {
         expect(Number.isFinite(cultivo.plantilla[clave])).toBe(true);
@@ -138,6 +139,9 @@ describe("crearNodoDesdePlantilla", () => {
       expect(cultivo.reposicion_dia_L).toBeLessThan(cultivo.plantilla.cantidad_sol);
       expect(cultivo.proceso.etapas.length).toBeGreaterThan(0);
       expect(cultivo.plagas_tipicas.length).toBeGreaterThan(0);
+      const guia = guiaDeCultivo(cultivo.id);
+      expect(guia?.luz.length).toBeGreaterThan(0);
+      expect(guia?.agua.length).toBeGreaterThan(0);
     }
   });
 
@@ -753,6 +757,7 @@ describe("catálogo de plagas", () => {
     expect(obtenerPlagaPorIdONombre("Pulgón")?.id).toBe("pulgon");
     expect(obtenerPlagaPorIdONombre("mosca_blanca")?.nombre).toBe("Mosca blanca");
     expect(obtenerPlagaPorIdONombre("pulgon")?.causa.length).toBeGreaterThan(0);
+    expect(obtenerPlagaPorIdONombre("botritis")?.tipo).toBe("enfermedad");
     expect(obtenerPlagaPorIdONombre("alien")).toBeNull();
   });
 });

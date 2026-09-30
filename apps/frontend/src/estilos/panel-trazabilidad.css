@@ -39,6 +39,67 @@
   color: var(--color-muted);
 }
 
+.panel-trazabilidad__seleccion {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--color-acento) 45%, var(--color-borde));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-acento) 12%, var(--color-panel));
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.panel-trazabilidad__punto {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-acento);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-acento) 20%, transparent);
+}
+
+.panel-trazabilidad__acordeon {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.65rem 0.1rem 0.1rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.panel-trazabilidad__acordeon p,
+.panel-trazabilidad__diagnostico p {
+  margin: 0;
+}
+
+.panel-trazabilidad__diagnostico {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-left: 3px solid var(--color-acento);
+  background: var(--color-lienzo);
+  padding: 0.5rem 0.6rem;
+}
+
+.panel-trazabilidad__tipo {
+  border-radius: 999px;
+  background: var(--color-progreso-pista);
+  padding: 0.08rem 0.35rem;
+  font-size: 0.68rem;
+  text-transform: capitalize;
+}
+
+.panel-trazabilidad__aviso {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+}
+
+.panel-trazabilidad__word {
+  justify-content: center;
+}
+
 .panel-trazabilidad__resumen {
   margin: 0;
   font-size: 0.8125rem;

@@ -3,12 +3,14 @@ export { CLAVES_MINERALES, CLAVES_VARIABLES_CULTIVO } from "./nodo-cultivo";
 
 export type {
   DefinicionCultivo,
+  GuiaCultivo,
   IdCultivoCatalogo,
   VariablesPlantilla,
 } from "./catalogo-cultivos";
 export {
   CATALOGO_CULTIVOS,
   copiarVariablesDePlantilla,
+  guiaDeCultivo,
   obtenerCultivoPorId,
   reposicionDiaDe,
 } from "./catalogo-cultivos";

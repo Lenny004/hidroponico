@@ -140,6 +140,21 @@
   white-space: nowrap;
 }
 
+.orificio-etiqueta--seleccionada {
+  outline: 2px solid #27d17f;
+  box-shadow: 0 0 0.75rem rgb(39 209 127 / 0.7);
+}
+
+.orificio-etiqueta__seleccionar {
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.orificio-etiqueta__seleccionar:hover {
+  text-decoration: underline;
+}
+
 .orificio-quitar {
   display: flex;
   width: 1rem;
