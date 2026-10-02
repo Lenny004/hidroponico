@@ -31,6 +31,82 @@
   font-size: 0.85rem;
 }
 
+.capa-activa {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 2;
+  display: flex;
+  min-width: 14.5rem;
+  max-width: min(20rem, calc(100% - 6.2rem));
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-borde-flotante);
+  border-left: 4px solid var(--color-capa-activa, var(--color-acento));
+  border-radius: var(--radio);
+  background: var(--color-barra-acciones);
+  padding: 0.45rem 0.5rem;
+  box-shadow: var(--sombra);
+  color: var(--color-tinta-flotante);
+}
+
+.capa-activa--vacia {
+  border-left-color: var(--color-borde-flotante);
+  color: var(--color-muted-flotante);
+}
+
+.capa-activa svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: 0 0 auto;
+}
+
+.capa-activa__icono {
+  color: var(--color-capa-activa, var(--color-acento));
+}
+
+.capa-activa__texto {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.capa-activa__texto p,
+.capa-activa__texto strong,
+.capa-activa__texto small {
+  overflow: hidden;
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.capa-activa__texto p,
+.capa-activa__texto small {
+  font-size: 0.68rem;
+  color: var(--color-muted-flotante);
+}
+
+.capa-activa__texto strong {
+  font-size: 0.82rem;
+  text-transform: capitalize;
+}
+
+.capa-activa__cerrar {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radio-s);
+  color: inherit;
+}
+
+.capa-activa__cerrar:hover {
+  background: var(--color-barra-acciones-hover);
+}
+
 .controles-lienzo {
   position: absolute;
   top: 0.7rem;

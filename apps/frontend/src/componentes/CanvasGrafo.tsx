@@ -3,6 +3,7 @@ import { resolverOrificioEnPantalla } from "./three/apuntador-orificio";
 import { indiceOrificioDePosicion } from "./three/orificios-nft";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import BarraAccionesCultivo from "./BarraAccionesCultivo";
+import CapaActiva3d from "./CapaActiva3d";
 import ControlesLienzo3d from "./ControlesLienzo3d";
 
 const LienzoThree = lazy(() => import("./three/LienzoThree"));
@@ -64,6 +65,7 @@ export default function CanvasGrafo() {
         }
       }}
     >
+      <CapaActiva3d />
       <BarraAccionesCultivo />
       <ControlesLienzo3d />
       <Suspense fallback={<div className="lienzo__cargando" role="status">Cargando vista 3D…</div>}>

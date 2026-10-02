@@ -70,10 +70,22 @@ export default function PanelCultivo() {
                   } as CSSProperties
                 }
               >
-                <GlifoCultivo tipoCultivo={cultivo.id} color={cultivo.color} />
+                <span className="tarjeta-cultivo__halo" aria-hidden />
+                <span className="tarjeta-cultivo__cabecera">
+                  <GlifoCultivo tipoCultivo={cultivo.id} color={cultivo.color} />
+                  <span className="tarjeta-cultivo__familia">
+                    {ETIQUETAS_FAMILIA[cultivo.familia]}
+                  </span>
+                </span>
                 <span className="tarjeta-cultivo__nombre">{cultivo.nombre}</span>
-                <span className="tarjeta-cultivo__familia">
-                  {ETIQUETAS_FAMILIA[cultivo.familia]}
+                <span className="tarjeta-cultivo__datos">
+                  <span><b>{cultivo.proceso.dias_cosecha}</b> d</span>
+                  <span><b>{cultivo.plantilla.cantidad_sol}</b> L</span>
+                  <span><b>{cultivo.plagas_tipicas.length}</b> alertas</span>
+                </span>
+                <span className="tarjeta-cultivo__accion">
+                  <span>{tipoActivo === cultivo.id ? "Seleccionado" : "Plantar"}</span>
+                  <span aria-hidden>↗</span>
                 </span>
               </button>
             </AnclaHoverCultivo>

@@ -12,21 +12,22 @@
 .panel-cultivo__titulo {
   margin: 0;
   font-family: var(--fuente-titulo);
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
   letter-spacing: -0.015em;
 }
 
 .panel-cultivo__ayuda {
   margin: 0.2rem 0 0;
-  font-size: 0.75rem;
+  max-width: 15rem;
+  font-size: 0.76rem;
   color: var(--color-muted);
 }
 
 .panel-cultivo__rejilla {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.45rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
   overflow-y: auto;
 }
 
@@ -36,38 +37,144 @@
 
 .tarjeta-cultivo {
   --color-cultivo: var(--color-acento);
+  position: relative;
+  isolation: isolate;
   display: flex;
   width: 100%;
   flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-  background: var(--color-lienzo);
-  padding: 0.55rem 0.35rem 0.5rem;
-  text-align: center;
+  align-items: stretch;
+  gap: 0.28rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-cultivo) 20%, var(--color-borde));
+  border-radius: 0.72rem;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--color-cultivo) 13%, var(--color-lienzo)), var(--color-lienzo) 64%);
+  padding: 0.55rem 0.48rem 0.5rem;
+  text-align: left;
+  box-shadow: 0 0.35rem 0.8rem rgb(0 0 0 / 0.08);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
 .tarjeta-cultivo:hover,
 .tarjeta-cultivo--activa {
   border-color: var(--color-cultivo);
+  transform: translateY(-2px);
+  box-shadow: 0 0.55rem 1.1rem color-mix(in srgb, var(--color-cultivo) 24%, transparent);
+}
+
+.tarjeta-cultivo:active {
+  transform: translateY(0) scale(0.985);
 }
 
 .tarjeta-cultivo--activa {
-  background: color-mix(in srgb, var(--color-cultivo) 12%, var(--color-lienzo));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-cultivo) 24%, var(--color-lienzo)), var(--color-lienzo));
+}
+
+.tarjeta-cultivo__halo {
+  position: absolute;
+  z-index: -1;
+  top: -2.2rem;
+  right: -1.6rem;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-cultivo) 28%, transparent);
+  filter: blur(0.2rem);
+  opacity: 0.55;
+}
+
+.tarjeta-cultivo__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tarjeta-cultivo__cabecera .glifo-cultivo {
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-cultivo) 16%, var(--color-panel));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-cultivo) 12%, transparent);
+}
+
+.tarjeta-cultivo__cabecera .glifo-cultivo__icono {
+  width: 1.1rem;
+  height: 1.1rem;
+  transition: transform 220ms ease;
+}
+
+.tarjeta-cultivo:hover .tarjeta-cultivo__cabecera .glifo-cultivo__icono,
+.tarjeta-cultivo--activa .tarjeta-cultivo__cabecera .glifo-cultivo__icono {
+  transform: rotate(-10deg) scale(1.12);
 }
 
 .tarjeta-cultivo__nombre {
   max-width: 100%;
   overflow: hidden;
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.25;
+  font-size: 0.77rem;
+  font-weight: 700;
+  line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .tarjeta-cultivo__familia {
-  font-size: 0.68rem;
+  border: 1px solid color-mix(in srgb, var(--color-cultivo) 32%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-cultivo) 12%, transparent);
+  max-width: 4rem;
+  overflow: hidden;
+  padding: 0.14rem 0.3rem;
+  color: var(--color-cultivo);
+  font-size: 0.56rem;
+  font-weight: 700;
+}
+
+.tarjeta-cultivo__datos {
+  display: flex;
+  min-width: 0;
+  justify-content: space-between;
+  gap: 0.15rem;
   color: var(--color-muted);
+  font-size: 0.57rem;
+  white-space: nowrap;
+}
+
+.tarjeta-cultivo__datos span + span::before {
+  margin-right: 0.18rem;
+  content: "·";
+  color: color-mix(in srgb, var(--color-cultivo) 60%, var(--color-muted));
+}
+
+.tarjeta-cultivo__datos b {
+  color: var(--color-texto);
+  font-weight: 700;
+}
+
+.tarjeta-cultivo__accion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid color-mix(in srgb, var(--color-cultivo) 18%, var(--color-borde));
+  padding-top: 0.3rem;
+  color: var(--color-cultivo);
+  font-size: 0.59rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.tarjeta-cultivo__accion span:last-child {
+  font-size: 0.75rem;
+  transition: transform 160ms ease;
+}
+
+.tarjeta-cultivo:hover .tarjeta-cultivo__accion span:last-child,
+.tarjeta-cultivo--activa .tarjeta-cultivo__accion span:last-child {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 1100px) {
+  .panel-cultivo {
+    width: 14.5rem;
+  }
 }

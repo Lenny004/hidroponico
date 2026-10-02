@@ -130,6 +130,27 @@ export default function PanelTrazabilidad() {
         </div>
       ) : null}
 
+      {definicion ? (
+        <div className="panel-trazabilidad__resumen-grid" aria-label="Resumen rápido del cultivo">
+          <div className="panel-trazabilidad__dato">
+            <span className="panel-trazabilidad__dato-etiqueta">Cosecha</span>
+            <strong>{definicion.proceso.dias_cosecha} d</strong>
+          </div>
+          <div className="panel-trazabilidad__dato">
+            <span className="panel-trazabilidad__dato-etiqueta">Reserva NFT</span>
+            <strong>{formatearMedida(nodo?.data.cultivo.variables.cantidad_sol ?? definicion.plantilla.cantidad_sol, "L")}</strong>
+          </div>
+          <div className="panel-trazabilidad__dato">
+            <span className="panel-trazabilidad__dato-etiqueta">Oxígeno</span>
+            <strong>{formatearMedida(nodo?.data.cultivo.variables.oxigeno ?? definicion.plantilla.oxigeno, "mg/L")}</strong>
+          </div>
+          <div className="panel-trazabilidad__dato">
+            <span className="panel-trazabilidad__dato-etiqueta">Reposición</span>
+            <strong>{formatearMedida(definicion.reposicion_dia_L, "L")}/día</strong>
+          </div>
+        </div>
+      ) : null}
+
       {definicion && guia ? (
         <>
           {ficha ? <p className="panel-trazabilidad__resumen">{ficha.resumen}</p> : null}

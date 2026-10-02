@@ -43,6 +43,13 @@ export default function PanelPipeline() {
       </button>
       {abierto ? (
         <div className="panel-pipeline__cuerpo">
+          <div className="panel-pipeline__intro">
+            <div>
+              <p className="panel-pipeline__eyebrow">LECTURA DEL SISTEMA</p>
+              <h2 className="panel-pipeline__titulo">Cálculos</h2>
+            </div>
+            <span className="panel-pipeline__estado"><i aria-hidden /> Listo</span>
+          </div>
           <button
             type="button"
             className="boton-secundario"

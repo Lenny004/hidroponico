@@ -21,6 +21,7 @@ export default function FichaHoverCultivo({ ficha }: { ficha: DatosFicha }) {
             className={`ficha-hover__punto ficha-hover__punto--${mineral.simbolo.toLowerCase()}`}
           >
             <p className="ficha-hover__simbolo">{mineral.simbolo}</p>
+            <p className="ficha-hover__etiqueta">{mineral.etiqueta}</p>
             <p className="ficha-hover__valor">{textoOVacio(mineral.concentracion, "mg/L")}</p>
             <p className="ficha-hover__masa">{textoOVacio(mineral.masaMg, "mg")}</p>
           </div>

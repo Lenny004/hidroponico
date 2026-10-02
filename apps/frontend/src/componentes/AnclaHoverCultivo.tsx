@@ -9,7 +9,7 @@ import type { FichaHoverCultivo as DatosFicha } from "@hidroponico/tipos-compart
 import FichaHoverCultivo from "./FichaHoverCultivo";
 
 const RETARDO_MS = 180;
-const ANCHO_FICHA = 272;
+const ANCHO_FICHA = 288;
 const ALTO_FICHA = 300;
 
 export default function AnclaHoverCultivo({

@@ -3,7 +3,7 @@
   width: min(26rem, 42%);
   flex-shrink: 0;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.75rem;
   overflow-y: auto;
   border-left: 1px solid var(--color-borde);
   background: var(--color-panel);
@@ -49,7 +49,7 @@
   background: color-mix(in srgb, var(--color-acento) 12%, var(--color-panel));
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 750;
 }
 
 .panel-trazabilidad__punto {
@@ -101,9 +101,44 @@
 }
 
 .panel-trazabilidad__resumen {
-  margin: 0;
+  margin: -0.1rem 0 0;
+  border-left: 3px solid var(--color-acento);
+  border-radius: 0 var(--radio-s) var(--radio-s) 0;
+  background: color-mix(in srgb, var(--color-acento) 7%, var(--color-lienzo));
+  padding: 0.55rem 0.65rem;
   font-size: 0.8125rem;
   line-height: 1.5;
+}
+
+.panel-trazabilidad__resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.panel-trazabilidad__dato {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.1rem;
+  border: 1px solid color-mix(in srgb, var(--color-acento) 24%, var(--color-borde));
+  border-radius: 0.6rem;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-acento) 10%, var(--color-lienzo)), var(--color-lienzo));
+  padding: 0.45rem 0.5rem;
+}
+
+.panel-trazabilidad__dato-etiqueta {
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.64rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel-trazabilidad__dato strong {
+  color: var(--color-texto);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .panel-trazabilidad__enlace {
@@ -131,6 +166,24 @@
   border-radius: var(--radio);
   background: var(--color-lienzo);
   padding: 0.55rem 0.65rem 0.7rem;
+}
+
+.panel-trazabilidad .seccion-plegable {
+  border-radius: 0.65rem;
+  background: linear-gradient(145deg, var(--color-lienzo), color-mix(in srgb, var(--color-acento) 4%, var(--color-lienzo)));
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.panel-trazabilidad .seccion-plegable:hover,
+.panel-trazabilidad .seccion-plegable[open] {
+  border-color: color-mix(in srgb, var(--color-acento) 48%, var(--color-borde));
+  box-shadow: 0 0.35rem 0.8rem rgb(0 0 0 / 0.08);
+}
+
+.panel-trazabilidad .seccion-plegable > summary {
+  padding: 0.18rem 0.1rem;
+  color: var(--color-texto);
+  font-weight: 700;
 }
 
 .ficha-herbazest__titulo {
