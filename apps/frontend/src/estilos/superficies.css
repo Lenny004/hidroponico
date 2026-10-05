@@ -1,0 +1,21 @@
+.panel-cultivo,
+.panel-pipeline,
+.panel-trazabilidad,
+.panel-casos,
+.panel-consolidado,
+.onboarding,
+.lienzo {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra);
+}
+
+@media (max-width: 1100px) {
+  .panel-trazabilidad {
+    width: min(22rem, 46%);
+  }
+
+  .panel-pipeline {
+    width: 18rem;
+  }
+}

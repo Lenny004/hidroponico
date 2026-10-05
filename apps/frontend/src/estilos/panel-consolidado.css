@@ -3,10 +3,10 @@
   min-width: 0;
   flex: 1;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.45rem;
   overflow-y: auto;
-  background: linear-gradient(180deg, var(--color-panel), color-mix(in srgb, var(--color-acento) 2%, var(--color-panel)));
-  padding: 0.65rem 0.85rem 0.8rem;
+  background: var(--color-panel);
+  padding: 0.6rem 0.7rem;
 }
 
 .panel-consolidado__titulo {
@@ -18,32 +18,38 @@
 
 .panel-consolidado__ayuda,
 .panel-consolidado__vacio {
-  margin: 0.15rem 0 0;
+  margin: 0;
   font-size: 0.75rem;
   line-height: 1.45;
   color: var(--color-muted);
 }
 
 .panel-consolidado__dato {
-  margin: 0.12rem 0 0;
+  margin: 0;
   font-size: 0.8125rem;
 }
 
 .panel-consolidado__aviso {
-  margin: 0.12rem 0 0;
+  margin: 0;
   font-size: 0.75rem;
   color: var(--color-aviso);
 }
 
 .panel-consolidado__tabla-envoltorio {
+  min-width: 0;
   overflow: auto;
+}
+
+.panel-consolidado .deposito {
+  width: 100%;
+  margin: 0;
 }
 
 .tabla-consolidado {
   width: 100%;
   border: 1px solid var(--color-borde);
   border-collapse: collapse;
-  border-radius: 0.65rem;
+  border-radius: var(--radio);
   overflow: hidden;
   font-size: 0.75rem;
 }
@@ -66,12 +72,6 @@
   margin-top: 0.2rem;
 }
 
-.agroservicio {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
 .agroservicio__entidad {
   margin: 0;
   font-family: var(--fuente-titulo);
@@ -91,17 +91,20 @@
   font-size: 0.75rem;
 }
 
-.sanidad {
+.sanidad,
+.agroservicio {
   display: flex;
+  min-width: 0;
   flex-direction: column;
   gap: 0.55rem;
 }
 
 .sanidad__cabecera {
   display: flex;
+  min-width: 0;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.65rem;
+  gap: 0.45rem;
 }
 
 .sanidad__cabecera .panel-consolidado__dato,
@@ -127,16 +130,18 @@
 
 .sanidad__tarjetas {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
   gap: 0.45rem;
+  align-items: stretch;
 }
 
 .sanidad__tarjeta {
-  border: 1px solid color-mix(in srgb, var(--color-plaga) 38%, var(--color-borde));
-  border-left: 3px solid var(--color-plaga);
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--color-plaga) 28%, var(--color-borde));
   border-radius: var(--radio);
-  background: var(--color-lienzo-60);
-  padding: 0.5rem;
+  background: var(--color-lienzo);
+  padding: 0.55rem 0.6rem;
+  box-shadow: none;
 }
 
 .sanidad__tarjeta-titulo {

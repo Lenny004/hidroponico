@@ -146,28 +146,24 @@
 
 .panel-resultados__motores {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .panel-resultados__motor {
   display: flex;
-  flex: 1 1 16rem;
   min-width: 0;
   flex-direction: column;
   gap: 0.45rem;
   border: 1px solid var(--color-borde);
-  border-radius: 0.7rem;
-  background: linear-gradient(145deg, var(--color-lienzo), color-mix(in srgb, var(--color-acento) 4%, var(--color-lienzo)));
-  padding: 0.55rem 0.65rem 0.65rem;
-  box-shadow: 0 0.25rem 0.7rem rgb(0 0 0 / 0.08);
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  border-radius: var(--radio);
+  background: var(--color-lienzo);
+  padding: 0.6rem 0.65rem 0.65rem;
+  box-shadow: none;
 }
 
 .panel-resultados__motor:hover {
-  border-color: color-mix(in srgb, var(--color-acento) 48%, var(--color-borde));
-  transform: translateY(-1px);
-  box-shadow: 0 0.45rem 1rem rgb(0 0 0 / 0.12);
+  border-color: color-mix(in srgb, var(--color-acento) 45%, var(--color-borde));
 }
 
 .panel-resultados__motor-cabecera {
@@ -178,12 +174,14 @@
 
 .panel-resultados__motor-icono {
   display: flex;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  color: var(--color-acento);
+  border-radius: var(--radio-s);
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
 }
 
 .panel-resultados__motor-icono svg {
@@ -192,11 +190,11 @@
 }
 
 .panel-resultados__motor--plagas .panel-resultados__motor-icono {
-  color: var(--color-plaga);
+  background: var(--color-plaga);
 }
 
 .panel-resultados__motor--oxigeno .panel-resultados__motor-icono {
-  color: var(--color-riego);
+  background: var(--color-riego);
 }
 
 .panel-resultados__motor-nombre {
@@ -233,7 +231,7 @@
 
 .panel-resultados__metricas {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(6.4rem, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.35rem;
   margin: 0;
   padding: 0;
@@ -245,10 +243,11 @@
 }
 
 .panel-resultados__metrica {
-  border: 1px solid var(--color-borde);
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--color-acento) 16%, var(--color-borde));
   border-radius: var(--radio-s);
-  background: color-mix(in srgb, var(--color-panel) 82%, var(--color-acento));
-  padding: 0.35rem 0.45rem;
+  background: var(--color-panel);
+  padding: 0.4rem 0.45rem;
 }
 
 .panel-resultados__metrica--nula {
@@ -295,11 +294,19 @@
 .panel-resultados__lista-texto,
 .panel-resultados__lista-etiqueta {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
   gap: 0.5rem;
   margin: 0;
   font-size: 0.75rem;
   color: var(--color-muted);
+}
+
+.panel-resultados__lista-texto {
+  border: 1px solid color-mix(in srgb, var(--color-acento) 16%, var(--color-borde));
+  border-radius: var(--radio-s);
+  background: var(--color-panel);
+  padding: 0.4rem 0.45rem;
 }
 
 .panel-resultados__lista-texto strong {

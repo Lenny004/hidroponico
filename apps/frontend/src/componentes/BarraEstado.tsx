@@ -13,9 +13,9 @@ export default function BarraEstado() {
         : "solo canvas";
 
   return (
-    <footer className="barra-estado">
-      <p className="barra-estado__mensaje">{mensajeEstado}</p>
-      <p className="barra-estado__meta">
+    <footer className="flex items-baseline justify-between gap-4 border-t border-borde bg-panel px-4 py-1.5 text-xs text-muted">
+      <p>{mensajeEstado}</p>
+      <p className="text-right">
         {nodos.length} cultivos · {aristas.length} conexiones · {etiquetaBd}
       </p>
     </footer>

@@ -4,6 +4,7 @@
   min-width: 0;
   min-height: 0;
   flex: 1;
+  overflow: hidden;
   background: var(--color-lienzo);
 }
 
@@ -37,8 +38,8 @@
   left: 0.7rem;
   z-index: 2;
   display: flex;
-  min-width: 14.5rem;
-  max-width: min(20rem, calc(100% - 6.2rem));
+  min-width: 0;
+  max-width: min(20rem, calc(100% - 10.5rem));
   align-items: center;
   gap: 0.5rem;
   border: 1px solid var(--color-borde-flotante);
@@ -182,7 +183,7 @@
 }
 
 .barra-acciones-cultivo__boton--agregar {
-  color: #157a3a;
+  color: var(--color-acento);
 }
 
 .barra-acciones-cultivo__boton--quitar {
@@ -194,7 +195,7 @@
 }
 
 .barra-acciones-cultivo__boton--resetear-confirmar {
-  background: rgb(180 35 24 / 0.12);
+  background: color-mix(in srgb, var(--color-peligro) 12%, transparent);
   color: var(--color-peligro);
   font-weight: 600;
 }
@@ -217,8 +218,8 @@
 }
 
 .orificio-etiqueta--seleccionada {
-  outline: 2px solid #27d17f;
-  box-shadow: 0 0 0.75rem rgb(39 209 127 / 0.7);
+  outline: 2px solid var(--color-acento);
+  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--color-acento) 70%, transparent);
 }
 
 .orificio-etiqueta__seleccionar {
@@ -238,8 +239,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radio-s);
-  background: rgb(180 35 24 / 0.92);
-  color: #fff;
+  background: var(--color-peligro);
+  color: var(--color-sobre-acento);
   font-size: 0.75rem;
   line-height: 1;
 }

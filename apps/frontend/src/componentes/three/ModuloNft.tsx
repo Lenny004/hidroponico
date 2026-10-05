@@ -26,8 +26,8 @@ const COLOR_MACETA = "#2a2a2a";
 const COLOR_ARCILLA = "#6b5344";
 const COLOR_TALLO = "#3d7a38";
 const COLOR_ANILLO = "#c9c2b0";
-const COLOR_ANILLO_HOVER = "#7d9b5c";
-const COLOR_ANILLO_SELECCION = "#27d17f";
+const COLOR_ANILLO_HOVER = "#7eb0f5";
+const COLOR_ANILLO_SELECCION = "#4884e6";
 const COLOR_ANILLO_GRUPO = "#d4a054";
 
 const LARGO_CANAL = 4.7;

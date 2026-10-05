@@ -101,7 +101,7 @@ Dos grafos separados: **construcción** (cliente, trabajo en progreso) y **persi
 ```
 hidroponico/
 ├── apps/
-│   ├── frontend/              # React + Vite + @xyflow/react + Zustand + CSS BEM
+│   ├── frontend/              # React + Vite + Tailwind CSS + @xyflow/react + Zustand
 │   └── backend/               # Fastify + TREE.JS (bus) + Prisma
 ├── packages/
 │   ├── motores/               # Strategy + Registry + 4 motores + orquestador
@@ -128,7 +128,7 @@ Interfaz principal del sistema.
 | **Estado** | Zustand (`usarGrafoConstruccion`, `usarTema`) + hooks de sync y cálculo automático |
 | **API cliente** | `api/grafo.ts`, `api/pipeline.ts` — comunicación con el backend |
 
-Stack: React 19, Vite 7, `@xyflow/react`, `@react-three/fiber`, Zustand, CSS BEM.
+Stack: React 19, Vite 7, Tailwind CSS 4, `@xyflow/react`, `@react-three/fiber`, Zustand.
 
 ### `apps/backend`
 

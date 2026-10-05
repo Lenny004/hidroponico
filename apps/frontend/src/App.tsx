@@ -14,17 +14,17 @@ export default function App() {
   usarSincronizacionGrafo();
   usarCalculoAutomatico();
   return (
-    <div className="app">
+    <div className="flex h-full flex-col bg-lienzo text-texto">
       <BarraSuperior />
-      <div className="app__cuerpo">
+      <div className="flex min-h-0 flex-1 gap-3 p-3">
         <PanelCultivo />
-        <div className="app__principal">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
           <OnboardingCultivo />
-          <div className="app__escenario">
+          <div className="flex min-h-0 flex-[1.35] gap-3">
             <CanvasGrafo />
             <PanelTrazabilidad />
           </div>
-          <div className="app__inferior">
+          <div className="flex min-h-50 max-h-[42%] flex-[0.85] gap-3 max-[1100px]:min-h-44">
             <PanelCasosUso />
             <PanelConsolidado />
           </div>

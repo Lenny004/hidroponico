@@ -72,24 +72,24 @@ function FondoYLuces() {
     <>
       <color attach="background" args={[colorFondo]} />
       <hemisphereLight
-        color={claro ? "#f3efe2" : "#4a4538"}
-        groundColor={claro ? "#b7a888" : "#1a1814"}
+        color={claro ? "#f7f9ff" : "#8aa0c4"}
+        groundColor={claro ? "#c5d4ee" : "#121a2b"}
         intensity={claro ? 0.7 : 0.45}
       />
       <ambientLight intensity={claro ? 0.42 : 0.32} />
       <directionalLight
         position={[7, 12, 6]}
         intensity={claro ? 1.35 : 1.05}
-        color={claro ? "#fff6e4" : "#f0d9a8"}
+        color={claro ? "#f4f7ff" : "#d5e4fa"}
       />
       <directionalLight
         position={[-5, 3, 4]}
         intensity={claro ? 0.28 : 0.22}
-        color={claro ? "#d7e4ff" : "#8aa0c4"}
+        color={claro ? "#d5e4fa" : "#8aa0c4"}
       />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, 0.2]} receiveShadow>
         <planeGeometry args={[10, 8]} />
-        <meshStandardMaterial color={claro ? "#d2c6ae" : "#2a261c"} roughness={0.95} />
+        <meshStandardMaterial color={claro ? "#d5e4fa" : "#121a2b"} roughness={0.95} />
       </mesh>
       <ContactShadows
         position={[0, -0.025, 0.35]}

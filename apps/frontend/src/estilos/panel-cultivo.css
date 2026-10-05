@@ -4,7 +4,6 @@
   flex-shrink: 0;
   flex-direction: column;
   gap: 0.65rem;
-  border-right: 1px solid var(--color-borde);
   background: var(--color-panel);
   padding: var(--espacio);
 }
@@ -46,12 +45,15 @@
   gap: 0.28rem;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--color-cultivo) 20%, var(--color-borde));
-  border-radius: 0.72rem;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--color-cultivo) 13%, var(--color-lienzo)), var(--color-lienzo) 64%);
+  border-radius: var(--radio);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--color-cultivo) 10%, var(--color-panel)),
+    var(--color-panel) 70%
+  );
   padding: 0.55rem 0.48rem 0.5rem;
   text-align: left;
-  box-shadow: 0 0.35rem 0.8rem rgb(0 0 0 / 0.08);
+  box-shadow: var(--sombra);
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
@@ -67,7 +69,7 @@
 }
 
 .tarjeta-cultivo--activa {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-cultivo) 24%, var(--color-lienzo)), var(--color-lienzo));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-cultivo) 16%, var(--color-panel)), var(--color-panel));
 }
 
 .tarjeta-cultivo__halo {

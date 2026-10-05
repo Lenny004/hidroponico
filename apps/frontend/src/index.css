@@ -1,9 +1,7 @@
-@import "./estilos/tokens.css";
+@import "tailwindcss";
 @import "./estilos/base.css";
-@import "./estilos/app.css";
-@import "./estilos/barra-superior.css";
-@import "./estilos/panel-cultivo.css";
 @import "./estilos/lienzo.css";
+@import "./estilos/panel-cultivo.css";
 @import "./estilos/panel-detalle.css";
 @import "./estilos/listas-calculo.css";
 @import "./estilos/formulario.css";
@@ -16,5 +14,94 @@
 @import "./estilos/panel-pipeline.css";
 @import "./estilos/panel-casos.css";
 @import "./estilos/panel-consolidado.css";
-@import "./estilos/barra-estado.css";
 @import "./estilos/onboarding.css";
+@import "./estilos/superficies.css";
+
+/*
+  Paleta tomada del anuncio FamilyWall: fondo #E4EDFE, tarjetas blancas, azul #4884E6.
+  Los utilitarios (bg-panel, text-acento…) leen estas variables, así el tema oscuro
+  no repite clases dark: en cada componente.
+*/
+@theme {
+  --font-sans: "Aptos", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --font-titulo: "Aptos Display", "Segoe UI Variable Display", "Trebuchet MS", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --radius-control: 0.875rem;
+  --radius-pequeno: 0.625rem;
+  --radius-tarjeta: 1.25rem;
+
+  --shadow-tarjeta: 0 8px 24px rgb(16 42 84 / 0.07);
+  --shadow-flotante: 0 16px 40px rgb(16 42 84 / 0.14);
+
+  --color-lienzo: #e4edfe;
+  --color-panel: #ffffff;
+  --color-borde: #d5e2f4;
+  --color-acento: #4884e6;
+  --color-acento-fuerte: #3a79da;
+  --color-texto: #10202c;
+  --color-muted: #5e6b7a;
+  --color-aviso: #c4842a;
+  --color-peligro: #d4534a;
+  --color-reset: #c46a32;
+  --color-plaga: #d47b72;
+  --color-plaga-anillo: rgb(212 123 114 / 0.75);
+  --color-riego: #3d8f9a;
+  --color-lienzo-60: rgb(228 237 254 / 0.72);
+  --color-lienzo-80: rgb(228 237 254 / 0.9);
+  --color-panel-95: rgb(255 255 255 / 0.96);
+  --color-placeholder: rgb(94 107 122 / 0.5);
+  --color-sobre-acento: #ffffff;
+  --color-barra-acciones: #ffffff;
+  --color-barra-acciones-hover: rgb(72 132 230 / 0.08);
+  --color-tinta-flotante: #10202c;
+  --color-muted-flotante: #5e6b7a;
+  --color-borde-flotante: #d5e2f4;
+  --color-etiqueta-fondo: rgb(16 32 44 / 0.82);
+  --color-etiqueta-texto: #f7f9fc;
+  --color-progreso-pista: rgb(72 132 230 / 0.14);
+}
+
+:root {
+  color-scheme: light;
+  --fuente-titulo: var(--font-titulo);
+  --fuente-ui: var(--font-sans);
+  --fuente-mono: var(--font-mono);
+  --radio: var(--radius-control);
+  --radio-s: var(--radius-pequeno);
+  --radio-tarjeta: var(--radius-tarjeta);
+  --espacio: 0.75rem;
+  --sombra: var(--shadow-tarjeta);
+}
+
+[data-tema="oscuro"] {
+  color-scheme: dark;
+  --shadow-tarjeta: 0 10px 28px rgb(0 0 0 / 0.35);
+  --shadow-flotante: 0 18px 44px rgb(0 0 0 / 0.45);
+  --color-lienzo: #0d1524;
+  --color-panel: #162033;
+  --color-borde: #2a3b56;
+  --color-acento: #69a4f5;
+  --color-acento-fuerte: #4884e6;
+  --color-texto: #f4f7fb;
+  --color-muted: #9aabc0;
+  --color-aviso: #e2a04a;
+  --color-peligro: #f07167;
+  --color-reset: #e08a4f;
+  --color-plaga: #e7a097;
+  --color-plaga-anillo: rgb(231 160 151 / 0.75);
+  --color-riego: #7ec8b0;
+  --color-lienzo-60: rgb(13 21 36 / 0.72);
+  --color-lienzo-80: rgb(13 21 36 / 0.88);
+  --color-panel-95: rgb(22 32 51 / 0.96);
+  --color-placeholder: rgb(154 171 192 / 0.55);
+  --color-sobre-acento: #ffffff;
+  --color-barra-acciones: #1c2940;
+  --color-barra-acciones-hover: rgb(255 255 255 / 0.06);
+  --color-tinta-flotante: #f4f7fb;
+  --color-muted-flotante: #9aabc0;
+  --color-borde-flotante: #3a4e6c;
+  --color-etiqueta-fondo: rgb(14 22 36 / 0.82);
+  --color-etiqueta-texto: #f4f7fb;
+  --color-progreso-pista: rgb(244 247 251 / 0.12);
+}
