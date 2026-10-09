@@ -14,8 +14,4 @@
   .panel-trazabilidad {
     width: min(22rem, 46%);
   }
-
-  .panel-pipeline {
-    width: 18rem;
-  }
 }

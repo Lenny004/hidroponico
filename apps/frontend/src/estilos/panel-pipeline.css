@@ -132,3 +132,13 @@
   background: transparent;
   padding: 0;
 }
+
+@media (max-width: 1100px) {
+  .panel-pipeline {
+    width: 18rem;
+  }
+
+  .panel-pipeline--cerrado {
+    width: 2.75rem;
+  }
+}
