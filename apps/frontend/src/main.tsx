@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 import App from "./App";
+import ErrorBoundary from "./componentes/ErrorBoundary";
 import "./index.css";
 import "./store/usarTema";
 
@@ -11,6 +12,8 @@ if (!raiz) {
 
 createRoot(raiz).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 );

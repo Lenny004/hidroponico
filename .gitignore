@@ -13,6 +13,7 @@ build/
 coverage/
 *.tsbuildinfo
 apps/backend/generated/
+test-results/
 
 # Logs
 *.log

@@ -5,6 +5,7 @@ import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import BarraAccionesCultivo from "./BarraAccionesCultivo";
 import CapaActiva3d from "./CapaActiva3d";
 import ControlesLienzo3d from "./ControlesLienzo3d";
+import ErrorBoundary from "./ErrorBoundary";
 
 const LienzoThree = lazy(() => import("./three/LienzoThree"));
 
@@ -68,9 +69,19 @@ export default function CanvasGrafo() {
       <CapaActiva3d />
       <BarraAccionesCultivo />
       <ControlesLienzo3d />
-      <Suspense fallback={<div className="lienzo__cargando" role="status">Cargando vista 3D…</div>}>
-        <LienzoThree origenEventos={origenEventos} />
-      </Suspense>
+      <ErrorBoundary
+        fallback={
+          <div className="lienzo__error" role="alert">
+            <strong>La vista 3D no está disponible</strong>
+            <span className="lienzo__error-ayuda">El resto de la planificación continúa funcionando.</span>
+            <button className="lienzo__error-boton" type="button" onClick={() => window.location.reload()}>Reintentar vista</button>
+          </div>
+        }
+      >
+        <Suspense fallback={<div className="lienzo__cargando" role="status">Cargando vista 3D…</div>}>
+          <LienzoThree origenEventos={origenEventos} />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }

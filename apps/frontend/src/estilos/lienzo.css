@@ -32,6 +32,44 @@
   font-size: 0.85rem;
 }
 
+.lienzo__error {
+  position: absolute;
+  inset: 1rem;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--color-peligro) 45%, var(--color-borde));
+  border-radius: var(--radio-tarjeta);
+  background: var(--color-panel-95);
+  padding: 1rem;
+  color: var(--color-texto);
+  text-align: center;
+}
+
+.lienzo__error-ayuda {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+}
+
+.lienzo__error-boton,
+.error-interfaz__boton {
+  border: 1px solid var(--color-acento);
+  border-radius: var(--radio-s);
+  background: var(--color-acento);
+  padding: 0.4rem 0.65rem;
+  color: var(--color-sobre-acento);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.lienzo__error-boton:hover,
+.error-interfaz__boton:hover {
+  background: var(--color-acento-fuerte);
+}
+
 .capa-activa {
   position: absolute;
   top: 0.7rem;

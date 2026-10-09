@@ -1,0 +1,60 @@
+.panel-carga {
+  display: flex;
+  min-width: 0;
+  min-height: 8rem;
+  flex-direction: column;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  background: var(--color-panel);
+  opacity: 0.7;
+}
+
+.error-interfaz {
+  display: grid;
+  min-height: 100%;
+  place-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: var(--color-texto);
+  text-align: center;
+}
+
+.error-interfaz h2,
+.error-interfaz p {
+  margin: 0;
+}
+
+.error-interfaz p {
+  color: var(--color-muted);
+}
+
+.panel-carga--catalogo {
+  width: 17rem;
+  flex: 0 0 17rem;
+}
+
+.panel-carga--trazabilidad {
+  width: min(26rem, 42%);
+  flex: 0 0 min(26rem, 42%);
+}
+
+.panel-carga--pipeline {
+  width: 22rem;
+  flex: 0 0 22rem;
+}
+
+.panel-carga--bloque {
+  flex: 1;
+}
+
+@media (max-width: 1100px) {
+  .panel-carga--catalogo {
+    width: 15rem;
+    flex-basis: 15rem;
+  }
+
+  .panel-carga--pipeline {
+    width: 18rem;
+    flex-basis: 18rem;
+  }
+}
