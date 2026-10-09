@@ -19,6 +19,7 @@ import {
   parsearDepositoInstalacion,
   parsearEtapaVida,
   parsearFechaInicio,
+  fechaInicioHoy,
   plantillaParaEtapa,
   resumenTrazabilidad,
   type ClaveVariableCultivo,
@@ -27,6 +28,7 @@ import {
   type NodoCultivo,
 } from "@hidroponico/tipos-compartidos";
 import { solicitarPipeline, type ResultadoPipelineApi } from "../api/pipeline";
+import { usarOperacion } from "./usarOperacion";
 import {
   CANTIDAD_ORIFICIOS,
   indiceOrificioDePosicion,
@@ -146,6 +148,14 @@ function grupoDesde(nodos: NodoFlujo[], aristas: Edge[], id: string | null): str
 
 const CLAVE_DEPOSITO = "hidroponico.deposito";
 
+function registrarCambio(descripcion: string): void {
+  usarOperacion.getState().registrarEvento({
+    tipo: "cambio",
+    fecha: fechaInicioHoy(),
+    descripcion,
+  });
+}
+
 function leerDepositoInicial(): DepositoInstalacion {
   if (typeof localStorage === "undefined") {
     return { ...DEPOSITO_VACIO };
@@ -244,6 +254,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
         mensajeEstado: "Conexión creada.",
       };
     });
+    registrarCambio("Conexión hidráulica creada entre dos cultivos.");
     return true;
   },
 
@@ -295,6 +306,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
         mensajeEstado: `${definicion.nombre} colocado en el orificio ${hueco + 1}.`,
       };
     });
+    registrarCambio(`${definicion.nombre} colocado en el orificio ${hueco + 1}.`);
   },
 
   quitarNodo: (id) => {
@@ -318,6 +330,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
         mensajeEstado: "Cultivo retirado del orificio.",
       };
     });
+    registrarCambio("Cultivo retirado del tubo.");
   },
 
   vaciarTubo: () => {
@@ -334,6 +347,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       idsRenderPatricia: null,
       mensajeEstado: "Tubos NFT vacíos.",
     });
+    registrarCambio("Se vaciaron todos los tubos NFT.");
   },
 
   seleccionar: (id) => {
@@ -378,6 +392,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       ),
       mensajeEstado: `Tipo cambiado a ${definicion.nombre}. Se aplicó la receta de la etapa (mg/L y litros).`,
     }));
+    registrarCambio(`Tipo de cultivo cambiado a ${definicion.nombre}.`);
   },
 
   actualizarVariable: (id, clave, valor) => {
@@ -435,6 +450,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
           ? "Sin plagas registradas."
           : `${normalizadas.length} plaga(s) en el nodo.`,
     }));
+    registrarCambio(normalizadas === null ? "Se limpiaron las plagas del nodo." : "Se actualizaron las plagas del nodo.");
   },
 
   actualizarTrazabilidad: (id, campo, valor) => {
@@ -461,6 +477,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
             ? `Inicio de vida: ${limpio}.`
             : "Sin fecha de inicio.",
     }));
+    registrarCambio(campo === "etapa_vida" ? "Se actualizó la etapa de vida." : "Se actualizó la fecha de alta.");
   },
 
   ejecutarPipeline: async (nombreMotor, opciones) => {
@@ -515,6 +532,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
     const deposito = parsearDepositoInstalacion({ ...get().deposito, ...cambio });
     guardarDeposito(deposito);
     set({ deposito });
+    registrarCambio("Se actualizaron las dimensiones o parámetros del depósito.");
   },
 
   aplicarRecetaEtapa: (id) => {
@@ -545,6 +563,7 @@ export const usarGrafoConstruccion = create<EstadoGrafoConstruccion>((set, get) 
       ),
       mensajeEstado: "Se aplicaron Mg, K, Mn y Fe de la etapa. Litros y O₂ no se tocaron.",
     }));
+    registrarCambio("Se aplicó la receta mineral de la etapa actual.");
   },
 
   setEstadoPersistencia: (estadoPersistencia) => set({ estadoPersistencia }),

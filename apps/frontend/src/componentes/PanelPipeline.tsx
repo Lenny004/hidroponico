@@ -8,6 +8,7 @@ import CatalogoPlantado from "./CatalogoPlantado";
 import PanelResultados from "./PanelResultados";
 import PanelRegresion from "./PanelRegresion";
 import ProyeccionInsumos from "./ProyeccionInsumos";
+import PanelOperacion from "./PanelOperacion";
 import { usarGrafoConstruccion } from "../store/usarGrafoConstruccion";
 import { usarInterfaz } from "../store/usarInterfaz";
 import { descargarTexto } from "../util/descargar-texto";
@@ -59,6 +60,10 @@ export default function PanelPipeline() {
             <Download strokeWidth={2.1} aria-hidden />
             Exportar CSV
           </button>
+          <details className="seccion-plegable" open>
+            <summary>Operación real</summary>
+            <PanelOperacion />
+          </details>
           <PanelResultados />
           <details className="seccion-plegable">
             <summary>Proyección de insumos</summary>

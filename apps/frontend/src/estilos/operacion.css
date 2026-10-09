@@ -1,0 +1,335 @@
+.operacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-top: 0.35rem;
+}
+
+.operacion__cabecera,
+.operacion__subtitulo-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.operacion__eyebrow {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.operacion__titulo,
+.operacion__subtitulo-fila h4 {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 0.98rem;
+  font-weight: 750;
+}
+
+.operacion__contador {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-muted);
+  font-size: 0.68rem;
+}
+
+.operacion__contador svg,
+.operacion__guardar svg,
+.operacion__bloque summary svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.operacion__metricas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.operacion__metrica {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.12rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-lienzo);
+  padding: 0.42rem;
+}
+
+.operacion__metrica span {
+  overflow: hidden;
+  color: var(--color-muted);
+  font-size: 0.6rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operacion__metrica strong {
+  overflow: hidden;
+  color: var(--color-texto);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operacion__estado--cabe {
+  color: var(--color-acento);
+}
+
+.operacion__estado--excede {
+  color: var(--color-peligro);
+}
+
+.operacion__estado--sin-deposito,
+.operacion__estado--reserva-incompleta {
+  color: var(--color-aviso);
+}
+
+.operacion__subtitulo-fila span {
+  color: var(--color-muted);
+  font-size: 0.65rem;
+}
+
+.operacion__lista,
+.operacion__tareas,
+.operacion__historial {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operacion__alerta,
+.operacion__tarea,
+.operacion__medicion {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-lienzo);
+  padding: 0.45rem;
+}
+
+.operacion__alerta svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: 0 0 auto;
+}
+
+.operacion__alerta > span,
+.operacion__tarea-contenido,
+.operacion__medicion > div {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.operacion__alerta strong,
+.operacion__tarea strong,
+.operacion__medicion strong {
+  color: var(--color-texto);
+  font-size: 0.72rem;
+}
+
+.operacion__alerta small,
+.operacion__tarea small,
+.operacion__medicion small {
+  color: var(--color-muted);
+  font-size: 0.66rem;
+  line-height: 1.35;
+}
+
+.operacion__alerta--critica {
+  border-color: color-mix(in srgb, var(--color-peligro) 50%, var(--color-borde));
+  color: var(--color-peligro);
+}
+
+.operacion__alerta--advertencia {
+  border-color: color-mix(in srgb, var(--color-aviso) 50%, var(--color-borde));
+  color: var(--color-aviso);
+}
+
+.operacion__alerta--info {
+  color: var(--color-acento);
+}
+
+.operacion__vacio,
+.operacion__error {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.operacion__error {
+  color: var(--color-peligro);
+}
+
+.operacion__bloque {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-panel);
+  padding: 0.42rem 0.5rem 0.5rem;
+}
+
+.operacion__bloque > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  color: var(--color-texto);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.operacion__bloque[open] > summary {
+  margin-bottom: 0.45rem;
+}
+
+.operacion__tarea--completa {
+  opacity: 0.55;
+}
+
+.operacion__tarea-check {
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--color-borde);
+  border-radius: 50%;
+  color: transparent;
+}
+
+.operacion__tarea-check:hover,
+.operacion__tarea-check[aria-pressed="true"] {
+  border-color: var(--color-acento);
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+}
+
+.operacion__tarea-check svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.operacion__tabla-wrap {
+  overflow-x: auto;
+}
+
+.operacion__tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.operacion__tabla th,
+.operacion__tabla td {
+  border-bottom: 1px solid var(--color-borde);
+  padding: 0.35rem 0.25rem;
+  text-align: right;
+}
+
+.operacion__tabla th:first-child,
+.operacion__tabla td:first-child {
+  text-align: left;
+}
+
+.operacion__tabla thead th {
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.operacion__tabla tbody th {
+  color: var(--color-texto);
+  font-weight: 600;
+}
+
+.operacion__formulario {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.operacion__formulario label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.18rem;
+  color: var(--color-muted);
+  font-size: 0.64rem;
+}
+
+.operacion__formulario input {
+  min-width: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-s);
+  background: var(--color-lienzo);
+  padding: 0.35rem 0.4rem;
+  color: var(--color-texto);
+  font-size: 0.7rem;
+}
+
+.operacion__formulario input:focus {
+  border-color: var(--color-acento);
+  outline: 2px solid color-mix(in srgb, var(--color-acento) 28%, transparent);
+  outline-offset: 1px;
+}
+
+.operacion__campo-ancho,
+.operacion__guardar,
+.operacion__error {
+  grid-column: 1 / -1;
+}
+
+.operacion__guardar {
+  justify-content: center;
+}
+
+.operacion__medicion {
+  align-items: center;
+}
+
+.operacion__medicion > span {
+  color: var(--color-muted);
+  font-size: 0.65rem;
+  text-align: right;
+}
+
+.operacion__borrar {
+  display: grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radio-s);
+  color: var(--color-muted);
+}
+
+.operacion__borrar:hover {
+  background: color-mix(in srgb, var(--color-peligro) 12%, transparent);
+  color: var(--color-peligro);
+}
+
+.operacion__borrar svg {
+  width: 0.78rem;
+  height: 0.78rem;
+}
+
+@media (max-width: 680px) {
+  .operacion__metricas {
+    grid-template-columns: 1fr;
+  }
+}

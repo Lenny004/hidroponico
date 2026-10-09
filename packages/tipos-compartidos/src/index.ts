@@ -242,3 +242,13 @@ export {
   normalizarPlagas,
   parsearNumeroONull,
 } from "./parsear-valores";
+
+export {
+  alertasOperacion,
+  calendarioOperativo,
+  type AlertaOperativa,
+  type MedicionOperativa,
+  type SeveridadAlertaOperativa,
+  type TareaOperativa,
+  type TipoTareaOperativa,
+} from "./operacion";

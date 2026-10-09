@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./estilos/base.css";
 @import "./estilos/lienzo.css";
+@import "./estilos/carga.css";
 @import "./estilos/panel-cultivo.css";
 @import "./estilos/panel-detalle.css";
 @import "./estilos/listas-calculo.css";
@@ -12,6 +13,7 @@
 @import "./estilos/ficha-hover.css";
 @import "./estilos/panel-trazabilidad.css";
 @import "./estilos/panel-pipeline.css";
+@import "./estilos/operacion.css";
 @import "./estilos/panel-casos.css";
 @import "./estilos/panel-consolidado.css";
 @import "./estilos/onboarding.css";
